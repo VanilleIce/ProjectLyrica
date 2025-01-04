@@ -5,8 +5,7 @@ import json
 import os
 import threading
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import filedialog
+from tkinter import messagebox, filedialog
 import winsound
 
 # Initialisiere globale Variablen für das Sky-Fenster
@@ -157,9 +156,7 @@ def gui_starten():
             dateipfad = filedialog.askopenfilename(
                 initialdir=songs_ordner,
                 title="Wähle ein Lied", 
-                filetypes=(
-                    ("Alle Dateien", "*.*"),
-                )
+                filetypes=[("Unterstützte Formate", "*.json *.txt *.skysheet")]
             )
             if dateipfad:
                 # Aktualisiere das Label mit dem ausgewählten Dateinamen
