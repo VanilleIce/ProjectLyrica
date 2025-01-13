@@ -100,7 +100,7 @@ def musik_abspielen(song_daten):
 def gui_starten():
     root = ctk.CTk()
     root.title("Projekt Lyrica")
-    root.geometry("500x350")
+    root.geometry("480x300")
     root.iconbitmap("resources/icons/icon.ico")
 
     titel_label = ctk.CTkLabel(root, text="Projekt Lyrica", font=("Arial", 18, "bold"))
@@ -110,8 +110,8 @@ def gui_starten():
     datei_label.pack(pady=10)
 
     dateipfad_ausgewählt = None
-
     songs_ordner = os.path.join(os.getcwd(), "resources/Songs")
+
     if not os.path.exists(songs_ordner):
         ctk.CTkLabel(root, text="Der Ordner 'Songs' wurde nicht gefunden.", font=("Arial", 12), text_color="red").pack(pady=10)
         return
@@ -127,25 +127,24 @@ def gui_starten():
             dateipfad_ausgewählt = dateipfad
             datei_label.configure(text=os.path.basename(dateipfad))
 
-        def ausgewähltes_lied_abspielen():
-            if dateipfad_ausgewählt is None:
-                ctk.CTkLabel(root, text="Warnung: Bitte wähle ein Lied aus!", font=("Arial", 16), text_color="red").pack(pady=10)
-                return
-            try:
-                song_daten = musikdatei_parsen(dateipfad_ausgewählt)
-                fenster_fokus()
-                musik_abspielen(song_daten[0])
-            except Exception as e:
-                messagebox.showerror("Fehler", str(e)) 
+    def ausgewähltes_lied_abspielen():
+        if dateipfad_ausgewählt is None:
+            ctk.CTkLabel(root, text="Warnung: Bitte wähle ein Lied aus!", font=("Arial", 16), text_color="red").pack(pady=10)
+            return
+        try:
+            song_daten = musikdatei_parsen(dateipfad_ausgewählt)
+            fenster_fokus()
+            musik_abspielen(song_daten[0])
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
 
-        datei_button = ctk.CTkButton(root, text="Lied auswählen", command=datei_dialog_öffnen, width=200, height=40)
-        datei_button.pack(pady=10)
+    datei_button = ctk.CTkButton(root, text="Lied auswählen", command=datei_dialog_öffnen, width=200, height=40)
+    datei_button.pack(pady=10)
 
-        play_button = tk.Button(root, text="Lied abspielen", command=ausgewähltes_lied_abspielen, font=("Arial", 14), width=12, height=1)
-        play_button.pack(pady=15)
+    play_button = ctk.CTkButton(root, text="Lied abspielen", command=ausgewähltes_lied_abspielen, width=200, height=40)
+    play_button.pack(pady=10)
 
     root.mainloop()
-
 
 if __name__ == '__main__':
     gui_starten()
