@@ -11,9 +11,7 @@ import winsound
 fenster_liste = pygetwindow.getWindowsWithTitle("Sky")
 sky_fenster = next((f for f in fenster_liste if f.title == "Sky"), None)
 
-for fenster in fenster_liste:
-    if fenster.title == "Sky":
-        sky_fenster = fenster
+abspiel_thread = None
 
 if sky_fenster is None:
     messagebox.showerror("Fehler", "Sky wurde nicht gefunden. Bitte öffne Sky, bevor du dieses Skript ausführst.")
@@ -26,13 +24,12 @@ def fenster_fokus():
         sky_fenster.minimize()
         sky_fenster.restore()
 
-tastatur_steuerung = Controller()
-
 def tastenkarten_holen():
     print("Tastenkarten werden geladen.")
     basis_karten = {i: k for i, k in enumerate('zuiophjklönm,.-')}
     return {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key'] for key, value in basis_karten.items()}
 
+tastatur_steuerung = Controller()
 tastenkarten = tastenkarten_holen()
 
 class TasteDruckThread(threading.Thread):
@@ -89,10 +86,8 @@ def musik_abspielen(song_daten):
         if sky_fenster.isActive:
             note_abspielen(note, i)
         else:
-            pause_zeit_start = time.perf_counter()
             while not sky_fenster.isActive:
                 time.sleep(1)
-            pause_zeit_end = time.perf_counter()
 
     winsound.Beep(1000, 500)
     messagebox.showinfo("Info", f"Fertig mit dem Abspielen von {song_daten['name']}")
@@ -128,13 +123,16 @@ def gui_starten():
             datei_label.configure(text=os.path.basename(dateipfad))
 
     def ausgewähltes_lied_abspielen():
+        global abspiel_thread
         if dateipfad_ausgewählt is None:
             ctk.CTkLabel(root, text="Warnung: Bitte wähle ein Lied aus!", font=("Arial", 16), text_color="red").pack(pady=10)
             return
         try:
             song_daten = musikdatei_parsen(dateipfad_ausgewählt)
             fenster_fokus()
-            musik_abspielen(song_daten[0])
+
+            abspiel_thread = threading.Thread(target=musik_abspielen, args=(song_daten))
+            abspiel_thread.start()
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
 
