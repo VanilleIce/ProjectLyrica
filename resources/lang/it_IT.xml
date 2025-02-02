@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- Messaggi generali di errore e successo -->
+    <translation key="error_loading_translations">Errore nel caricamento delle traduzioni: {0}</translation>
+    <translation key="language_not_found">Lingua non trovata</translation>
+    <translation key="file_not_found">File non trovato</translation>
+    <translation key="unknown_file_format">Formato file sconosciuto</translation>
+    <translation key="error_loading_languages">Errore nel caricamento delle lingue disponibili</translation>
+    <translation key="error_title">Errore</translation>
+    <translation key="language_saved">Lingua salvata</translation>
+    <translation key="missing_translations_file">File di traduzione mancante per {0}</translation>
+    <translation key="file_not_found_error">File non trovato: {0}</translation>
+    
+    <!-- GUI: Finestri e bottoni -->
+    <translation key="language_window_title">Selezione della lingua</translation>
+    <translation key="select_language">Seleziona lingua:</translation>
+    <translation key="save_button_text">Salva</translation>
+    <translation key="info_title">Informazione</translation>
+    <translation key="no_song_selected">Nessuna canzone selezionata</translation>
+    <translation key="file_select_title">Seleziona canzone</translation>
+    <translation key="supported_formats">Formati supportati</translation>
+    <translation key="warning_title">Avviso</translation>
+    <translation key="choose_song_warning">Seleziona una canzone prima di procedere.</translation>
+    
+    <!-- Funzioni del lettore musicale -->
+    <translation key="play_button_text">Riproduci</translation>
+    <translation key="paused_button_text">Pausa</translation>
+    <translation key="stopped_button_text">Stop</translation>
+    <translation key="key_press">Premere tasto</translation>
+    <translation key="enabled">Abilitato</translation>
+    <translation key="disabled">Disabilitato</translation>
+    <translation key="duration">Durata del tasto premuto</translation>
+    <translation key="key_recognition_error">Errore nel riconoscimento del tasto</translation>
+    
+    <!-- Messaggi di errore durante la riproduzione -->
+    <translation key="play_error_message">Errore durante la riproduzione della musica</translation>
+    <translation key="missing_key_songNotes">Dati della canzone mancanti (Key: songNotes)</translation>
+    <translation key="song_not_found">Canzone non trovata</translation>
+    
+    <!-- Funzioni delle finestre -->
+    <translation key="sky_window_not_found">Finestra Sky non trovata</translation>
+    <translation key="window_focus_error">Impossibile mettere la finestra a fuoco</translation>
+    
+    <!-- Altre opzioni di testo -->
+    <translation key="preset">Preset</translation>
+    <translation key="project_title">Progetto Lyrica</translation>
+    
+</translations>

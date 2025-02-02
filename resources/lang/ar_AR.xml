@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- General error and success messages -->
+    <translation key="error_loading_translations">خطأ في تحميل الترجمات</translation>
+    <translation key="language_not_found">اللغة غير موجودة</translation>
+    <translation key="file_not_found">الملف غير موجود</translation>
+    <translation key="unknown_file_format">تنسيق الملف غير معروف</translation>
+    <translation key="error_loading_languages">خطأ في تحميل اللغات المتاحة</translation>
+    <translation key="error_title">خطأ</translation>
+    <translation key="language_saved">تم حفظ اللغة</translation>
+    <translation key="missing_translations_file">ملف الترجمة مفقود لـ {0}</translation>
+    <translation key="file_not_found_error">ملف غير موجود: {0}</translation>
+    
+    <!-- GUI: Windows and Buttons -->
+    <translation key="language_window_title">اختيار اللغة</translation>
+    <translation key="select_language">اختر لغة:</translation>
+    <translation key="save_button_text">حفظ</translation>
+    <translation key="info_title">معلومات</translation>
+    <translation key="no_song_selected">لم يتم اختيار أغنية</translation>
+    <translation key="file_select_title">اختر أغنية</translation>
+    <translation key="supported_formats">الصيغ المدعومة</translation>
+    <translation key="warning_title">تحذير</translation>
+    <translation key="choose_song_warning">يرجى اختيار أغنية.</translation>
+    
+    <!-- Music player functions -->
+    <translation key="play_button_text">تشغيل</translation>
+    <translation key="paused_button_text">موقوف</translation>
+    <translation key="stopped_button_text">موقف</translation>
+    <translation key="key_press">اضغط على المفتاح</translation>
+    <translation key="enabled">مفعل</translation>
+    <translation key="disabled">غير مفعل</translation>
+    <translation key="duration">مدة الضغط على المفتاح</translation>
+    <translation key="key_recognition_error">خطأ في التعرف على المفتاح</translation>
+    
+    <!-- Errors during playback -->
+    <translation key="play_error_message">حدث خطأ أثناء تشغيل الموسيقى</translation>
+    <translation key="missing_key_songNotes">المفتاح مفقود في بيانات الأغنية (المفتاح: songNotes)</translation>
+    <translation key="song_not_found">الأغنية غير موجودة</translation>
+    
+    <!-- Window functions -->
+    <translation key="sky_window_not_found">نافذة Sky غير موجودة</translation>
+    <translation key="window_focus_error">خطأ في تحديد النافذة في المقدمة</translation>
+    
+    <!-- Additional text options -->
+    <translation key="preset">إعداد مسبق</translation>
+    <translation key="project_title">Project Lyrica</translation>
+    
+</translations>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- General error and success messages -->
+    <translation key="error_loading_translations">Error loading translations</translation>
+    <translation key="language_not_found">Language not found</translation>
+    <translation key="file_not_found">File not found</translation>
+    <translation key="unknown_file_format">Unknown file format</translation>
+    <translation key="error_loading_languages">Error loading available languages</translation>
+    <translation key="error_title">Error</translation>
+    <translation key="language_saved">Language saved</translation>
+    <translation key="ok_button_text">Ok</translation>
+    <translation key="missing_translations_file">Missing translation file for {0}</translation>
+    <translation key="file_not_found_error">File not found: {0}</translation>
+    
+    <!-- GUI: Windows and Buttons -->
+    <translation key="language_window_title">Language Selection</translation>
+    <translation key="select_language">Select Language:</translation>
+    <translation key="save_button_text">Save</translation>
+    <translation key="info_title">Information</translation>
+    <translation key="no_song_selected">No song selected</translation>
+    <translation key="file_select_title">Select song</translation>
+    <translation key="supported_formats">Supported formats</translation>
+    <translation key="warning_title">Warning</translation>
+    <translation key="choose_song_warning">Please select a song before proceeding.</translation>
+    
+    <!-- Music player functions -->
+    <translation key="play_button_text">Play</translation>
+    <translation key="paused_button_text">Pause</translation>
+    <translation key="stopped_button_text">Stop</translation>
+    <translation key="key_press">Key Press</translation>
+    <translation key="enabled">Enabled</translation>
+    <translation key="disabled">Disabled</translation>
+    <translation key="duration">Key press duration</translation>
+    <translation key="key_recognition_error">Key recognition error</translation>
+    
+    <!-- Errors during playback -->
+    <translation key="play_error_message">Error during music playback</translation>
+    <translation key="missing_key_songNotes">Song data missing (Key: songNotes)</translation>
+    <translation key="song_not_found">Song could not be found</translation>
+    
+    <!-- Window functions -->
+    <translation key="sky_window_not_found">Sky window not found</translation>
+    <translation key="window_focus_error">Window could not be focused</translation>
+    
+    <!-- Additional text options -->
+    <translation key="preset">Preset</translation>
+    <translation key="project_title">Project Lyrica</translation>
+    
+</translations>

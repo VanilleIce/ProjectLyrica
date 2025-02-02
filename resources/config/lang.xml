@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languages>
+  <language code="en_US">English</language>
+  <language code="de_DE">Deutsch</language>
+  <language code="fr_FR">Français</language>
+  <language code="es_ES">Español</language>
+  <language code="it_IT">Italiano</language>
+  <language code="pt_PT">Português</language>
+  <language code="nl_NL">Nederlands</language>
+  <language code="pl_PL">Polski</language>
+  <language code="da_DK">Dansk</language>
+  <language code="ko_KR">한국어</language>
+  <language code="zh_CN">中文</language>
+  <language code="ru_RU">Русский</language>
+  <language code="id_ID">Bahasa Indonesia</language>
+  <language code="ja_JP">日本語</language>
+  <language code="ar_AR">العربية</language>
+</languages>

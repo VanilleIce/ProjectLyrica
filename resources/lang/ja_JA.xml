@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- General error and success messages -->
+    <translation key="error_loading_translations">翻訳の読み込みエラー</translation>
+    <translation key="language_not_found">言語が見つかりません</translation>
+    <translation key="file_not_found">ファイルが見つかりません</translation>
+    <translation key="unknown_file_format">不明なファイル形式</translation>
+    <translation key="error_loading_languages">利用可能な言語の読み込みエラー</translation>
+    <translation key="error_title">エラー</translation>
+    <translation key="language_saved">言語が保存されました</translation>
+    <translation key="missing_translations_file">{0} の翻訳ファイルが見つかりません</translation>
+    <translation key="file_not_found_error">ファイルが見つかりません: {0}</translation>
+    
+    <!-- GUI: Windows and Buttons -->
+    <translation key="language_window_title">言語選択</translation>
+    <translation key="select_language">言語を選択：</translation>
+    <translation key="save_button_text">保存</translation>
+    <translation key="info_title">情報</translation>
+    <translation key="no_song_selected">曲が選択されていません</translation>
+    <translation key="file_select_title">曲を選択</translation>
+    <translation key="supported_formats">サポートされている形式</translation>
+    <translation key="warning_title">警告</translation>
+    <translation key="choose_song_warning">曲を選択してください。</translation>
+    
+    <!-- Music player functions -->
+    <translation key="play_button_text">再生</translation>
+    <translation key="paused_button_text">一時停止</translation>
+    <translation key="stopped_button_text">停止</translation>
+    <translation key="key_press">キー押下</translation>
+    <translation key="enabled">有効</translation>
+    <translation key="disabled">無効</translation>
+    <translation key="duration">キー押下の時間</translation>
+    <translation key="key_recognition_error">キー認識エラー</translation>
+    
+    <!-- Errors during playback -->
+    <translation key="play_error_message">音楽再生中のエラー</translation>
+    <translation key="missing_key_songNotes">曲データが不足しています（キー：songNotes）</translation>
+    <translation key="song_not_found">曲が見つかりません</translation>
+    
+    <!-- Window functions -->
+    <translation key="sky_window_not_found">Skyウィンドウが見つかりません</translation>
+    <translation key="window_focus_error">ウィンドウのフォーカスエラー</translation>
+    
+    <!-- Additional text options -->
+    <translation key="preset">プリセット</translation>
+    <translation key="project_title">Project Lyrica</translation>
+    
+</translations>

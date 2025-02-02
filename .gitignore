@@ -1,10 +1,1 @@
-
-Lyrica/setup/setup.iss
-Lyrica/ProjectLyrica.spec
-Lyrica/ProjectLyrica.exe
-Lyrica/setup/ProjectLyrica.exe
-Lyrica/python/__pycache__
-Lyrica/resources/Songs/desktop.ini
-Lyrica/python/_ProjectLyrica.py
-Lyrica/python/-ProjectLyrica.py
-Lyrica/python/.ProjectLyrica.py
+resources/Songs/desktop.ini

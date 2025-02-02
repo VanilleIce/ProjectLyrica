@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- Allgemeine Fehler und Erfolgsmeldungen -->
+    <translation key="error_loading_translations">Fehler beim Laden der Übersetzungen: {0}</translation>
+    <translation key="language_not_found">Sprache konnte nicht gefunden werden</translation>
+    <translation key="file_not_found">Datei nicht gefunden</translation>
+    <translation key="unknown_file_format">Unbekanntes Dateiformat</translation>
+    <translation key="error_loading_languages">Fehler beim Laden der verfügbaren Sprachen</translation>
+    <translation key="error_title">Fehler</translation>
+    <translation key="language_saved">Sprache wurde gespeichert</translation>
+    <translation key="missing_translations_file">Fehlende Übersetzungsdatei für {0}</translation>
+    <translation key="file_not_found_error">Datei nicht gefunden: {0}</translation>
+    
+    <!-- GUI: Fenster und Buttons -->
+    <translation key="language_window_title">Sprachauswahl</translation>
+    <translation key="select_language">Sprache auswählen:</translation>
+    <translation key="save_button_text">Speichern</translation>
+    <translation key="info_title">Information</translation>
+    <translation key="no_song_selected">Kein Lied ausgewählt</translation>
+    <translation key="file_select_title">Lied auswählen</translation>
+    <translation key="supported_formats">Unterstützte Formate</translation>
+    <translation key="warning_title">Warnung</translation>
+    <translation key="choose_song_warning">Bitte wählen Sie ein Lied aus, bevor Sie fortfahren.</translation>
+    
+    <!-- Musikplayer Funktionen -->
+    <translation key="play_button_text">Abspielen</translation>
+    <translation key="paused_button_text">Pausieren</translation>
+    <translation key="stopped_button_text">Stopp</translation>
+    <translation key="key_press">Tastendruck</translation>
+    <translation key="enabled">Aktiviert</translation>
+    <translation key="disabled">Deaktiviert</translation>
+    <translation key="duration">Dauer des Tastendrucks</translation>
+    <translation key="key_recognition_error">Fehler bei der Tastenerkennung</translation>
+    
+    <!-- Fehlermeldungen beim Abspielen -->
+    <translation key="play_error_message">Fehler beim Abspielen der Musik</translation>
+    <translation key="missing_key_songNotes">Song-Daten fehlen (Key: songNotes)</translation>
+    <translation key="song_not_found">Song konnte nicht gefunden werden</translation>
+    
+    <!-- Fensterfunktionen -->
+    <translation key="sky_window_not_found">Sky-Fenster nicht gefunden</translation>
+    <translation key="window_focus_error">Fenster konnte nicht in den Fokus gesetzt werden</translation>
+    
+    <!-- Weitere Textoptionen -->
+    <translation key="preset">Preset</translation>
+    <translation key="project_title">Projekt Lyrica</translation>
+    
+</translations>

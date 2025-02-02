@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- General error and success messages -->
+    <translation key="error_loading_translations">Hubo un error al cargar las traducciones</translation>
+    <translation key="language_not_found">Idioma no encontrado</translation>
+    <translation key="file_not_found">Archivo no encontrado</translation>
+    <translation key="unknown_file_format">Formato de archivo desconocido</translation>
+    <translation key="error_loading_languages">Hubo un error al cargar los idiomas disponibles</translation>
+    <translation key="error_title">Error</translation>
+    <translation key="language_saved">Idioma guardado</translation>
+    <translation key="missing_translations_file">Archivo de traducción faltante para {0}</translation>
+    <translation key="file_not_found_error">Archivo no encontrado: {0}</translation>
+    
+    <!-- GUI: Windows and Buttons -->
+    <translation key="language_window_title">Seleccionar idioma</translation>
+    <translation key="select_language">Seleccionar idioma:</translation>
+    <translation key="save_button_text">Guardar</translation>
+    <translation key="info_title">Información</translation>
+    <translation key="no_song_selected">No se ha seleccionado ninguna canción</translation>
+    <translation key="file_select_title">Seleccionar canción</translation>
+    <translation key="supported_formats">Formatos compatibles</translation>
+    <translation key="warning_title">Advertencia</translation>
+    <translation key="choose_song_warning">Por favor, seleccione una canción.</translation>
+    
+    <!-- Music player functions -->
+    <translation key="play_button_text">Reproducir</translation>
+    <translation key="paused_button_text">Pausado</translation>
+    <translation key="stopped_button_text">Detenido</translation>
+    <translation key="key_press">Presionar tecla</translation>
+    <translation key="enabled">Activado</translation>
+    <translation key="disabled">Desactivado</translation>
+    <translation key="duration">Duración de la pulsación de tecla</translation>
+    <translation key="key_recognition_error">Error en el reconocimiento de la tecla</translation>
+    
+    <!-- Errors during playback -->
+    <translation key="play_error_message">Hubo un error al reproducir la música</translation>
+    <translation key="missing_key_songNotes">Falta una clave en los datos de la canción (clave: songNotes)</translation>
+    <translation key="song_not_found">Canción no encontrada</translation>
+    
+    <!-- Window functions -->
+    <translation key="sky_window_not_found">Ventana de Sky no encontrada</translation>
+    <translation key="window_focus_error">Error al enfocar la ventana</translation>
+    
+    <!-- Additional text options -->
+    <translation key="preset">Preset</translation>
+    <translation key="project_title">Project Lyrica</translation>
+    
+</translations>

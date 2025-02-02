@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- General error and success messages -->
+    <translation key="error_loading_translations">Ошибка загрузки переводов</translation>
+    <translation key="language_not_found">Язык не найден</translation>
+    <translation key="file_not_found">Файл не найден</translation>
+    <translation key="unknown_file_format">Неизвестный формат файла</translation>
+    <translation key="error_loading_languages">Ошибка загрузки доступных языков</translation>
+    <translation key="error_title">Ошибка</translation>
+    <translation key="language_saved">Язык сохранен</translation>
+    <translation key="missing_translations_file">Отсутствует файл перевода для {0}</translation>
+    <translation key="file_not_found_error">Файл не найден: {0}</translation>
+    
+    <!-- GUI: Windows and Buttons -->
+    <translation key="language_window_title">Выбор языка</translation>
+    <translation key="select_language">Выберите язык:</translation>
+    <translation key="save_button_text">Сохранить</translation>
+    <translation key="info_title">Информация</translation>
+    <translation key="no_song_selected">Не выбрана песня</translation>
+    <translation key="file_select_title">Выбор песни</translation>
+    <translation key="supported_formats">Поддерживаемые форматы</translation>
+    <translation key="warning_title">Предупреждение</translation>
+    <translation key="choose_song_warning">Пожалуйста, выберите песню.</translation>
+    
+    <!-- Music player functions -->
+    <translation key="play_button_text">Воспроизведение</translation>
+    <translation key="paused_button_text">Пауза</translation>
+    <translation key="stopped_button_text">Остановить</translation>
+    <translation key="key_press">Нажатие клавиши</translation>
+    <translation key="enabled">Включено</translation>
+    <translation key="disabled">Выключено</translation>
+    <translation key="duration">Длительность нажатия клавиши</translation>
+    <translation key="key_recognition_error">Ошибка распознавания клавиши</translation>
+    
+    <!-- Errors during playback -->
+    <translation key="play_error_message">Ошибка воспроизведения музыки</translation>
+    <translation key="missing_key_songNotes">Отсутствуют данные песни (ключ: songNotes)</translation>
+    <translation key="song_not_found">Песня не найдена</translation>
+    
+    <!-- Window functions -->
+    <translation key="sky_window_not_found">Окно Sky не найдено</translation>
+    <translation key="window_focus_error">Ошибка фокуса окна</translation>
+    
+    <!-- Additional text options -->
+    <translation key="preset">Пресет</translation>
+    <translation key="project_title">Project Lyrica</translation>
+    
+</translations>
