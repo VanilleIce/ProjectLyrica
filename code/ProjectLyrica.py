@@ -9,7 +9,6 @@ from pynput.keyboard import Controller, Listener
 from tkinter import filedialog, messagebox
 from translation_utils import load_selected_language, load_translations, start_language_selection
 
-# Funktion zum Abrufen der Übersetzungen
 def get_translations(key, translations=None):
     if translations is None:
         selected_language = load_selected_language()
@@ -112,10 +111,12 @@ class MusikApp:
         self.listener.start()
 
     def beenden(self):
-        """Beendet das Programm und stoppt alle Threads und Listener."""
-        self.player.stoppe_abspiel_thread()
-        self.listener.stop()
-        self.root.quit()
+        if not self.player.finde_sky_fenster():
+            self.player.stoppe_abspiel_thread()
+            self.listener.stop()
+            self.root.quit()
+            self.root.destroy()
+            sys.exit()
 
     def datei_dialog_öffnen(self):
         songs_ordner = Path.cwd() / "resources/Songs"
@@ -142,7 +143,7 @@ class MusikApp:
             time.sleep(2)
 
             if not self.player.abspiel_thread or not self.player.abspiel_thread.is_alive():
-                self.player.abspiel_thread = Thread(target=self.player.musik_abspielen, args=(song_daten, self.player.stop_event, self.tastendruck_dauer))
+                self.player.abspiel_thread = Thread(target=self.player.musik_abspielen, args=(song_daten, self.player.stop_event, self.tastendruck_dauer), daemon=True)
                 self.player.abspiel_thread.start()
         except Exception as e:
             messagebox.showerror(get_translations("error_title"), f"{get_translations('play_error_message')}: {e}")
@@ -152,7 +153,6 @@ class MusikApp:
         self.dauer_anzeige.configure(text=f"{self.tastendruck_dauer} s")
 
     def toggle_tastendruck(self):
-        """Schaltet den Tastendruck an/aus und zeigt/versteckt den Slider und die Buttons."""
         self.player.tastendruck_aktiviert = not self.player.tastendruck_aktiviert
         status = get_translations("enabled" if self.player.tastendruck_aktiviert else "disabled")
         self.tastendruck_button.configure(text=f"{get_translations('key_press')}: {status}")
@@ -169,7 +169,6 @@ class MusikApp:
             self.presets_button_frame.pack_forget()
 
     def tastendruck_erkannt(self, key):
-        """Pause ein- und ausschalten mit '#'."""
         try:
             if hasattr(key, 'char') and key.char == '#':
                 if self.player.pause_flag.is_set():
@@ -180,7 +179,6 @@ class MusikApp:
             messagebox.showerror(get_translations("error_title"), f"{get_translations('key_recognition_error')}: {e}")
 
     def preset_button_click(self, dauer):
-        """Preset-Taste gedrückt, um eine vordefinierte Dauer zu wählen."""
         self.tastendruck_dauer = dauer
         self.dauer_slider.set(self.tastendruck_dauer)
         self.dauer_anzeige.configure(text=f"{self.tastendruck_dauer} s")

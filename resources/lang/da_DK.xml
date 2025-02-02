@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">Vælg venligst en sang.</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">Afspil</translation>
+    <translation key="play_button_text">▶ Afspil</translation>
     <translation key="paused_button_text">Pauset</translation>
     <translation key="stopped_button_text">Stoppet</translation>
     <translation key="key_press">Tastetryk</translation>

@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">Seleziona una canzone prima di procedere.</translation>
     
     <!-- Funzioni del lettore musicale -->
-    <translation key="play_button_text">Riproduci</translation>
+    <translation key="play_button_text">▶ Riproduci</translation>
     <translation key="paused_button_text">Pausa</translation>
     <translation key="stopped_button_text">Stop</translation>
     <translation key="key_press">Premere tasto</translation>

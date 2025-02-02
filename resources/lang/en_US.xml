@@ -24,7 +24,7 @@
     <translation key="choose_song_warning">Please select a song before proceeding.</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">Play</translation>
+    <translation key="play_button_text">▶ Play</translation>
     <translation key="paused_button_text">Pause</translation>
     <translation key="stopped_button_text">Stop</translation>
     <translation key="key_press">Key Press</translation>

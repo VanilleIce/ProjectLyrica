@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">노래를 선택하십시오.</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">재생</translation>
+    <translation key="play_button_text">▶ 재생</translation>
     <translation key="paused_button_text">일시 정지됨</translation>
     <translation key="stopped_button_text">중지됨</translation>
     <translation key="key_press">키 입력</translation>

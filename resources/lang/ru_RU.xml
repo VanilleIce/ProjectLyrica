@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">Пожалуйста, выберите песню.</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">Воспроизведение</translation>
+    <translation key="play_button_text">▶ Воспроизведение</translation>
     <translation key="paused_button_text">Пауза</translation>
     <translation key="stopped_button_text">Остановить</translation>
     <translation key="key_press">Нажатие клавиши</translation>

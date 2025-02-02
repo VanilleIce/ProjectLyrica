@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">Veuillez sélectionner une chanson.</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">Lecture</translation>
+    <translation key="play_button_text">▶ Lecture</translation>
     <translation key="paused_button_text">Pause</translation>
     <translation key="stopped_button_text">Arrêté</translation>
     <translation key="key_press">Appuyer sur la touche</translation>

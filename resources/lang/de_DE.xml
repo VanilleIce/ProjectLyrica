@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">Bitte wählen Sie ein Lied aus, bevor Sie fortfahren.</translation>
     
     <!-- Musikplayer Funktionen -->
-    <translation key="play_button_text">Abspielen</translation>
+    <translation key="play_button_text">▶ Abspielen</translation>
     <translation key="paused_button_text">Pausieren</translation>
     <translation key="stopped_button_text">Stopp</translation>
     <translation key="key_press">Tastendruck</translation>

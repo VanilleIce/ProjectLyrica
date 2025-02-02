@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">请选择一首歌曲。</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">播放</translation>
+    <translation key="play_button_text">▶ 播放</translation>
     <translation key="paused_button_text">已暂停</translation>
     <translation key="stopped_button_text">已停止</translation>
     <translation key="key_press">按键</translation>

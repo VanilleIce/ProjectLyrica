@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">Silakan pilih lagu.</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">Putar</translation>
+    <translation key="play_button_text">▶ Putar</translation>
     <translation key="paused_button_text">Jeda</translation>
     <translation key="stopped_button_text">Dihentikan</translation>
     <translation key="key_press">Tekan tombol</translation>

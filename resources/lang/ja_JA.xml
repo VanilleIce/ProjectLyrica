@@ -23,7 +23,7 @@
     <translation key="choose_song_warning">曲を選択してください。</translation>
     
     <!-- Music player functions -->
-    <translation key="play_button_text">再生</translation>
+    <translation key="play_button_text">▶ 再生</translation>
     <translation key="paused_button_text">一時停止</translation>
     <translation key="stopped_button_text">停止</translation>
     <translation key="key_press">キー押下</translation>
