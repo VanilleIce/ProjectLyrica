@@ -1,6 +1,6 @@
 import json
 import time
-import sys
+#import sys
 import winsound
 import pygetwindow as gw
 import customtkinter as ctk
@@ -112,12 +112,11 @@ class MusikApp:
         self.listener.start()
 
     def beenden(self):
-        if not self.player.finde_sky_fenster():
-            self.player.stoppe_abspiel_thread()
-            self.listener.stop()
-            self.root.quit()
-            self.root.destroy()
-            sys.exit()
+        self.player.stoppe_abspiel_thread()
+        self.listener.stop()
+        self.root.quit()
+        self.root.destroy()
+        #sys.exit()
 
     def datei_dialog_öffnen(self):
         songs_ordner = Path.cwd() / "resources/Songs"
@@ -227,7 +226,7 @@ class MusikApp:
 
 
 if __name__ == '__main__':
-    selected_language = load_selected_language() 
+    selected_language = load_selected_language()
     translations = load_translations(selected_language)
 
     app = MusikApp()
