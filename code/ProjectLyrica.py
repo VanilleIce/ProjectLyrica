@@ -1,5 +1,6 @@
 import json
 import time
+import sys
 import winsound
 import pygetwindow as gw
 import customtkinter as ctk
