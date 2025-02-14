@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- General error and success messages -->
-    <translation key="error_loading_translations">Terjadi kesalahan saat memuat terjemahan</translation>
+    <!-- Pesan Kesalahan dan Keberhasilan Umum -->
+    <translation key="error_loading_translations">Kesalahan saat memuat terjemahan: {0}</translation>
+    <translation key="lang_config_not_found">Konfigurasi bahasa tidak ditemukan</translation>
     <translation key="language_not_found">Bahasa tidak ditemukan</translation>
     <translation key="file_not_found">File tidak ditemukan</translation>
-    <translation key="unknown_file_format">Format file tidak dikenal</translation>
-    <translation key="error_loading_languages">Terjadi kesalahan saat memuat bahasa yang tersedia</translation>
+    <translation key="unknown_file_format">Format file tidak diketahui</translation>
+    <translation key="error_loading_languages">Kesalahan saat memuat bahasa yang tersedia</translation>
     <translation key="error_title">Kesalahan</translation>
-    <translation key="language_saved">Bahasa disimpan</translation>
+    <translation key="language_saved">Bahasa telah disimpan</translation>
     <translation key="missing_translations_file">File terjemahan hilang untuk {0}</translation>
-    <translation key="file_not_found_error">File tidak ditemukan: {0}</translation>
     
-    <!-- GUI: Windows and Buttons -->
+    <!-- GUI: Jendela dan Tombol -->
     <translation key="language_window_title">Pilih Bahasa</translation>
     <translation key="select_language">Pilih bahasa:</translation>
     <translation key="save_button_text">Simpan</translation>
     <translation key="info_title">Informasi</translation>
     <translation key="no_song_selected">Tidak ada lagu yang dipilih</translation>
     <translation key="file_select_title">Pilih lagu</translation>
-    <translation key="supported_formats">Format yang didukung</translation>
     <translation key="warning_title">Peringatan</translation>
-    <translation key="choose_song_warning">Silakan pilih lagu.</translation>
+    <translation key="choose_song_warning">Harap pilih lagu sebelum melanjutkan.</translation>
+    <translation key="select_valid_file">Harap pilih file yang valid!</translation>
+    <translation key="file_dialog_title">Pilih file</translation>
+    <translation key="select_button_text">Pilih</translation>
     
-    <!-- Music player functions -->
+    <!-- Fungsi Pemutar Musik -->
     <translation key="play_button_text">▶ Putar</translation>
-    <translation key="paused_button_text">Jeda</translation>
-    <translation key="stopped_button_text">Dihentikan</translation>
     <translation key="key_press">Tekan tombol</translation>
     <translation key="enabled">Aktif</translation>
-    <translation key="disabled">Tidak aktif</translation>
-    <translation key="duration">Durasi tekan tombol</translation>
-    <translation key="key_recognition_error">Kesalahan pengenalan tombol</translation>
+    <translation key="disabled">Nonaktif</translation>
+    <translation key="duration">Durasi Tekan Tombol</translation>
+    <translation key="key_recognition_error">Kesalahan saat mengenali tombol</translation>
     
-    <!-- Errors during playback -->
-    <translation key="play_error_message">Terjadi kesalahan saat memutar musik</translation>
-    <translation key="missing_key_songNotes">Kunci hilang dalam data lagu (kunci: songNotes)</translation>
-    <translation key="song_not_found">Lagu tidak ditemukan</translation>
+    <!-- Pesan Kesalahan Pemutaran -->
+    <translation key="play_error_message">Kesalahan saat memutar musik</translation>
+    <translation key="missing_key_songNotes">Data lagu hilang (Kunci: songNotes)</translation>
     
-    <!-- Window functions -->
+    <!-- Fungsi Jendela -->
     <translation key="sky_window_not_found">Jendela Sky tidak ditemukan</translation>
-    <translation key="window_focus_error">Kesalahan fokus jendela</translation>
+    <translation key="window_focus_error">Jendela tidak dapat difokuskan</translation>
     
-    <!-- Additional text options -->
+    <!-- Opsi Teks Lainnya -->
     <translation key="preset">Preset</translation>
-    <translation key="project_title">Project Lyrica</translation>
-    
+    <translation key="project_title">Proyek Lyrica</translation>
 </translations>

@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- General error and success messages -->
-    <translation key="error_loading_translations">Erreur lors du chargement des traductions</translation>
-    <translation key="language_not_found">Langue non trouvée</translation>
-    <translation key="file_not_found">Fichier introuvable</translation>
+    <!-- Messages d'erreur et de réussite généraux -->
+    <translation key="error_loading_translations">Erreur lors du chargement des traductions : {0}</translation>
+    <translation key="lang_config_not_found">Configuration de la langue non trouvée</translation>
+    <translation key="language_not_found">Langue introuvable</translation>
+    <translation key="file_not_found">Fichier non trouvé</translation>
     <translation key="unknown_file_format">Format de fichier inconnu</translation>
     <translation key="error_loading_languages">Erreur lors du chargement des langues disponibles</translation>
     <translation key="error_title">Erreur</translation>
     <translation key="language_saved">Langue enregistrée</translation>
     <translation key="missing_translations_file">Fichier de traduction manquant pour {0}</translation>
-    <translation key="file_not_found_error">Fichier non trouvé : {0}</translation>
     
-    <!-- GUI: Windows and Buttons -->
-    <translation key="language_window_title">Sélectionner la langue</translation>
-    <translation key="select_language">Sélectionner une langue :</translation>
+    <!-- GUI : Fenêtres et boutons -->
+    <translation key="language_window_title">Sélection de la langue</translation>
+    <translation key="select_language">Sélectionner la langue :</translation>
     <translation key="save_button_text">Enregistrer</translation>
     <translation key="info_title">Informations</translation>
     <translation key="no_song_selected">Aucune chanson sélectionnée</translation>
     <translation key="file_select_title">Sélectionner une chanson</translation>
-    <translation key="supported_formats">Formats pris en charge</translation>
     <translation key="warning_title">Avertissement</translation>
-    <translation key="choose_song_warning">Veuillez sélectionner une chanson.</translation>
+    <translation key="choose_song_warning">Veuillez sélectionner une chanson avant de continuer.</translation>
+    <translation key="select_valid_file">Veuillez sélectionner un fichier valide !</translation>
+    <translation key="file_dialog_title">Sélectionner un fichier</translation>
+    <translation key="select_button_text">Sélectionner</translation>
     
-    <!-- Music player functions -->
+    <!-- Fonctions du lecteur de musique -->
     <translation key="play_button_text">▶ Lecture</translation>
-    <translation key="paused_button_text">Pause</translation>
-    <translation key="stopped_button_text">Arrêté</translation>
-    <translation key="key_press">Appuyer sur la touche</translation>
+    <translation key="key_press">Appui sur la touche</translation>
     <translation key="enabled">Activé</translation>
     <translation key="disabled">Désactivé</translation>
-    <translation key="duration">Durée de la pression de la touche</translation>
+    <translation key="duration">Durée de l'appui sur la touche</translation>
     <translation key="key_recognition_error">Erreur de reconnaissance de la touche</translation>
     
-    <!-- Errors during playback -->
-    <translation key="play_error_message">Une erreur s'est produite lors de la lecture de la musique</translation>
-    <translation key="missing_key_songNotes">Clé manquante dans les données de la chanson (clé : songNotes)</translation>
-    <translation key="song_not_found">Chanson introuvable</translation>
+    <!-- Messages d'erreur lors de la lecture -->
+    <translation key="play_error_message">Erreur lors de la lecture de la musique</translation>
+    <translation key="missing_key_songNotes">Données de la chanson manquantes (Clé : songNotes)</translation>
     
-    <!-- Window functions -->
+    <!-- Fonctions des fenêtres -->
     <translation key="sky_window_not_found">Fenêtre Sky introuvable</translation>
-    <translation key="window_focus_error">Erreur de focus de la fenêtre</translation>
+    <translation key="window_focus_error">Impossible de mettre la fenêtre au premier plan</translation>
     
-    <!-- Additional text options -->
+    <!-- Autres options de texte -->
     <translation key="preset">Préréglage</translation>
-    <translation key="project_title">Project Lyrica</translation>
-    
+    <translation key="project_title">Projet Lyrica</translation>
 </translations>

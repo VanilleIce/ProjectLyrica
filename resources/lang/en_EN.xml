@@ -8,37 +8,38 @@
     <translation key="unknown_file_format">Unknown file format</translation>
     <translation key="error_loading_languages">Error loading available languages</translation>
     <translation key="error_title">Error</translation>
-    <translation key="language_saved">Language saved</translation>
+    <translation key="language_saved">Language has been saved</translation>
     <translation key="missing_translations_file">Missing translations file for {0}</translation>
     
     <!-- GUI: Windows and buttons -->
     <translation key="language_window_title">Language Selection</translation>
-    <translation key="select_language">Select Language:</translation>
+    <translation key="select_language">Select language:</translation>
     <translation key="save_button_text">Save</translation>
     <translation key="info_title">Information</translation>
     <translation key="no_song_selected">No song selected</translation>
-    <translation key="file_select_title">Select Song</translation>
+    <translation key="file_select_title">Select song</translation>
     <translation key="warning_title">Warning</translation>
-    <translation key="choose_song_warning">Please select a song before continuing.</translation>
+    <translation key="choose_song_warning">Please select a song before proceeding.</translation>
     <translation key="select_valid_file">Please select a valid file!</translation>
-    <translation key="file_dialog_title">Select a file</translation>
+    <translation key="file_dialog_title">Choose a file</translation>
     <translation key="select_button_text">Select</translation>
+    <translation key="supported_formats">Supported formats</translation>
     
     <!-- Music player functions -->
     <translation key="play_button_text">▶ Play</translation>
-    <translation key="key_press">Key Press</translation>
+    <translation key="key_press">Key press</translation>
     <translation key="enabled">Enabled</translation>
     <translation key="disabled">Disabled</translation>
     <translation key="duration">Key press duration</translation>
     <translation key="key_recognition_error">Key recognition error</translation>
     
     <!-- Play error messages -->
-    <translation key="play_error_message">Error playing music</translation>
+    <translation key="play_error_message">Error playing the music</translation>
     <translation key="missing_key_songNotes">Missing song data (Key: songNotes)</translation>
     
     <!-- Window functions -->
     <translation key="sky_window_not_found">Sky window not found</translation>
-    <translation key="window_focus_error">Unable to focus window</translation>
+    <translation key="window_focus_error">Window could not be focused</translation>
     
     <!-- Other text options -->
     <translation key="preset">Preset</translation>

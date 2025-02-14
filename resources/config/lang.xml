@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <languages>
-  <language code="en_US">English</language>
-  <language code="de_DE">Deutsch</language>
-  <language code="fr_FR">Français</language>
-  <language code="es_ES">Español</language>
-  <language code="it_IT">Italiano</language>
-  <language code="pt_PT">Português</language>
-  <language code="nl_NL">Nederlands</language>
-  <language code="pl_PL">Polski</language>
-  <language code="da_DK">Dansk</language>
-  <language code="ko_KR">한국어</language>
-  <language code="zh_CN">中文</language>
-  <language code="ru_RU">Русский</language>
-  <language code="id_ID">Bahasa Indonesia</language>
-  <language code="ja_JP">日本語</language>
-  <language code="ar_AR">العربية</language>
+  <language code="en_US" key_layout="QWERTY">English (Amerika)</language>
+  <language code="en_EN" key_layout="QWERTY">English (British)</language>
+  <language code="de_DE" key_layout="QWERTZ">Deutsch</language>
+  <language code="fr_FR" key_layout="AZERTY">Français</language>
+  <language code="es_ES" key_layout="QWERTY">Español</language>
+  <language code="it_IT" key_layout="QWERTY">Italiano</language>
+  <language code="pt_PT" key_layout="QWERTY">Português</language>
+  <language code="nl_NL" key_layout="QWERTY">Nederlands</language>
+  <language code="pl_PL" key_layout="QWERTY">Polski</language>
+  <language code="da_DK" key_layout="QWERTY">Dansk</language>
+  <language code="mg_MG" key_layout="QWERTY">Malagasy</language>
+  <language code="ko_KR" key_layout="QWERTY">한국어</language>
+  <language code="zh_CN" key_layout="QWERTY">中文</language>
+  <language code="ru_RU" key_layout="ЙЦУКЕН">Русский</language>
+  <language code="id_ID" key_layout="QWERTY">Bahasa Indonesia</language>
+  <language code="ja_JP" key_layout="JIS">日本語</language>
+  <language code="ar_AR" key_layout="Arabic">العربية</language>
 </languages>

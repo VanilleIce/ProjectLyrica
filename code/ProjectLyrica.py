@@ -1,23 +1,172 @@
 import json
 import time
-#import sys
+import os
 import winsound
 import pygetwindow as gw
 import customtkinter as ctk
+import tkinter as tk
 from pathlib import Path
 from threading import Event, Thread, Timer
 from pynput.keyboard import Controller, Listener
 from tkinter import filedialog, messagebox
-from translation_utils import load_selected_language, load_translations, start_language_selection
+import xml.etree.ElementTree as ET
 
-def get_translations(key, translations=None):
-    if translations is None:
-        selected_language = load_selected_language()
-        if selected_language is None:
-            start_language_selection()
-            selected_language = load_selected_language()
-        translations = load_translations(selected_language)
-    return translations.get(key, key)
+SETTINGS_FILE = 'settings.json'
+
+# -------------------------------
+# Language Manager Class
+# -------------------------------
+
+class LM:
+    @staticmethod
+    def load_selected_language():
+        try:
+            with open(SETTINGS_FILE, 'r', encoding="utf-8") as file:
+                settings = json.load(file)
+                return settings.get('selected_language', 'en_US')
+        except FileNotFoundError:
+            return None
+        except Exception as e:
+            return None
+
+    @staticmethod
+    def save_selected_language(language_code):
+        try:
+            with open(SETTINGS_FILE, 'w', encoding="utf-8") as file:
+                json.dump({'selected_language': language_code}, file, indent=4)
+        except Exception as e:
+            pass
+
+    @staticmethod
+    def load_available_languages():
+        lang_file = os.path.join('resources', 'config', 'lang.xml')
+        try:
+            tree = ET.parse(lang_file)
+            root = tree.getroot()
+
+            languages = []
+            for language in root.findall('language'):
+                code = language.get('code')
+                name = language.text
+                if code and name:
+                    languages.append((code, name))
+            return languages
+        except FileNotFoundError:
+            messagebox.showerror("Fehler", LM.get_translation('lang_config_not_found'))
+            return []
+        except Exception as e:
+            messagebox.showerror("Fehler", LM.get_translation('error_loading_languages').format(e))
+            return []
+
+    @staticmethod
+    def load_translations(language_code):
+        lang_file = os.path.join('resources', 'lang', f"{language_code}.xml")
+        try:
+            tree = ET.parse(lang_file)
+            root = tree.getroot()
+
+            translations = {}
+            for translation in root.findall('translation'):
+                key = translation.get('key')
+                value = translation.text
+                if key and value:
+                    translations[key] = value
+            return translations
+        except FileNotFoundError:
+            if language_code != 'en_US':
+                return LM.load_translations('en_US')
+            else:
+                messagebox.showerror(
+                    LM.get_translation('error_title'), 
+                    LM.get_translation('missing_translations_file').format(language_code)
+                )
+                return {}
+        except Exception as e:
+            messagebox.showerror(
+                LM.get_translation('error_title'), 
+                LM.get_translation('error_loading_translations').format(e)
+            )
+            return {}
+
+    @staticmethod
+    def get_translation(key):
+        selected_language = LM.load_selected_language()
+        translations = LM.load_translations(selected_language or 'en_US')
+        return translations.get(key, f"[{key}]")
+
+# -------------------------------
+# GUI: Language Selection Window
+# -------------------------------
+
+language_window_open = False
+
+def language_selection_window():
+    global language_window_open
+    if language_window_open:
+        return
+
+    language_window_open = True
+
+    selected_language = LM.load_selected_language()
+
+    if selected_language:
+        language_window_open = False
+        return
+
+    translations = LM.load_translations(selected_language or 'en_US')
+
+    root = ctk.CTk()
+    root.title(translations.get('language_window_title'))
+    root.geometry("400x200")
+    root.iconbitmap("resources/icons/icon.ico")
+
+    languages = LM.load_available_languages()
+    language_dict = {name: code for code, name in languages}
+    language_names = list(language_dict.keys())
+
+    default_language_name = next((name for name, code in language_dict.items() if code == selected_language), "English")
+
+    ctk.CTkLabel(root, text=translations.get('select_language'), font=("Arial", 14)).pack(pady=10)
+    
+    language_combobox = ctk.CTkComboBox(root, values=language_names, state="readonly", font=("Arial", 12))
+    language_combobox.set(default_language_name)
+    language_combobox.pack(pady=10)
+
+    def on_save():
+        selected_name = language_combobox.get()
+        selected_code = language_dict.get(selected_name)
+
+        if not selected_code:
+            messagebox.showerror(
+                translations.get('error_title'), 
+                LM.get_translation('language_not_found')
+            )
+            return
+
+        LM.save_selected_language(selected_code)
+        messagebox.showinfo(
+            translations.get('info_title'), 
+            LM.get_translation('language_saved')
+        )
+        root.quit()
+        root.destroy()
+        language_window_open = False
+
+    ctk.CTkButton(root, text=translations.get('save_button_text'), command=on_save).pack(pady=20)
+
+    def close_language_window():
+        global language_window_open
+        language_window_open = False
+        root.quit()
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", close_language_window)
+
+    root.mainloop()
+
+# -------------------------------
+# Music Player Functions
+# -------------------------------
 
 class MusikPlayer:
     def __init__(self):
@@ -28,9 +177,13 @@ class MusikPlayer:
         self.tastenkarten = self.tastenkarten_holen()
         self.tastendruck_aktiviert = False
 
+#    def tastenkarten_holen(self):
+#        basis_karten = {i: k for i, k in enumerate('zuiophjklönm,.-')}
+#        return {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key'] for key, value in basis_karten.items()}
     def tastenkarten_holen(self):
-        basis_karten = {i: k for i, k in enumerate('zuiophjklönm,.-')}
-        return {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key'] for key, value in basis_karten.items()}
+        basis_karten = list('zuiophjklönm,.-')
+        return {f"{prefix}{idx}": taste for prefix in ['Key', '1Key', '2Key', '3Key'] for idx, taste in enumerate(basis_karten)}
+
 
     def finde_sky_fenster(self):
         fenster_liste = gw.getWindowsWithTitle("Sky")
@@ -38,8 +191,9 @@ class MusikPlayer:
 
     def fenster_fokus(self, sky_fenster):
         if not sky_fenster:
-            messagebox.showwarning(get_translations("warning_title"), get_translations("sky_window_not_found"))
+            messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("sky_window_not_found"))
             return
+
         try:
             sky_fenster.activate()
         except Exception:
@@ -47,19 +201,32 @@ class MusikPlayer:
                 sky_fenster.minimize()
                 sky_fenster.restore()
             except Exception as e:
-                messagebox.showerror(get_translations("error_title"), f"{get_translations('window_focus_error')}: {e}")
+                messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('window_focus_error')}: {e}")
 
     def musikdatei_parsen(self, dateipfad):
         dateipfad = Path(dateipfad)
         if not dateipfad.exists():
-            raise FileNotFoundError(f"{get_translations('file_not_found')}: {dateipfad}")
-        with dateipfad.open('r', encoding="utf-8") as datei:
-            if dateipfad.suffix in {'.json', '.skysheet'}:
-                return json.load(datei)
-            elif dateipfad.suffix == '.txt':
-                return json.loads(datei.read())
-            else:
-                raise ValueError(f"{get_translations('unknown_file_format')}: {dateipfad}")
+            raise FileNotFoundError(f"{LM.get_translation('file_not_found')}: {dateipfad}")
+
+        encodings = ["utf-8", "utf-16-le"]
+
+        for encoding in encodings:
+            try:
+                with dateipfad.open('r', encoding=encoding) as datei:
+                    inhalt = datei.read()
+                    if not inhalt.strip():
+                        raise ValueError(f"{LM.get_translation('file_empty_error')}: {dateipfad}")
+
+                    if dateipfad.suffix in {'.json', '.skysheet'}:
+                        return json.loads(inhalt)
+                    elif dateipfad.suffix == '.txt':
+                        return json.loads(inhalt)
+                    else:
+                        raise ValueError(f"{LM.get_translation('unknown_file_format')}: {dateipfad}")
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                continue  
+
+        raise ValueError(f"{LM.get_translation('file_encoding_error')}: {dateipfad}")
 
     def note_abspielen(self, note, i, song_notes, tastendruck_dauer):
         note_taste = note['key'].lower()
@@ -74,22 +241,21 @@ class MusikPlayer:
             time.sleep(warte_zeit)
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
-        if isinstance(song_daten, list) and len(song_daten) > 0:
+        if isinstance(song_daten, list) and song_daten:
             song_daten = song_daten[0]
-        if 'songNotes' not in song_daten:
-            raise ValueError(get_translations('missing_key_songNotes'))
 
-        song_notes = song_daten['songNotes']
-        for i, note in enumerate(song_notes):
+        if "songNotes" not in song_daten:
+            raise ValueError(LM.get_translation("missing_key_songNotes"))
+
+        for i, note in enumerate(song_daten["songNotes"]):
             self.warten_auf_pause()
             if stop_event.is_set():
                 break
-            self.note_abspielen(note, i, song_notes, tastendruck_dauer)
+            self.note_abspielen(note, i, song_daten["songNotes"], tastendruck_dauer)
 
         winsound.Beep(1000, 500)
 
     def warten_auf_pause(self):
-        """Wartet darauf, dass die Pause beendet wird."""
         while self.pause_flag.is_set():
             time.sleep(0.1)
 
@@ -99,6 +265,9 @@ class MusikPlayer:
             self.abspiel_thread.join()
             self.stop_event.clear()
 
+# -------------------------------
+# Main Application (GUI)
+# -------------------------------
 
 class MusikApp:
     def __init__(self):
@@ -107,7 +276,6 @@ class MusikApp:
         self.tastendruck_dauer = 0.1
         self.presets = [0.2, 0.248, 0.3, 0.5, 1.0]
         self.root = None
-
         self.listener = Listener(on_press=self.tastendruck_erkannt)
         self.listener.start()
 
@@ -116,14 +284,13 @@ class MusikApp:
         self.listener.stop()
         self.root.quit()
         self.root.destroy()
-        #sys.exit()
 
     def datei_dialog_öffnen(self):
         songs_ordner = Path.cwd() / "resources/Songs"
         dateipfad = filedialog.askopenfilename(
             initialdir=songs_ordner if songs_ordner.exists() else Path.cwd(),
-            title=get_translations("file_select_title"),
-            filetypes=[(get_translations("supported_formats"), "*.json *.txt *.skysheet")]
+            title=LM.get_translation("file_select_title"),
+            filetypes=[(LM.get_translation("supported_formats"), "*.json *.txt *.skysheet")]
         )
         if dateipfad:
             self.dateipfad_ausgewählt = dateipfad
@@ -131,7 +298,7 @@ class MusikApp:
 
     def ausgewähltes_lied_abspielen(self):
         if not self.dateipfad_ausgewählt:
-            messagebox.showwarning(get_translations("warning_title"), get_translations("choose_song_warning"))
+            messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("choose_song_warning"))
             return
 
         self.player.stoppe_abspiel_thread()
@@ -146,27 +313,27 @@ class MusikApp:
                 self.player.abspiel_thread = Thread(target=self.player.musik_abspielen, args=(song_daten, self.player.stop_event, self.tastendruck_dauer), daemon=True)
                 self.player.abspiel_thread.start()
         except Exception as e:
-            messagebox.showerror(get_translations("error_title"), f"{get_translations('play_error_message')}: {e}")
+            messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('play_error_message')}: {e}")
 
     def tastendruck_dauer_setzen(self, wert):
         self.tastendruck_dauer = round(float(wert), 3)
-        self.dauer_anzeige.configure(text=f"{self.tastendruck_dauer} s")
+        self.dauer_anzeige.configure(text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s")
 
     def toggle_tastendruck(self):
         self.player.tastendruck_aktiviert = not self.player.tastendruck_aktiviert
-        status = get_translations("enabled" if self.player.tastendruck_aktiviert else "disabled")
-        self.tastendruck_button.configure(text=f"{get_translations('key_press')}: {status}")
+        status = LM.get_translation("enabled" if self.player.tastendruck_aktiviert else "disabled")
+        self.tastendruck_button.configure(text=f"{LM.get_translation('key_press')}: {status}")
+
+        elements = [self.dauer_slider, self.dauer_anzeige, self.presets_button_frame]
 
         if self.player.tastendruck_aktiviert:
-            self.root.geometry("650x420")
-            self.dauer_slider.pack(pady=10, before=self.play_button)
-            self.dauer_anzeige.pack(pady=5, before=self.play_button)
-            self.presets_button_frame.pack(pady=10, before=self.play_button)
+            self.root.geometry("750x380")
+            for element in elements:
+                element.pack(pady=10, before=self.play_button)
         else:
             self.root.geometry("500x250")
-            self.dauer_slider.pack_forget()
-            self.dauer_anzeige.pack_forget()
-            self.presets_button_frame.pack_forget()
+            for element in elements:
+                element.pack_forget()
 
     def tastendruck_erkannt(self, key):
         try:
@@ -176,58 +343,52 @@ class MusikApp:
                 else:
                     self.player.pause_flag.set()
         except Exception as e:
-            messagebox.showerror(get_translations("error_title"), f"{get_translations('key_recognition_error')}: {e}")
+            messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('key_recognition_error')}: {e}")
 
     def preset_button_click(self, dauer):
         self.tastendruck_dauer = dauer
         self.dauer_slider.set(self.tastendruck_dauer)
-        self.dauer_anzeige.configure(text=f"{self.tastendruck_dauer} s")
+        self.dauer_anzeige.configure(text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s")
 
     def gui_starten(self):
+        selected_language = LM.load_selected_language()
+        if not selected_language:
+            language_selection_window()
+
         ctk.set_appearance_mode("dark")
         self.root = ctk.CTk()
-        self.root.title(get_translations("project_title"))
+        self.root.title(LM.get_translation("project_title"))
         self.root.geometry("500x250")
         self.root.iconbitmap("resources/icons/icon.ico")
 
         self.root.protocol('WM_DELETE_WINDOW', self.beenden)
 
-        titel_label = ctk.CTkLabel(self.root, text=get_translations("project_title"), font=("Arial", 18, "bold"))
+        titel_label = ctk.CTkLabel(self.root, text=LM.get_translation("project_title"), font=("Arial", 18, "bold"))
         titel_label.pack(pady=10)
 
-        self.datei_label = ctk.CTkButton(self.root, text=get_translations("no_song_selected"), command=self.datei_dialog_öffnen,
-                                         font=("Arial", 14), fg_color="grey", width=300, height=40)
+        self.datei_label = ctk.CTkButton(self.root, text=LM.get_translation("file_select_title"), command=self.datei_dialog_öffnen, font=("Arial", 14), fg_color="grey", width=300, height=40)
         self.datei_label.pack(pady=10)
 
-        status = get_translations("enabled" if self.player.tastendruck_aktiviert else "disabled")
-        self.tastendruck_button = ctk.CTkButton(self.root, text=f"{get_translations('key_press')}: {status}", command=self.toggle_tastendruck,
-                                                width=200, height=30)
+        status = LM.get_translation("enabled" if self.player.tastendruck_aktiviert else "disabled")
+        self.tastendruck_button = ctk.CTkButton(self.root, text=f"{LM.get_translation('key_press')}: {status}", command=self.toggle_tastendruck, width=200, height=30)
         self.tastendruck_button.pack(pady=10)
 
-        self.dauer_slider = ctk.CTkSlider(self.root, from_=0.1, to=1.0, number_of_steps=100,
-                                          command=self.tastendruck_dauer_setzen)
-        self.dauer_slider.set(self.tastendruck_dauer)
+        self.play_button = ctk.CTkButton(self.root, text=LM.get_translation("play_button_text"), command=self.ausgewähltes_lied_abspielen, font=("Arial", 14), width=200, height=40)
+        self.play_button.pack(pady=10)
 
-        self.dauer_anzeige = ctk.CTkLabel(self.root, text=f"{self.tastendruck_dauer} s", font=("Arial", 12))
-
-        self.play_button = ctk.CTkButton(self.root, text=get_translations("play_button_text"), command=self.ausgewähltes_lied_abspielen,
-                                         width=200, height=40)
-        self.play_button.pack(pady=20)
+        self.dauer_slider = ctk.CTkSlider(self.root, from_=0.1, to=1.0, number_of_steps=100, command=self.tastendruck_dauer_setzen)
+        self.dauer_anzeige = ctk.CTkLabel(self.root, text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s")
 
         self.presets_button_frame = ctk.CTkFrame(self.root)
-
-        for preset in self.presets:
-            button = ctk.CTkButton(self.presets_button_frame, text=f"{preset}s", 
-                                   command=lambda p=preset: self.preset_button_click(p), 
-                                   width=100, height=30)
-            button.grid(row=0, column=self.presets.index(preset), padx=15, pady=10)
+        for wert in self.presets:
+            ctk.CTkButton(self.presets_button_frame, text=f"{wert} s", command=lambda v=wert: self.preset_button_click(v)).pack(side="left", padx=2)
 
         self.root.mainloop()
 
+# -------------------------------
+# Start Application
+# -------------------------------
 
-if __name__ == '__main__':
-    selected_language = load_selected_language()
-    translations = load_translations(selected_language)
-
+if __name__ == "__main__":
     app = MusikApp()
     app.gui_starten()

@@ -2,6 +2,7 @@
 <translations>
     <!-- Allgemeine Fehler und Erfolgsmeldungen -->
     <translation key="error_loading_translations">Fehler beim Laden der Übersetzungen: {0}</translation>
+    <translation key="lang_config_not_found">Fehler Lang Config nicht gefunden</translation>
     <translation key="language_not_found">Sprache konnte nicht gefunden werden</translation>
     <translation key="file_not_found">Datei nicht gefunden</translation>
     <translation key="unknown_file_format">Unbekanntes Dateiformat</translation>
@@ -9,7 +10,6 @@
     <translation key="error_title">Fehler</translation>
     <translation key="language_saved">Sprache wurde gespeichert</translation>
     <translation key="missing_translations_file">Fehlende Übersetzungsdatei für {0}</translation>
-    <translation key="file_not_found_error">Datei nicht gefunden: {0}</translation>
     
     <!-- GUI: Fenster und Buttons -->
     <translation key="language_window_title">Sprachauswahl</translation>
@@ -18,14 +18,15 @@
     <translation key="info_title">Information</translation>
     <translation key="no_song_selected">Kein Lied ausgewählt</translation>
     <translation key="file_select_title">Lied auswählen</translation>
-    <translation key="supported_formats">Unterstützte Formate</translation>
     <translation key="warning_title">Warnung</translation>
     <translation key="choose_song_warning">Bitte wählen Sie ein Lied aus, bevor Sie fortfahren.</translation>
+    <translation key="select_valid_file">Bitte eine gültige Datei auswählen!</translation>
+    <translation key="file_dialog_title">Wählen Sie eine Datei</translation>
+    <translation key="select_button_text">Auswählen</translation>
+    <translation key="supported_formats">Unterstützte Formate</translation>
     
     <!-- Musikplayer Funktionen -->
     <translation key="play_button_text">▶ Abspielen</translation>
-    <translation key="paused_button_text">Pausieren</translation>
-    <translation key="stopped_button_text">Stopp</translation>
     <translation key="key_press">Tastendruck</translation>
     <translation key="enabled">Aktiviert</translation>
     <translation key="disabled">Deaktiviert</translation>
@@ -35,7 +36,7 @@
     <!-- Fehlermeldungen beim Abspielen -->
     <translation key="play_error_message">Fehler beim Abspielen der Musik</translation>
     <translation key="missing_key_songNotes">Song-Daten fehlen (Key: songNotes)</translation>
-    <translation key="song_not_found">Song konnte nicht gefunden werden</translation>
+    <translation key="file_encoding_error">Die Datei {dateipfad} konnte nicht gelesen werden, da das Encoding unbekannt oder nicht unterstützt ist.</translation>
     
     <!-- Fensterfunktionen -->
     <translation key="sky_window_not_found">Sky-Fenster nicht gefunden</translation>
@@ -43,6 +44,5 @@
     
     <!-- Weitere Textoptionen -->
     <translation key="preset">Preset</translation>
-    <translation key="project_title">Projekt Lyrica</translation>
-    
+    <translation key="project_title">Projekt Lyrica</translation>  
 </translations>

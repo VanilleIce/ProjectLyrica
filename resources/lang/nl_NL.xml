@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- General error and success messages -->
-    <translation key="error_loading_translations">Fout bij het laden van vertalingen</translation>
+    <!-- Algemene fout- en succesberichten -->
+    <translation key="error_loading_translations">Fout bij het laden van vertalingen: {0}</translation>
+    <translation key="lang_config_not_found">Taalconfiguratie niet gevonden</translation>
     <translation key="language_not_found">Taal niet gevonden</translation>
     <translation key="file_not_found">Bestand niet gevonden</translation>
     <translation key="unknown_file_format">Onbekend bestandsformaat</translation>
     <translation key="error_loading_languages">Fout bij het laden van beschikbare talen</translation>
     <translation key="error_title">Fout</translation>
-    <translation key="language_saved">Taal opgeslagen</translation>
+    <translation key="language_saved">Taal is opgeslagen</translation>
     <translation key="missing_translations_file">Vertaalbestand ontbreekt voor {0}</translation>
-    <translation key="file_not_found_error">Bestand niet gevonden: {0}</translation>
     
-    <!-- GUI: Windows and Buttons -->
-    <translation key="language_window_title">Taal kiezen</translation>
-    <translation key="select_language">Kies een taal:</translation>
+    <!-- GUI: Vensters en knoppen -->
+    <translation key="language_window_title">Taalkeuze</translation>
+    <translation key="select_language">Kies taal:</translation>
     <translation key="save_button_text">Opslaan</translation>
     <translation key="info_title">Informatie</translation>
     <translation key="no_song_selected">Geen nummer geselecteerd</translation>
     <translation key="file_select_title">Selecteer nummer</translation>
-    <translation key="supported_formats">Ondersteunde formaten</translation>
     <translation key="warning_title">Waarschuwing</translation>
-    <translation key="choose_song_warning">Kies een nummer.</translation>
+    <translation key="choose_song_warning">Kies een nummer voordat je doorgaat.</translation>
+    <translation key="select_valid_file">Selecteer een geldig bestand!</translation>
+    <translation key="file_dialog_title">Bestand kiezen</translation>
+    <translation key="select_button_text">Kies</translation>
     
-    <!-- Music player functions -->
+    <!-- Muziekspeler functies -->
     <translation key="play_button_text">▶ Afspelen</translation>
-    <translation key="paused_button_text">Geplaatst</translation>
-    <translation key="stopped_button_text">Gestopt</translation>
-    <translation key="key_press">Toets indrukken</translation>
+    <translation key="key_press">Toetsdruk</translation>
     <translation key="enabled">Ingeschakeld</translation>
     <translation key="disabled">Uitgeschakeld</translation>
     <translation key="duration">Toetsdrukduur</translation>
     <translation key="key_recognition_error">Fout bij het herkennen van de toets</translation>
     
-    <!-- Errors during playback -->
+    <!-- Foutmeldingen bij het afspelen -->
     <translation key="play_error_message">Fout bij het afspelen van muziek</translation>
-    <translation key="missing_key_songNotes">Ontbrekende sleutel in songdata (key: songNotes)</translation>
-    <translation key="song_not_found">Nummer niet gevonden</translation>
+    <translation key="missing_key_songNotes">Songdata ontbreekt (Key: songNotes)</translation>
     
-    <!-- Window functions -->
+    <!-- Vensterfuncties -->
     <translation key="sky_window_not_found">Sky-venster niet gevonden</translation>
-    <translation key="window_focus_error">Fout bij het instellen van venster op de voorgrond</translation>
+    <translation key="window_focus_error">Venster kan niet op de voorgrond worden gebracht</translation>
     
-    <!-- Additional text options -->
+    <!-- Andere tekstopties -->
     <translation key="preset">Preset</translation>
     <translation key="project_title">Project Lyrica</translation>
-    
 </translations>

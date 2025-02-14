@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- General error and success messages -->
-    <translation key="error_loading_translations">Błąd ładowania tłumaczeń</translation>
+    <!-- Allgemeine Fehler und Erfolgsmeldungen -->
+    <translation key="error_loading_translations">Błąd ładowania tłumaczeń: {0}</translation>
+    <translation key="lang_config_not_found">Błąd: konfiguracja języka nie została znaleziona</translation>
     <translation key="language_not_found">Nie znaleziono języka</translation>
-    <translation key="file_not_found">Plik nie został znaleziony</translation>
+    <translation key="file_not_found">Nie znaleziono pliku</translation>
     <translation key="unknown_file_format">Nieznany format pliku</translation>
     <translation key="error_loading_languages">Błąd ładowania dostępnych języków</translation>
     <translation key="error_title">Błąd</translation>
-    <translation key="language_saved">Język zapisany</translation>
-    <translation key="missing_translations_file">Brak pliku tłumaczenia dla {0}</translation>
-    <translation key="file_not_found_error">Plik nie znaleziony: {0}</translation>
+    <translation key="language_saved">Język zapisany pomyślnie</translation>
+    <translation key="missing_translations_file">Brakujący plik tłumaczeń dla {0}</translation>
     
-    <!-- GUI: Windows and Buttons -->
+    <!-- GUI: Fenster und Buttons -->
     <translation key="language_window_title">Wybór języka</translation>
     <translation key="select_language">Wybierz język:</translation>
     <translation key="save_button_text">Zapisz</translation>
     <translation key="info_title">Informacja</translation>
-    <translation key="no_song_selected">Brak wybranej piosenki</translation>
-    <translation key="file_select_title">Wybierz piosenkę</translation>
-    <translation key="supported_formats">Obsługiwane formaty</translation>
+    <translation key="no_song_selected">Nie wybrano utworu</translation>
+    <translation key="file_select_title">Wybierz utwór</translation>
     <translation key="warning_title">Ostrzeżenie</translation>
-    <translation key="choose_song_warning">Proszę wybrać piosenkę.</translation>
+    <translation key="choose_song_warning">Proszę wybrać utwór przed kontynuowaniem.</translation>
+    <translation key="select_valid_file">Proszę wybrać prawidłowy plik!</translation>
+    <translation key="file_dialog_title">Wybierz plik</translation>
+    <translation key="select_button_text">Wybierz</translation>
     
-    <!-- Music player functions -->
-    <translation key="play_button_text">▶ Odtwarzaj</translation>
-    <translation key="paused_button_text">Wstrzymane</translation>
-    <translation key="stopped_button_text">Zatrzymane</translation>
+    <!-- Musikplayer Funktionen -->
+    <translation key="play_button_text">▶ Odtwórz</translation>
     <translation key="key_press">Naciśnij klawisz</translation>
-    <translation key="enabled">Włączone</translation>
-    <translation key="disabled">Wyłączone</translation>
-    <translation key="duration">Czas trwania naciśnięcia</translation>
+    <translation key="enabled">Włączono</translation>
+    <translation key="disabled">Wyłączono</translation>
+    <translation key="duration">Czas naciśnięcia klawisza</translation>
     <translation key="key_recognition_error">Błąd rozpoznawania klawisza</translation>
     
-    <!-- Errors during playback -->
+    <!-- Fehlermeldungen beim Abspielen -->
     <translation key="play_error_message">Błąd podczas odtwarzania muzyki</translation>
-    <translation key="missing_key_songNotes">Brak danych piosenki (klucz: songNotes)</translation>
-    <translation key="song_not_found">Piosenka nie znaleziona</translation>
+    <translation key="missing_key_songNotes">Brakujące dane utworu (Klucz: songNotes)</translation>
     
-    <!-- Window functions -->
+    <!-- Fensterfunktionen -->
     <translation key="sky_window_not_found">Nie znaleziono okna Sky</translation>
-    <translation key="window_focus_error">Błąd ustawiania okna na pierwszy plan</translation>
+    <translation key="window_focus_error">Nie udało się ustawić okna na pierwszy plan</translation>
     
-    <!-- Additional text options -->
-    <translation key="preset">Preset</translation>
-    <translation key="project_title">Project Lyrica</translation>
-    
+    <!-- Weitere Textoptionen -->
+    <translation key="preset">Ustawienia wstępne</translation>
+    <translation key="project_title">Projekt Lyrica</translation>
 </translations>
