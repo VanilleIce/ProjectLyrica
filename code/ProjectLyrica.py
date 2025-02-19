@@ -4,7 +4,6 @@ import os
 import winsound
 import pygetwindow as gw
 import customtkinter as ctk
-import tkinter as tk
 from pathlib import Path
 from threading import Event, Thread, Timer
 from pynput.keyboard import Controller, Listener
@@ -177,13 +176,9 @@ class MusikPlayer:
         self.tastenkarten = self.tastenkarten_holen()
         self.tastendruck_aktiviert = False
 
-#    def tastenkarten_holen(self):
-#        basis_karten = {i: k for i, k in enumerate('zuiophjklönm,.-')}
-#        return {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key'] for key, value in basis_karten.items()}
     def tastenkarten_holen(self):
-        basis_karten = list('zuiophjklönm,.-')
-        return {f"{prefix}{idx}": taste for prefix in ['Key', '1Key', '2Key', '3Key'] for idx, taste in enumerate(basis_karten)}
-
+        basis_karten = {i: k for i, k in enumerate('zuiophjklönm,.-')}
+        return {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key'] for key, value in basis_karten.items()}
 
     def finde_sky_fenster(self):
         fenster_liste = gw.getWindowsWithTitle("Sky")
