@@ -203,25 +203,19 @@ class MusikPlayer:
         if not dateipfad.exists():
             raise FileNotFoundError(f"{LM.get_translation('file_not_found')}: {dateipfad}")
 
-        encodings = ["utf-8", "utf-16-le"]
+        try:
+            with dateipfad.open('r') as datei:
+                inhalt = datei.read()
+                if not inhalt.strip():
+                    raise ValueError(f"{LM.get_translation('file_empty_error')}: {dateipfad}")
 
-        for encoding in encodings:
-            try:
-                with dateipfad.open('r', encoding=encoding) as datei:
-                    inhalt = datei.read()
-                    if not inhalt.strip():
-                        raise ValueError(f"{LM.get_translation('file_empty_error')}: {dateipfad}")
+                if dateipfad.suffix in {'.json', '.skysheet', '.txt'}:
+                    return json.loads(inhalt)
+                else:
+                    raise ValueError(f"{LM.get_translation('unknown_file_format')}: {dateipfad}")
 
-                    if dateipfad.suffix in {'.json', '.skysheet'}:
-                        return json.loads(inhalt)
-                    elif dateipfad.suffix == '.txt':
-                        return json.loads(inhalt)
-                    else:
-                        raise ValueError(f"{LM.get_translation('unknown_file_format')}: {dateipfad}")
-            except (UnicodeDecodeError, json.JSONDecodeError):
-                continue  
-
-        raise ValueError(f"{LM.get_translation('file_encoding_error')}: {dateipfad}")
+        except (UnicodeDecodeError, json.JSONDecodeError) as e:
+            raise ValueError(f"{LM.get_translation('file_encoding_error')}: {dateipfad}, {e}")
 
     def note_abspielen(self, note, i, song_notes, tastendruck_dauer):
         note_taste = note['key'].lower()
