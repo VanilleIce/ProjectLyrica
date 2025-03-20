@@ -209,12 +209,17 @@ class MusikPlayer:
                 if not inhalt.strip():
                     raise ValueError(f"{LM.get_translation('file_empty_error')}: {dateipfad}")
 
-                if dateipfad.suffix in {'.json', '.skysheet', '.txt'}:
-                    return json.loads(inhalt)
-                else:
-                    raise ValueError(f"{LM.get_translation('unknown_file_format')}: {dateipfad}")
+                daten = json.loads(inhalt)
 
-        except (UnicodeDecodeError, json.JSONDecodeError) as e:
+                if isinstance(daten, list) and daten:
+                    daten = daten[0]
+
+                if "songNotes" in daten:
+                    return {"songNotes": daten["songNotes"]}
+                else:
+                    raise ValueError(f"{LM.get_translation('missing_key_songNotes')}: {dateipfad}")
+
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
             raise ValueError(f"{LM.get_translation('file_encoding_error')}: {dateipfad}, {e}")
 
     def note_abspielen(self, note, i, song_notes, tastendruck_dauer):
