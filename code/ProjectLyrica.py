@@ -19,16 +19,14 @@ SETTINGS_FILE = 'settings.json'
 class LM:
     @staticmethod
     def load_selected_language():
-        if not Path(SETTINGS_FILE).exists():
-            LM.save_selected_language("en_US")
-            return "en_US"
-
         try:
             with open(SETTINGS_FILE, 'r', encoding="utf-8") as file:
                 settings = json.load(file)
                 return settings.get('selected_language', 'en_US')
-        except (FileNotFoundError, json.JSONDecodeError):
-            return 'en_US'
+        except FileNotFoundError:
+            return None
+        except Exception as e:
+            return None
 
     @staticmethod
     def save_selected_language(language_code):
@@ -92,7 +90,7 @@ class LM:
     @staticmethod
     def get_translation(key):
         selected_language = LM.load_selected_language()
-        translations = LM.load_translations(selected_language or 'en_US')
+        translations = LM.load_translations(selected_language)
         return translations.get(key, f"[{key}]")
 
 # -------------------------------
@@ -109,14 +107,7 @@ def language_selection_window():
     language_window_open = True
 
     selected_language = LM.load_selected_language()
-
-    if selected_language:
-        language_window_open = False
-        return
-    else:
-        language_window_open = True
-
-    translations = LM.load_translations(selected_language or 'en_US')
+    translations = LM.load_translations(selected_language)
 
     root = ctk.CTk()
     root.title(translations.get('language_window_title'))
@@ -236,13 +227,20 @@ class MusikPlayer:
             except KeyError:
                 pass
 
-            self.tastatur_steuerung.press(self.tastenkarten[note_taste])
-            Timer(tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
-
         if i < len(song_notes) - 1:
             nächste_note_zeit = song_notes[i + 1]['time']
             warte_zeit = (nächste_note_zeit - note_zeit) / 1000
             time.sleep(warte_zeit)
+
+    @staticmethod
+    def beep():
+        if sys.platform == "win32":
+            winsound.Beep(1000, 500)
+        else:
+            try:
+                subprocess.run(["play", "-nq", "-t", "alsa", "synth", "0.5", "sine", "1000"], check=True)
+            except FileNotFoundError:
+                pass
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
         if isinstance(song_daten, list) and song_daten:
@@ -257,10 +255,10 @@ class MusikPlayer:
             if stop_event.is_set():
                 break
 
-            self.note_abspielen(note, i, song_daten["songNotes"], self.tastendruck_dauer)
+            self.note_abspielen(note, i, song_daten["songNotes"], tastendruck_dauer)
 
-        winsound.Beep(1000, 500)
-        
+        self.beep()
+
     def warten_auf_pause(self):
         while self.pause_flag.is_set():
             time.sleep(0.1)
