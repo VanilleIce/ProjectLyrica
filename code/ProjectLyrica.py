@@ -240,9 +240,12 @@ class MusikPlayer:
             winsound.Beep(1000, 500)
         else:
             try:
-                subprocess.run(["play", "-nq", "-t", "alsa", "synth", "0.5", "sine", "1000"], check=True)
+                subprocess.run(["aplay", "/usr/share/sounds/alsa/Front_Center.wav"], check=True)
             except FileNotFoundError:
-                pass
+                try:
+                    subprocess.run(["play", "-nq", "-t", "alsa", "synth", "0.5", "sine", "1000"], check=True)
+                except FileNotFoundError:
+                    pass
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
         if isinstance(song_daten, list) and song_daten:
