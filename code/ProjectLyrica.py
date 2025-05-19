@@ -76,9 +76,6 @@ class LM:
                 if key and value:
                     translations[key] = value
 
-            LM._translations_cache[language_code] = translations
-            return translations
-
         except FileNotFoundError:
             if language_code != 'en_US':
 
@@ -95,6 +92,9 @@ class LM:
                 LM.get_translation('error_loading_translations').format(e)
             )
             return {}
+
+        LM._translations_cache[language_code] = translations
+        return translations
 
     @staticmethod
     def get_translation(key):
@@ -294,6 +294,10 @@ class MusikApp:
     def beenden(self):
         self.player.stoppe_abspiel_thread()
         self.listener.stop()
+        if hasattr(self, 'player'):
+            del self.player
+        if hasattr(self, 'listener'):
+            del self.listener
         self.root.quit()
         self.root.destroy()
 
