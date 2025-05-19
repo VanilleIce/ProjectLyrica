@@ -184,7 +184,10 @@ class MusikPlayer:
                    for key, value in enumerate('zuiophjklönm,.-')}
         self.tastendruck_aktiviert = False
         self.tastendruck_dauer = 0.1
+        self._target_tastendruck_dauer = 0.1
+        self._actual_tastendruck_dauer = 0.1
         self.geänderte_tastendruck_dauer = None
+        self.root = None
 
     def finde_sky_fenster(self):
         fenster_liste = gw.getWindowsWithTitle("Sky")
@@ -231,10 +234,10 @@ class MusikPlayer:
     def note_abspielen(self, note, i, song_notes, tastendruck_dauer):
         note_taste = note['key'].lower()
         note_zeit = note['time']
-
+        actual_dauer = self._actual_tastendruck_dauer
         if note_taste in self.tastenkarten:
             self.tastatur_steuerung.press(self.tastenkarten[note_taste])
-            Timer(tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
+            Timer(actual_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
 
         if i < len(song_notes) - 1:
             nächste_note_zeit = song_notes[i + 1]['time']
@@ -242,6 +245,7 @@ class MusikPlayer:
             time.sleep(warte_zeit)
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
+        self._actual_tastendruck_dauer = tastendruck_dauer
         if isinstance(song_daten, list) and song_daten:
             song_daten = song_daten[0]
 
@@ -260,19 +264,18 @@ class MusikPlayer:
     def warten_auf_pause(self):
         while self.pause_flag.is_set():
             time.sleep(0.1)
-
         if self.geänderte_tastendruck_dauer is not None:
-            self.tastendruck_dauer = self.geänderte_tastendruck_dauer
+            self._target_tastendruck_dauer = self.geänderte_tastendruck_dauer
             self.geänderte_tastendruck_dauer = None
+        
+        self._actual_tastendruck_dauer = 0.1 if not self.tastendruck_aktiviert else self._target_tastendruck_dauer
 
     def stoppe_abspiel_thread(self):
-        if self.abspiel_thread is not None and self.abspiel_thread.is_alive():
-            self.stop_event.set()
-            self.abspiel_thread.join()
-            self.stop_event.clear()
-            self.abspiel_thread = None
-        
+        self.stop_event.set()
         self.pause_flag.clear()
+        if self.abspiel_thread and self.abspiel_thread.is_alive():
+            self.abspiel_thread.join(timeout=1.0)
+        self.stop_event.clear()
 
 # -------------------------------
 # Main Application (GUI)
@@ -312,6 +315,11 @@ class MusikApp:
 
         self.player.stoppe_abspiel_thread()
 
+        if not self.player.tastendruck_aktiviert:
+            self.tastendruck_dauer = 0.1
+            self.dauer_slider.set(0.1)
+            self.dauer_anzeige.configure(text=LM.get_translation("duration") + " 0.1 s")
+
         try:
             if not Path(self.dateipfad_ausgewählt).exists():
                 raise FileNotFoundError(LM.get_translation("file_not_found"))
@@ -329,14 +337,27 @@ class MusikApp:
 
     def tastendruck_dauer_setzen(self, wert):
         self.tastendruck_dauer = round(float(wert), 3)
+        self.player._target_tastendruck_dauer = self.tastendruck_dauer
+        if self.player.tastendruck_aktiviert:
+            self.player.geänderte_tastendruck_dauer = self.tastendruck_dauer
+            if not self.player.pause_flag.is_set():
+                self.player._actual_tastendruck_dauer = self.tastendruck_dauer
         self.dauer_anzeige.configure(text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s")
 
     def toggle_tastendruck(self):
         self.player.tastendruck_aktiviert = not self.player.tastendruck_aktiviert
-
-        if self.player.pause_flag.is_set():
-            self.player.geänderte_tastendruck_dauer = 0.1 if not self.player.tastendruck_aktiviert else self.tastendruck_dauer
-
+        
+        if self.player.tastendruck_aktiviert:
+            self.player.geänderte_tastendruck_dauer = self.tastendruck_dauer
+            self.player._target_tastendruck_dauer = self.tastendruck_dauer
+            if not self.player.pause_flag.is_set():
+                self.player._actual_tastendruck_dauer = self.tastendruck_dauer
+        else:
+            self.player.geänderte_tastendruck_dauer = 0.1
+            self.player._target_tastendruck_dauer = 0.1
+            self.player._actual_tastendruck_dauer = 0.1
+            self.dauer_slider.set(0.1)
+        
         status = LM.get_translation("enabled" if self.player.tastendruck_aktiviert else "disabled")
         self.tastendruck_button.configure(text=f"{LM.get_translation('key_press')}: {status}")
 
@@ -355,6 +376,7 @@ class MusikApp:
         if getattr(key, 'char', None) == '#':
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
+                self.player._actual_tastendruck_dauer = 0.1 if not self.player.tastendruck_aktiviert else self.player._target_tastendruck_dauer
             else:
                 self.player.pause_flag.set()
 
@@ -363,8 +385,11 @@ class MusikApp:
         self.dauer_slider.set(self.tastendruck_dauer)
         self.dauer_anzeige.configure(text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s")
 
-        if self.player.pause_flag.is_set():
+        if self.player.tastendruck_aktiviert:
             self.player.geänderte_tastendruck_dauer = self.tastendruck_dauer
+
+            if self.player.pause_flag.is_set():
+                self.player.tastendruck_dauer = self.tastendruck_dauer
 
     def gui_starten(self):
         selected_language = LM.load_selected_language()
