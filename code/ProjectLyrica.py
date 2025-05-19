@@ -233,11 +233,8 @@ class MusikPlayer:
         note_zeit = note['time']
 
         if note_taste in self.tastenkarten:
-            try:
-                self.tastatur_steuerung.press(self.tastenkarten[note_taste])
-                Timer(self.tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
-            except KeyError:
-                pass
+            self.tastatur_steuerung.press(self.tastenkarten[note_taste])
+            Timer(tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
 
         if i < len(song_notes) - 1:
             nächste_note_zeit = song_notes[i + 1]['time']
@@ -357,7 +354,7 @@ class MusikApp:
 
     def tastendruck_erkannt(self, key):
         try:
-            if hasattr(key, 'char') and key.char == '#':
+            if getattr(key, 'char', None) == '#':
                 if self.player.pause_flag.is_set():
                     self.player.pause_flag.clear()
                 else:
@@ -384,8 +381,6 @@ class MusikApp:
         self.root.geometry("500x250")
         self.root.iconbitmap("resources/icons/icon.ico")
 
-        self.root.protocol('WM_DELETE_WINDOW', self.beenden)
-
         titel_label = ctk.CTkLabel(self.root, text=LM.get_translation("project_title"), font=("Arial", 18, "bold"))
         titel_label.pack(pady=10)
 
@@ -406,6 +401,7 @@ class MusikApp:
         for wert in self.presets:
             ctk.CTkButton(self.presets_button_frame, text=f"{wert} s", command=lambda v=wert: self.preset_button_click(v)).pack(side="left", padx=2)
 
+        self.root.protocol('WM_DELETE_WINDOW', self.beenden)
         self.root.mainloop()
 
 # -------------------------------
