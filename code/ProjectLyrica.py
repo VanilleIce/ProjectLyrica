@@ -1,8 +1,6 @@
 import json
 import time
 import os
-import sys
-import subprocess
 import winsound
 import pygetwindow as gw
 import customtkinter as ctk
@@ -19,6 +17,8 @@ SETTINGS_FILE = 'settings.json'
 # -------------------------------
 
 class LM:
+    _translations_cache = {}
+
     @staticmethod
     def load_selected_language():
         try:
@@ -61,6 +61,9 @@ class LM:
 
     @staticmethod
     def load_translations(language_code):
+        if language_code in LM._translations_cache:
+            return LM._translations_cache[language_code]
+
         lang_file = os.path.join('resources', 'lang', f"{language_code}.xml")
         try:
             tree = ET.parse(lang_file)
@@ -72,9 +75,13 @@ class LM:
                 value = translation.text
                 if key and value:
                     translations[key] = value
+
+            LM._translations_cache[language_code] = translations
             return translations
+
         except FileNotFoundError:
             if language_code != 'en_US':
+
                 return LM.load_translations('en_US')
             else:
                 messagebox.showerror(
@@ -91,7 +98,7 @@ class LM:
 
     @staticmethod
     def get_translation(key):
-        selected_language = LM.load_selected_language()
+        selected_language = LM.load_selected_language() or 'en_US'
         translations = LM.load_translations(selected_language)
         return translations.get(key, f"[{key}]")
 
@@ -120,7 +127,7 @@ def language_selection_window():
     language_dict = {name: code for code, name in languages}
     language_names = list(language_dict.keys())
 
-    default_language_name = next((name for name, code in language_dict.items() if code == selected_language), "English")
+    default_language_name = next((name for name, code in language_dict.items() if code == selected_language), next(iter(language_dict.keys()), "English"))
 
     ctk.CTkLabel(root, text=translations.get('select_language'), font=("Arial", 14)).pack(pady=10)
     
@@ -129,6 +136,8 @@ def language_selection_window():
     language_combobox.pack(pady=10)
 
     def on_save():
+        global language_window_open
+
         selected_name = language_combobox.get()
         selected_code = language_dict.get(selected_name)
 
@@ -152,6 +161,7 @@ def language_selection_window():
 
     def close_language_window():
         global language_window_open
+        
         language_window_open = False
         root.quit()
         root.destroy()
@@ -171,7 +181,7 @@ class MusikPlayer:
         self.abspiel_thread = None
         self.tastatur_steuerung = Controller()
         self.tastenkarten = {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key']
-                     for key, value in enumerate('zuiophjklönm,.-')}
+                   for key, value in enumerate('zuiophjklönm,.-')}
         self.tastendruck_aktiviert = False
         self.tastendruck_dauer = 0.1
         self.geänderte_tastendruck_dauer = None
@@ -225,7 +235,7 @@ class MusikPlayer:
         if note_taste in self.tastenkarten:
             try:
                 self.tastatur_steuerung.press(self.tastenkarten[note_taste])
-                Timer(tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
+                Timer(self.tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
             except KeyError:
                 pass
 
@@ -233,19 +243,6 @@ class MusikPlayer:
             nächste_note_zeit = song_notes[i + 1]['time']
             warte_zeit = (nächste_note_zeit - note_zeit) / 1000
             time.sleep(warte_zeit)
-
-    @staticmethod
-    def beep():
-        if sys.platform == "win32":
-            winsound.Beep(1000, 500)
-        else:
-            try:
-                subprocess.run(["aplay", "/usr/share/sounds/alsa/Front_Center.wav"], check=True)
-            except FileNotFoundError:
-                try:
-                    subprocess.run(["play", "-nq", "-t", "alsa", "synth", "0.5", "sine", "1000"], check=True)
-                except FileNotFoundError:
-                    pass
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
         if isinstance(song_daten, list) and song_daten:
@@ -262,7 +259,7 @@ class MusikPlayer:
 
             self.note_abspielen(note, i, song_daten["songNotes"], tastendruck_dauer)
 
-        self.beep()
+        winsound.Beep(1000, 500)
 
     def warten_auf_pause(self):
         while self.pause_flag.is_set():
