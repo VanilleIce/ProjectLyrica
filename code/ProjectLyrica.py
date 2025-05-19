@@ -250,7 +250,6 @@ class MusikPlayer:
 
         for i, note in enumerate(song_daten["songNotes"]):
             self.warten_auf_pause()
-
             if stop_event.is_set():
                 break
 
@@ -353,14 +352,11 @@ class MusikApp:
                 element.pack_forget()
 
     def tastendruck_erkannt(self, key):
-        try:
-            if getattr(key, 'char', None) == '#':
-                if self.player.pause_flag.is_set():
-                    self.player.pause_flag.clear()
-                else:
-                    self.player.pause_flag.set()
-        except Exception as e:
-            messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('key_recognition_error')}: {e}")
+        if getattr(key, 'char', None) == '#':
+            if self.player.pause_flag.is_set():
+                self.player.pause_flag.clear()
+            else:
+                self.player.pause_flag.set()
 
     def preset_button_click(self, dauer):
         self.tastendruck_dauer = dauer
