@@ -1,5 +1,7 @@
 # Project: Lyrica
 
+[![CLA assistant](https://cla-assistant.io/readme/badge/VanilleIce/ProjectLyrica)](https://cla-assistant.io/VanilleIce/ProjectLyrica)
+
 Welcome to a unique project that blends music, technology, and creativity. This tool is designed to unlock a hidden experience, brought to life in a distinctive environment.
 
 ## What is Lyrica?
