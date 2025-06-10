@@ -19,3 +19,8 @@ The answer is as simple as it is mysterious: Lyrica is a tool created to build a
 ---
 
 Want to know more? The only way to uncover Lyrica's secrets is to experience it for yourself.
+
+## Contributing
+- This project is licensed under the AGPLv3.  
+- All contributors must sign the [CLA](https://cla-assistant.io/VanilleIce/ProjectLyrica) before submitting code.  
+- Unauthorized distribution or modification is prohibited.  
