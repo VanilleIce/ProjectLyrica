@@ -196,16 +196,18 @@ class MusikPlayer:
     def fenster_fokus(self, sky_fenster):
         if not sky_fenster:
             messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("sky_window_not_found"))
-            return
+            return False
 
-        try:
-            sky_fenster.activate()
-        except Exception:
-            try:
-                sky_fenster.minimize()
+        try:    
+            if sky_fenster.isMinimized:
                 sky_fenster.restore()
-            except Exception as e:
-                messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('window_focus_error')}: {e}")
+            
+            sky_fenster.activate()
+                
+            return True
+        except Exception as e:
+            messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('window_focus_error')}: {e}")
+            return False
 
     def musikdatei_parsen(self, dateipfad):
         dateipfad = Path(dateipfad)
@@ -253,7 +255,7 @@ class MusikPlayer:
             raise ValueError(LM.get_translation("missing_key_songNotes"))
 
         for i, note in enumerate(song_daten["songNotes"]):
-            self.warten_auf_pause()
+            self.warten_pause()
             if stop_event.is_set():
                 break
 
@@ -261,9 +263,10 @@ class MusikPlayer:
 
         winsound.Beep(1000, 500)
 
-    def warten_auf_pause(self):
+    def warten_pause(self):
         while self.pause_flag.is_set():
             time.sleep(0.1)
+
         if self.geänderte_tastendruck_dauer is not None:
             self._target_tastendruck_dauer = self.geänderte_tastendruck_dauer
             self.geänderte_tastendruck_dauer = None
@@ -322,16 +325,16 @@ class MusikApp:
         if not self.player.tastendruck_aktiviert:
             self.tastendruck_dauer = 0.1
             self.dauer_slider.set(0.1)
-            self.dauer_anzeige.configure(text=LM.get_translation("duration") + " 0.1 s")
 
         try:
             if not Path(self.dateipfad_ausgewählt).exists():
                 raise FileNotFoundError(LM.get_translation("file_not_found"))
                 
             song_daten = self.player.musikdatei_parsen(self.dateipfad_ausgewählt)
+
             sky_fenster = self.player.finde_sky_fenster()
             self.player.fenster_fokus(sky_fenster)
-            time.sleep(2)
+            time.sleep(2) # Time befor starts to play
 
             if not self.player.abspiel_thread or not self.player.abspiel_thread.is_alive():
                 self.player.abspiel_thread = Thread(target=self.player.musik_abspielen, args=(song_daten, self.player.stop_event, self.tastendruck_dauer), daemon=True)
@@ -381,6 +384,12 @@ class MusikApp:
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
                 self.player._actual_tastendruck_dauer = 0.1 if not self.player.tastendruck_aktiviert else self.player._target_tastendruck_dauer
+                
+                #Sky fokus again
+                sky_fenster = self.player.finde_sky_fenster()
+                if sky_fenster:
+                    self.player.fenster_fokus(sky_fenster)
+                    time.sleep(1)
             else:
                 self.player.pause_flag.set()
 
