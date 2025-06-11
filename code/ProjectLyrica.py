@@ -57,10 +57,10 @@ class LM:
                     languages.append((code, name))
             return languages
         except FileNotFoundError:
-            messagebox.showerror("Fehler", LM.get_translation('lang_config_not_found'))
+            messagebox.showerror(LM.get_translation('error_title'), LM.get_translation('lang_config_not_found'))
             return []
         except Exception as e:
-            messagebox.showerror("Fehler", LM.get_translation('error_loading_languages').format(e))
+            messagebox.showerror(LM.get_translation('error_title'), LM.get_translation('error_loading_languages').format(e))
             return []
 
     @staticmethod
@@ -186,11 +186,9 @@ class MusikPlayer:
         self.tastatur_steuerung = Controller()
         self.tastenkarten = {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key']
                    for key, value in enumerate('zuiophjklönm,.-')}
+
         self.tastendruck_aktiviert = False
         self.tastendruck_dauer = 0.1
-        self._target_tastendruck_dauer = 0.1
-        self._actual_tastendruck_dauer = 0.1
-        self.geänderte_tastendruck_dauer = None
 
         self.geschwindigkeit_aktiviert = False
         self.aktuelle_geschwindigkeit = 1000
@@ -242,10 +240,10 @@ class MusikPlayer:
     def note_abspielen(self, note, i, song_notes, tastendruck_dauer):
         note_taste = note['key'].lower()
         note_zeit = note['time']
-        actual_dauer = self._actual_tastendruck_dauer
+
         if note_taste in self.tastenkarten:
             self.tastatur_steuerung.press(self.tastenkarten[note_taste])
-            Timer(actual_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
+            Timer(self.tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
 
         if i < len(song_notes) - 1:
             nächste_note_zeit = song_notes[i + 1]['time']
@@ -254,7 +252,6 @@ class MusikPlayer:
             time.sleep(warte_zeit)
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
-        self._actual_tastendruck_dauer = tastendruck_dauer
         if isinstance(song_daten, list) and song_daten:
             song_daten = song_daten[0]
 
@@ -274,12 +271,6 @@ class MusikPlayer:
         while self.pause_flag.is_set():
             time.sleep(0.1)
 
-        if self.geänderte_tastendruck_dauer is not None:
-            self._target_tastendruck_dauer = self.geänderte_tastendruck_dauer
-            self.geänderte_tastendruck_dauer = None
-        
-        self._actual_tastendruck_dauer = 0.1 if not self.tastendruck_aktiviert else self._target_tastendruck_dauer
-
     def stoppe_abspiel_thread(self):
         self.stop_event.set()
         self.pause_flag.clear()
@@ -295,7 +286,6 @@ class MusikApp:
     def __init__(self):
         self.player = MusikPlayer()
         self.dateipfad_ausgewählt = None
-        self.tastendruck_dauer = 0.1
         self.presets = [0.2, 0.248, 0.3, 0.5, 1.0]
         self.root = None
         self.listener = Listener(on_press=self.tastendruck_erkannt)
@@ -305,7 +295,8 @@ class MusikApp:
 
     def beenden(self):
         self.player.stoppe_abspiel_thread()
-        self.listener.stop()
+        if self.listener.is_alive():
+            self.listener.stop()
         if hasattr(self, 'player'):
             del self.player
         if hasattr(self, 'listener'):
@@ -332,7 +323,6 @@ class MusikApp:
         self.player.stoppe_abspiel_thread()
 
         if not self.player.tastendruck_aktiviert:
-            self.tastendruck_dauer = 0.1
             self.dauer_slider.set(0.1)
 
         try:
@@ -347,32 +337,24 @@ class MusikApp:
 
             if not self.player.abspiel_thread or not self.player.abspiel_thread.is_alive():
                 self.player.abspiel_thread = Thread(target=self.player.musik_abspielen, 
-                                                args=(song_daten, self.player.stop_event, self.tastendruck_dauer), 
+                                                args=(song_daten, self.player.stop_event, self.player.tastendruck_dauer), 
                                                 daemon=True)
                 self.player.abspiel_thread.start()
         except Exception as e:
             messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('play_error_message')}: {e}")
 
     def tastendruck_dauer_setzen(self, wert):
-        self.tastendruck_dauer = round(float(wert), 3)
-        self.player._target_tastendruck_dauer = self.tastendruck_dauer
-        if self.player.tastendruck_aktiviert:
-            self.player.geänderte_tastendruck_dauer = self.tastendruck_dauer
-            if not self.player.pause_flag.is_set():
-                self.player._actual_tastendruck_dauer = self.tastendruck_dauer
-        self.dauer_anzeige.configure(text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s")
-
+        self.player.tastendruck_dauer = round(float(wert), 3)
+        self.dauer_anzeige.configure(text=f"{LM.get_translation('duration')} {self.player.tastendruck_dauer} s")
+        
     def tastendruck_erkannt(self, key):
         if getattr(key, 'char', None) == '#':
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
-                self.player._actual_tastendruck_dauer = 0.1 if not self.player.tastendruck_aktiviert else self.player._target_tastendruck_dauer
-                
-                #Sky fokus again
+
                 sky_fenster = self.player.finde_sky_fenster()
-                if sky_fenster:
-                    self.player.fenster_fokus(sky_fenster)
-                    time.sleep(1)
+                if sky_fenster and self.player.fenster_fokus(sky_fenster):
+                    time.sleep(2)
             else:
                 self.player.pause_flag.set()
 
@@ -380,25 +362,36 @@ class MusikApp:
         self.player.aktuelle_geschwindigkeit = geschwindigkeit
         self.geschwindigkeit_label.configure(text=f"{LM.get_translation('current_speed')}: {geschwindigkeit}")
         
-        if self.player.abspiel_thread and self.player.abspiel_thread.is_alive():
+        if self.player.abspiel_thread and self.player.abspiel_thread.is_alive() and not self.player.pause_flag.is_set():
             self.player.stoppe_abspiel_thread()
             self.ausgewähltes_lied_abspielen()
 
     def toggle_tastendruck(self):
         self.player.tastendruck_aktiviert = not self.player.tastendruck_aktiviert
-        
         status = LM.get_translation("enabled" if self.player.tastendruck_aktiviert else "disabled")
         self.tastendruck_button.configure(text=f"{LM.get_translation('key_press')}: {status}")
         
-        if self.player.tastendruck_aktiviert:
-            self.tastendruck_controls_frame.pack(pady=5, before=self.geschwindigkeit_button)
-        else:
-            self.tastendruck_controls_frame.pack_forget()
+        if not self.player.tastendruck_aktiviert:
+            self.player.tastendruck_dauer = 0.1
+            self.dauer_slider.set(0.1)
+            self.dauer_anzeige.configure(text=f"{LM.get_translation('duration')} 0.1 s")
+        
+        self.tastendruck_controls_frame.pack(pady=5, before=self.geschwindigkeit_button) \
+            if self.player.tastendruck_aktiviert else self.tastendruck_controls_frame.pack_forget()
         
         self.anpassen_fenstergroesse()
 
+    def preset_button_click(self, dauer):
+        self.player.tastendruck_dauer = dauer
+        self.dauer_slider.set(dauer)
+        self.dauer_anzeige.configure(text=f"{LM.get_translation('duration')} {dauer} s")
+
     def toggle_geschwindigkeit(self):
         self.player.geschwindigkeit_aktiviert = not self.player.geschwindigkeit_aktiviert
+        
+        if not self.player.geschwindigkeit_aktiviert:
+            self.player.aktuelle_geschwindigkeit = 1000
+            self.geschwindigkeit_label.configure(text=f"{LM.get_translation('current_speed')}: 1000")
         
         status = LM.get_translation("enabled" if self.player.geschwindigkeit_aktiviert else "disabled")
         self.geschwindigkeit_button.configure(text=f"{LM.get_translation('speed_control')}: {status}")
@@ -420,17 +413,6 @@ class MusikApp:
         else:
             self.root.geometry("500x250")
 
-    def preset_button_click(self, dauer):
-        self.tastendruck_dauer = dauer
-        self.dauer_slider.set(self.tastendruck_dauer)
-        self.dauer_anzeige.configure(text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s")
-
-        if self.player.tastendruck_aktiviert:
-            self.player.geänderte_tastendruck_dauer = self.tastendruck_dauer
-
-            if self.player.pause_flag.is_set():
-                self.player.tastendruck_dauer = self.tastendruck_dauer
-
 # -------------------------------
 # Frontend GUI
 # -------------------------------
@@ -446,12 +428,10 @@ class MusikApp:
         self.root.geometry("500x250")
         self.root.iconbitmap("resources/icons/icon.ico")
 
-        # Titel-Label
         titel_label = ctk.CTkLabel(self.root, text=LM.get_translation("project_title"), 
                                 font=("Arial", 18, "bold"))
         titel_label.pack(pady=10)
 
-        # Dateiauswahl-Button
         self.datei_label = ctk.CTkButton(
             self.root, 
             text=LM.get_translation("file_select_title"),
@@ -463,7 +443,6 @@ class MusikApp:
         )
         self.datei_label.pack(pady=10)
 
-        # Tastendruck-Toggle-Button
         tastendruck_status = LM.get_translation("enabled" if self.player.tastendruck_aktiviert else "disabled")
         self.tastendruck_button = ctk.CTkButton(
             self.root,
@@ -474,10 +453,8 @@ class MusikApp:
         )
         self.tastendruck_button.pack(pady=5)
 
-        # Tastendruck-Steuerung (in Frame)
         self.tastendruck_controls_frame = ctk.CTkFrame(self.root)
         
-        # Slider
         self.dauer_slider = ctk.CTkSlider(
             self.tastendruck_controls_frame,
             from_=0.1,
@@ -488,14 +465,12 @@ class MusikApp:
         )
         self.dauer_slider.pack(pady=5)
         
-        # Anzeige-Label
         self.dauer_anzeige = ctk.CTkLabel(
             self.tastendruck_controls_frame,
-            text=LM.get_translation("duration") + f" {self.tastendruck_dauer} s"
+            text=LM.get_translation("duration") + f" {self.player.tastendruck_dauer} s"
         )
         self.dauer_anzeige.pack()
         
-        # Presets-Buttons
         self.presets_button_frame = ctk.CTkFrame(self.tastendruck_controls_frame)
         for wert in self.presets:
             ctk.CTkButton(
@@ -506,7 +481,6 @@ class MusikApp:
             ).pack(side="left", padx=2)
         self.presets_button_frame.pack(pady=5)
 
-        # Geschwindigkeits-Toggle-Button
         geschwindigkeit_status = LM.get_translation("enabled" if self.player.geschwindigkeit_aktiviert else "disabled")
         self.geschwindigkeit_button = ctk.CTkButton(
             self.root,
@@ -517,10 +491,8 @@ class MusikApp:
         )
         self.geschwindigkeit_button.pack(pady=5)
 
-        # Geschwindigkeits-Steuerung (in Frame)
         self.geschwindigkeit_controls_frame = ctk.CTkFrame(self.root)
         
-        # Geschwindigkeits-Presets
         self.geschwindigkeit_presets_frame = ctk.CTkFrame(self.geschwindigkeit_controls_frame)
         for geschwindigkeit in self.geschwindigkeits_presets:
             ctk.CTkButton(
@@ -532,14 +504,12 @@ class MusikApp:
             ).pack(side="left", padx=2)
         self.geschwindigkeit_presets_frame.pack(pady=5)
         
-        # Geschwindigkeits-Anzeige
         self.geschwindigkeit_label = ctk.CTkLabel(
             self.geschwindigkeit_controls_frame,
             text=f"{LM.get_translation('current_speed')}: {self.player.aktuelle_geschwindigkeit}"
         )
         self.geschwindigkeit_label.pack(pady=5)
 
-        # Play-Button
         self.play_button = ctk.CTkButton(
             self.root,
             text=LM.get_translation("play_button_text"),
@@ -550,7 +520,6 @@ class MusikApp:
         )
         self.play_button.pack(pady=10)
 
-        # Initiale Sichtbarkeit setzen
         if self.player.tastendruck_aktiviert:
             self.tastendruck_controls_frame.pack(pady=5, before=self.geschwindigkeit_button)
         else:
