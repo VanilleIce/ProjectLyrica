@@ -25,22 +25,12 @@ class LM:
 
     @staticmethod
     def load_selected_language():
-        try:
-            with open(SETTINGS_FILE, 'r', encoding="utf-8") as file:
-                settings = json.load(file)
-                return settings.get('selected_language', 'en_US')
-        except FileNotFoundError:
-            return None
-        except Exception as e:
-            return None
+        config = ConfigManager.load_config()
+        return config.get("selected_language")
 
     @staticmethod
     def save_selected_language(language_code):
-        try:
-            with open(SETTINGS_FILE, 'w', encoding="utf-8") as file:
-                json.dump({'selected_language': language_code}, file, indent=4)
-        except Exception as e:
-            pass
+        ConfigManager.save_config({"selected_language": language_code})
 
     @staticmethod
     def load_available_languages():
@@ -102,15 +92,39 @@ class LM:
 
     @staticmethod
     def get_translation(key):
-        selected_language = LM.load_selected_language() or 'en_US'
+        selected_language = LM.load_selected_language()
         translations = LM.load_translations(selected_language)
         return translations.get(key, f"[{key}]")
+
+class ConfigManager:
+    DEFAULT_CONFIG = {
+        "key_press_durations": [0.2, 0.248, 0.3, 0.5, 1.0],
+        "speed_presets": [600, 800, 1000, 1200],
+        "selected_language": None
+    }
+
+    @staticmethod
+    def load_config():
+        try:
+            with open(SETTINGS_FILE, 'r', encoding="utf-8") as file:
+                config = json.load(file)
+                return {**ConfigManager.DEFAULT_CONFIG, **config}
+        except (FileNotFoundError, json.JSONDecodeError):
+            return ConfigManager.DEFAULT_CONFIG
+
+    @staticmethod
+    def save_config(config_data):
+        current_config = ConfigManager.load_config()
+        updated_config = {**current_config, **config_data}
+        with open(SETTINGS_FILE, 'w', encoding="utf-8") as file:
+            json.dump(updated_config, file, indent=3, separators=(', ', ': '), ensure_ascii=False)
 
 # -------------------------------
 # GUI: Language Selection Window
 # -------------------------------
 
 language_window_open = False
+
 
 def language_selection_window():
     global language_window_open
@@ -200,14 +214,13 @@ class MusikPlayer:
     def fenster_fokus(self, sky_fenster):
         if not sky_fenster:
             messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("sky_window_not_found"))
-            return False
-
+            return
+        if not self.player.fenster_fokus(sky_fenster):
+            return
         try:    
             if sky_fenster.isMinimized:
                 sky_fenster.restore()
-            
             sky_fenster.activate()
-                
             return True
         except Exception as e:
             messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('window_focus_error')}: {e}")
@@ -286,12 +299,16 @@ class MusikApp:
     def __init__(self):
         self.player = MusikPlayer()
         self.dateipfad_ausgewählt = None
-        self.presets = [0.2, 0.248, 0.3, 0.5, 1.0]
         self.root = None
         self.listener = Listener(on_press=self.tastendruck_erkannt)
         self.listener.start()
 
-        self.geschwindigkeits_presets = [600, 800, 1000, 1200]
+        if LM.load_selected_language() is None:
+            language_selection_window()
+
+        config = ConfigManager.load_config()
+        self.presets = config["key_press_durations"]
+        self.geschwindigkeits_presets = config["speed_presets"]
 
     def beenden(self):
         self.player.stoppe_abspiel_thread()
@@ -332,8 +349,10 @@ class MusikApp:
             song_daten = self.player.musikdatei_parsen(self.dateipfad_ausgewählt)
 
             sky_fenster = self.player.finde_sky_fenster()
-            self.player.fenster_fokus(sky_fenster)
-            time.sleep(2) # Time befor starts to play
+            if not sky_fenster or not self.player.fenster_fokus(sky_fenster):
+                return
+            
+            time.sleep(2) # Wartezeit vor dem Abspielen
 
             if not self.player.abspiel_thread or not self.player.abspiel_thread.is_alive():
                 self.player.abspiel_thread = Thread(target=self.player.musik_abspielen, 
@@ -351,12 +370,13 @@ class MusikApp:
         if getattr(key, 'char', None) == '#':
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
-
                 sky_fenster = self.player.finde_sky_fenster()
+                if not sky_fenster:
+                    messagebox.showwarning(LM.get_translation("warning_title"),
+                                        LM.get_translation("sky_window_not_found"))
+                    return
                 if sky_fenster and self.player.fenster_fokus(sky_fenster):
                     time.sleep(2)
-            else:
-                self.player.pause_flag.set()
 
     def setze_geschwindigkeit(self, geschwindigkeit):
         self.player.aktuelle_geschwindigkeit = geschwindigkeit
@@ -418,10 +438,6 @@ class MusikApp:
 # -------------------------------
 
     def gui_starten(self):
-        selected_language = LM.load_selected_language()
-        if not selected_language:
-            language_selection_window()
-
         ctk.set_appearance_mode("dark")
         self.root = ctk.CTk()
         self.root.title(LM.get_translation("project_title"))
@@ -538,5 +554,6 @@ class MusikApp:
 # -------------------------------
 
 if __name__ == "__main__":
+    ConfigManager.load_config()
     app = MusikApp()
     app.gui_starten()
