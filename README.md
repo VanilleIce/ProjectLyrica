@@ -2,6 +2,12 @@
 
 [![CLA assistant](https://cla-assistant.io/readme/badge/VanilleIce/ProjectLyrica)](https://cla-assistant.io/VanilleIce/ProjectLyrica)
 
+## Contributing
+- This project is licensed under the AGPLv3.  
+- All contributors must sign the [CLA](https://cla-assistant.io/VanilleIce/ProjectLyrica) before submitting code.  
+- Unauthorized distribution or modification is prohibited.
+
+
 Welcome to a unique project that blends music, technology, and creativity. This tool is designed to unlock a hidden experience, brought to life in a distinctive environment.
 
 ## What is Lyrica?
@@ -19,8 +25,3 @@ The answer is as simple as it is mysterious: Lyrica is a tool created to build a
 ---
 
 Want to know more? The only way to uncover Lyrica's secrets is to experience it for yourself.
-
-## Contributing
-- This project is licensed under the AGPLv3.  
-- All contributors must sign the [CLA](https://cla-assistant.io/VanilleIce/ProjectLyrica) before submitting code.  
-- Unauthorized distribution or modification is prohibited.  
