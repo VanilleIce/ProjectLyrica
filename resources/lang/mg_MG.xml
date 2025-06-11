@@ -1,46 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- General errors and success messages -->
-    <translation key="error_loading_translations">Nisy olana tamin'ny fanovàna ny fandikan-teny: {0}</translation>
-    <translation key="lang_config_not_found">Tsy hita ny Lang Config</translation>
+    <!-- Hadisoana sy hafatra fahombiazana ankapobeny -->
+    <translation key="error_loading_translations">Nisy olana tamin'ny famakiana ny fandikan-teny: {0}</translation>
+    <translation key="lang_config_not_found">Tsy hita ny fikirakirana fiteny</translation>
     <translation key="language_not_found">Tsy hita ny fiteny</translation>
     <translation key="file_not_found">Tsy hita ny rakitra</translation>
     <translation key="unknown_file_format">Endrika rakitra tsy fantatra</translation>
-    <translation key="error_loading_languages">Nisy olana tamin'ny fandaharana ny fiteny</translation>
-    <translation key="error_title">Olana</translation>
+    <translation key="error_loading_languages">Nisy olana tamin'ny famakiana ny fiteny</translation>
+    <translation key="error_title">Hadisoana</translation>
     <translation key="language_saved">Voavonjy ny fiteny</translation>
-    <translation key="missing_translations_file">Rakitra fandikan-teny tsy ampy ho an'ny {0}</translation>
+    <translation key="missing_translations_file">Tsy misy rakitra fandikan-teny ho an'ny {0}</translation>
     
-    <!-- GUI: Windows and Buttons -->
-    <translation key="language_window_title">Safidin'ny Fiteny</translation>
+    <!-- GUI: Varavarankely sy bokotra -->
+    <translation key="language_window_title">Safidy fiteny</translation>
     <translation key="select_language">Misafidiana fiteny:</translation>
     <translation key="save_button_text">Tehirizo</translation>
-    <translation key="info_title">Fampahatsiahivana</translation>
+    <translation key="info_title">Fampahafantarana</translation>
     <translation key="no_song_selected">Tsy misy hira voafantina</translation>
-    <translation key="file_select_title">Safidio ny hira</translation>
-    <translation key="warning_title">Tandindona</translation>
-    <translation key="choose_song_warning">Mba misafidiana hira alohan'ny handehanana.</translation>
-    <translation key="select_valid_file">Mba safidio rakitra manankery!</translation>
+    <translation key="file_select_title">Misafidiana hira</translation>
+    <translation key="warning_title">Fampitandremana</translation>
+    <translation key="choose_song_warning">Misafidiana hira alohan'ny hanohizana.</translation>
+    <translation key="select_valid_file">Misafidiana rakitra manankery!</translation>
     <translation key="file_dialog_title">Misafidiana rakitra</translation>
     <translation key="select_button_text">Safidio</translation>
+    <translation key="supported_formats">Endrika tohanana</translation>
     
-    <!-- Music player functions -->
-    <translation key="play_button_text">▶ Manomboka</translation>
+    <!-- Asa ny mpilalao mozika -->
+    <translation key="play_button_text">▶ Lalao</translation>
     <translation key="key_press">Tsindrio ny bokotra</translation>
-    <translation key="enabled">Alefa</translation>
-    <translation key="disabled">Voadio</translation>
-    <translation key="duration">Fandehanan'ny fanerena bokotra</translation>
-    <translation key="key_recognition_error">Olana amin'ny fahitana bokotra</translation>
+    <translation key="enabled">Ampiasaina</translation>
+    <translation key="disabled">Foana</translation>
+    <translation key="duration">Faharetan’ny fanindriana</translation>
+    <translation key="key_recognition_error">Olana amin'ny fanekena bokotra</translation>
+
+    <translation key="speed_control">Fifehezana hafainganana</translation>
+    <translation key="current_speed">Hafainganana ankehitriny</translation>
     
-    <!-- Playback errors -->
-    <translation key="play_error_message">Olana tamin'ny filalaovana ny hira</translation>
-    <translation key="missing_key_songNotes">Data momba ny hira tsy hita (Key: songNotes)</translation>
+    <!-- Hadisoana amin'ny filalaovana hira -->
+    <translation key="play_error_message">Nisy olana tamin'ny filalaovana ny hira</translation>
+    <translation key="missing_key_songNotes">Tsy hita ny angona momba ny hira (Key: songNotes)</translation>
     
-    <!-- Window functions -->
+    <!-- Asa varavarankely -->
     <translation key="sky_window_not_found">Tsy hita ny varavarankely Sky</translation>
-    <translation key="window_focus_error">Tsy afaka nampiditra ny varavarankely ho lohany</translation>
+    <translation key="window_focus_error">Tsy afaka nampifantoka ny varavarankely</translation>
     
-    <!-- Additional Text Options -->
-    <translation key="preset">Fomban-tsarimihetsika</translation>
+    <!-- Safidy fanampiny -->
+    <translation key="preset">Preset</translation>
     <translation key="project_title">Tetikas Lyrica</translation>
 </translations>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- Allgemeine Fehler und Erfolgsmeldungen -->
+    <!-- 通用错误和成功消息 -->
     <translation key="error_loading_translations">加载翻译时出错：{0}</translation>
     <translation key="lang_config_not_found">语言配置加载失败</translation>
     <translation key="language_not_found">找不到语言</translation>
@@ -11,7 +11,7 @@
     <translation key="language_saved">语言已保存</translation>
     <translation key="missing_translations_file">缺少翻译文件：{0}</translation>
     
-    <!-- GUI: Fenster und Buttons -->
+    <!-- GUI：窗口和按钮 -->
     <translation key="language_window_title">选择语言</translation>
     <translation key="select_language">选择语言：</translation>
     <translation key="save_button_text">保存</translation>
@@ -23,24 +23,28 @@
     <translation key="select_valid_file">请选择有效的文件！</translation>
     <translation key="file_dialog_title">选择文件</translation>
     <translation key="select_button_text">选择</translation>
+    <translation key="supported_formats">支持的格式</translation>
     
-    <!-- Musikplayer Funktionen -->
+    <!-- 音乐播放器功能 -->
     <translation key="play_button_text">▶ 播放</translation>
     <translation key="key_press">按键</translation>
     <translation key="enabled">启用</translation>
     <translation key="disabled">禁用</translation>
     <translation key="duration">按键持续时间</translation>
     <translation key="key_recognition_error">按键识别错误</translation>
+
+    <translation key="speed_control">速度</translation>
+    <translation key="current_speed">当前速度</translation>
     
-    <!-- Fehlermeldungen beim Abspielen -->
+    <!-- 播放时的错误信息 -->
     <translation key="play_error_message">播放音乐时出错</translation>
     <translation key="missing_key_songNotes">缺少歌曲数据（键：songNotes）</translation>
     
-    <!-- Fensterfunktionen -->
+    <!-- 窗口功能 -->
     <translation key="sky_window_not_found">未找到天空窗口</translation>
     <translation key="window_focus_error">无法将窗口设置为焦点</translation>
     
-    <!-- Weitere Textoptionen -->
+    <!-- 其他文本选项 -->
     <translation key="preset">预设</translation>
     <translation key="project_title">Lyrica 项目</translation>
 </translations>

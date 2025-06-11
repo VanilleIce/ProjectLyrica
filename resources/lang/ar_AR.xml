@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- Allgemeine Fehler und Erfolgsmeldungen -->
+    <!-- أخطاء عامة ورسائل النجاح -->
     <translation key="error_loading_translations">خطأ في تحميل الترجمات: {0}</translation>
     <translation key="lang_config_not_found">خطأ في تحميل تكوين اللغة</translation>
     <translation key="language_not_found">تعذر العثور على اللغة</translation>
@@ -11,7 +11,7 @@
     <translation key="language_saved">تم حفظ اللغة</translation>
     <translation key="missing_translations_file">ملف الترجمات مفقود لـ {0}</translation>
     
-    <!-- GUI: Fenster und Buttons -->
+    <!-- واجهة المستخدم الرسومية: النوافذ والأزرار -->
     <translation key="language_window_title">اختيار اللغة</translation>
     <translation key="select_language">اختار اللغة:</translation>
     <translation key="save_button_text">حفظ</translation>
@@ -23,24 +23,28 @@
     <translation key="select_valid_file">يرجى اختيار ملف صالح!</translation>
     <translation key="file_dialog_title">اختيار ملف</translation>
     <translation key="select_button_text">اختيار</translation>
+    <translation key="supported_formats">التنسيقات المدعومة</translation>
     
-    <!-- Musikplayer Funktionen -->
+    <!-- وظائف مشغل الموسيقى -->
     <translation key="play_button_text">▶ تشغيل</translation>
     <translation key="key_press">ضغط المفتاح</translation>
     <translation key="enabled">مفعل</translation>
     <translation key="disabled">معطل</translation>
     <translation key="duration">مدة ضغط المفتاح</translation>
     <translation key="key_recognition_error">خطأ في التعرف على المفتاح</translation>
+
+    <translation key="speed_control">السرعة</translation>
+    <translation key="current_speed">السرعة الحالية</translation>
     
-    <!-- Fehlermeldungen beim Abspielen -->
+    <!-- رسائل الخطأ أثناء التشغيل -->
     <translation key="play_error_message">خطأ في تشغيل الموسيقى</translation>
     <translation key="missing_key_songNotes">بيانات الأغنية مفقودة (المفتاح: songNotes)</translation>
     
-    <!-- Fensterfunktionen -->
+    <!-- وظائف النافذة -->
     <translation key="sky_window_not_found">نافذة سكاي غير موجودة</translation>
     <translation key="window_focus_error">تعذر تركيز النافذة</translation>
     
-    <!-- Weitere Textoptionen -->
+    <!-- خيارات نصية إضافية -->
     <translation key="preset">الإعدادات المسبقة</translation>
     <translation key="project_title">مشروع ليريكا</translation>
 </translations>

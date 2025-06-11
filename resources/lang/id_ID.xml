@@ -23,6 +23,7 @@
     <translation key="select_valid_file">Harap pilih file yang valid!</translation>
     <translation key="file_dialog_title">Pilih file</translation>
     <translation key="select_button_text">Pilih</translation>
+    <translation key="supported_formats">Format yang didukung</translation>
     
     <!-- Fungsi Pemutar Musik -->
     <translation key="play_button_text">▶ Putar</translation>
@@ -31,6 +32,9 @@
     <translation key="disabled">Nonaktif</translation>
     <translation key="duration">Durasi Tekan Tombol</translation>
     <translation key="key_recognition_error">Kesalahan saat mengenali tombol</translation>
+
+    <translation key="speed_control">Kecepatan</translation>
+    <translation key="current_speed">kecepatan saat ini</translation>
     
     <!-- Pesan Kesalahan Pemutaran -->
     <translation key="play_error_message">Kesalahan saat memutar musik</translation>

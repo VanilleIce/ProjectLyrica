@@ -23,6 +23,7 @@
     <translation key="select_valid_file">Selecteer een geldig bestand!</translation>
     <translation key="file_dialog_title">Bestand kiezen</translation>
     <translation key="select_button_text">Kies</translation>
+    <translation key="supported_formats">Ondersteunde formaten</translation>
     
     <!-- Muziekspeler functies -->
     <translation key="play_button_text">▶ Afspelen</translation>
@@ -31,6 +32,9 @@
     <translation key="disabled">Uitgeschakeld</translation>
     <translation key="duration">Toetsdrukduur</translation>
     <translation key="key_recognition_error">Fout bij het herkennen van de toets</translation>
+
+    <translation key="speed_control">Snelheid</translation>
+    <translation key="current_speed">huidige snelheid</translation>
     
     <!-- Foutmeldingen bij het afspelen -->
     <translation key="play_error_message">Fout bij het afspelen van muziek</translation>

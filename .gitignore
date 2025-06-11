@@ -161,5 +161,4 @@ cython_debug/
 #.idea/
 
 /.github/workflows
-code/-ProjectLyrica.py
-code/-translation_utils.py
+code/.ProjectLyrica.py
