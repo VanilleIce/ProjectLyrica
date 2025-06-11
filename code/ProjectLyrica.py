@@ -263,23 +263,16 @@ class MusikPlayer:
             time.sleep(warte_zeit)
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
-        if not song_daten["songNotes"]:
-            return
+        if isinstance(song_daten, list) and song_daten:
+            song_daten = song_daten[0]
 
-        start_time = time.time()
-        base_time = song_daten["songNotes"][0]['time']
-        
+        if "songNotes" not in song_daten:
+            raise ValueError(LM.get_translation("missing_key_songNotes"))
+
         for i, note in enumerate(song_daten["songNotes"]):
             self.warten_pause()
             if stop_event.is_set():
                 break
-
-            # Präzise Timing-Berechnung
-            target_time = (note['time'] - base_time) / self.aktuelle_geschwindigkeit * 1000
-            elapsed = (time.time() - start_time) * 1000
-            
-            if elapsed < target_time:
-                time.sleep((target_time - elapsed)/1000)
 
             self.note_abspielen(note, i, song_daten["songNotes"], tastendruck_dauer)
 
