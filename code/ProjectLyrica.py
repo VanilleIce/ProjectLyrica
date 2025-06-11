@@ -92,7 +92,7 @@ class LM:
 
     @staticmethod
     def get_translation(key):
-        selected_language = LM.load_selected_language()
+        selected_language = LM.load_selected_language() or 'en_US'
         translations = LM.load_translations(selected_language)
         return translations.get(key, f"[{key}]")
 
@@ -214,9 +214,7 @@ class MusikPlayer:
     def fenster_fokus(self, sky_fenster):
         if not sky_fenster:
             messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("sky_window_not_found"))
-            return
-        if not self.player.fenster_fokus(sky_fenster):
-            return
+            return false
         try:    
             if sky_fenster.isMinimized:
                 sky_fenster.restore()
@@ -265,16 +263,23 @@ class MusikPlayer:
             time.sleep(warte_zeit)
 
     def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
-        if isinstance(song_daten, list) and song_daten:
-            song_daten = song_daten[0]
+        if not song_daten["songNotes"]:
+            return
 
-        if "songNotes" not in song_daten:
-            raise ValueError(LM.get_translation("missing_key_songNotes"))
-
+        start_time = time.time()
+        base_time = song_daten["songNotes"][0]['time']
+        
         for i, note in enumerate(song_daten["songNotes"]):
             self.warten_pause()
             if stop_event.is_set():
                 break
+
+            # Präzise Timing-Berechnung
+            target_time = (note['time'] - base_time) / self.aktuelle_geschwindigkeit * 1000
+            elapsed = (time.time() - start_time) * 1000
+            
+            if elapsed < target_time:
+                time.sleep((target_time - elapsed)/1000)
 
             self.note_abspielen(note, i, song_daten["songNotes"], tastendruck_dauer)
 
@@ -349,8 +354,7 @@ class MusikApp:
             song_daten = self.player.musikdatei_parsen(self.dateipfad_ausgewählt)
 
             sky_fenster = self.player.finde_sky_fenster()
-            if not sky_fenster or not self.player.fenster_fokus(sky_fenster):
-                return
+            self.player.fenster_fokus(sky_fenster)
             
             time.sleep(2) # Wartezeit vor dem Abspielen
 
@@ -371,12 +375,11 @@ class MusikApp:
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
                 sky_fenster = self.player.finde_sky_fenster()
-                if not sky_fenster:
-                    messagebox.showwarning(LM.get_translation("warning_title"),
-                                        LM.get_translation("sky_window_not_found"))
-                    return
-                if sky_fenster and self.player.fenster_fokus(sky_fenster):
-                    time.sleep(2)
+                if sky_fenster:
+                    self.player.fenster_fokus(sky_fenster)
+                    time.sleep(1.2)
+            else:
+                self.player.pause_flag.set()
 
     def setze_geschwindigkeit(self, geschwindigkeit):
         self.player.aktuelle_geschwindigkeit = geschwindigkeit
