@@ -23,6 +23,7 @@
     <translation key="select_valid_file">Please select a valid file!</translation>
     <translation key="file_dialog_title">Select a file</translation>
     <translation key="select_button_text">Select</translation>
+    <translation key="supported_formats">Supported formats</translation>
     
     <!-- Music player functions -->
     <translation key="play_button_text">▶ Play</translation>
@@ -31,6 +32,9 @@
     <translation key="disabled">Disabled</translation>
     <translation key="duration">Key press duration</translation>
     <translation key="key_recognition_error">Key recognition error</translation>
+
+    <translation key="speed_control">Speed</translation>
+    <translation key="current_speed">Current speed</translation>
     
     <!-- Play error messages -->
     <translation key="play_error_message">Error playing music</translation>

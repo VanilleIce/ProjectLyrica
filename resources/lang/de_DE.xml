@@ -24,7 +24,7 @@
     <translation key="file_dialog_title">Wählen Sie eine Datei</translation>
     <translation key="select_button_text">Auswählen</translation>
     <translation key="supported_formats">Unterstützte Formate</translation>
-    
+
     <!-- Musikplayer Funktionen -->
     <translation key="play_button_text">▶ Abspielen</translation>
     <translation key="key_press">Tastendruck</translation>
@@ -32,6 +32,9 @@
     <translation key="disabled">Deaktiviert</translation>
     <translation key="duration">Dauer des Tastendrucks</translation>
     <translation key="key_recognition_error">Fehler bei der Tastenerkennung</translation>
+
+    <translation key="speed_control">Geschwindigkeit</translation>
+    <translation key="current_speed">aktuelle Geschwindigkeit</translation>
     
     <!-- Fehlermeldungen beim Abspielen -->
     <translation key="play_error_message">Fehler beim Abspielen der Musik</translation>

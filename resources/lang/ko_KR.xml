@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- Allgemeine Fehler und Erfolgsmeldungen -->
+    <!-- 일반적인 오류 및 성공 메시지 -->
     <translation key="error_loading_translations">번역 로딩 오류: {0}</translation>
     <translation key="lang_config_not_found">언어 설정을 찾을 수 없습니다</translation>
     <translation key="language_not_found">언어를 찾을 수 없습니다</translation>
@@ -11,7 +11,7 @@
     <translation key="language_saved">언어가 저장되었습니다</translation>
     <translation key="missing_translations_file">{0}에 대한 번역 파일이 없습니다</translation>
     
-    <!-- GUI: Fenster und Buttons -->
+    <!-- GUI: 창 및 버튼 -->
     <translation key="language_window_title">언어 선택</translation>
     <translation key="select_language">언어 선택:</translation>
     <translation key="save_button_text">저장</translation>
@@ -23,24 +23,28 @@
     <translation key="select_valid_file">유효한 파일을 선택해 주세요!</translation>
     <translation key="file_dialog_title">파일 선택</translation>
     <translation key="select_button_text">선택</translation>
+    <translation key="supported_formats">지원되는 형식</translation>
     
-    <!-- Musikplayer Funktionen -->
+    <!-- 음악 플레이어 기능 -->
     <translation key="play_button_text">▶ 재생</translation>
     <translation key="key_press">키 누르기</translation>
     <translation key="enabled">활성화됨</translation>
     <translation key="disabled">비활성화됨</translation>
     <translation key="duration">키 누른 시간</translation>
     <translation key="key_recognition_error">키 인식 오류</translation>
+
+    <translation key="speed_control">속도</translation>
+    <translation key="current_speed">현재 속도</translation>
     
-    <!-- Fehlermeldungen beim Abspielen -->
+    <!-- 재생 중 오류 메시지 -->
     <translation key="play_error_message">음악 재생 오류</translation>
     <translation key="missing_key_songNotes">곡 데이터 누락 (키: songNotes)</translation>
     
-    <!-- Fensterfunktionen -->
+    <!-- 창 기능 -->
     <translation key="sky_window_not_found">Sky 창을 찾을 수 없습니다</translation>
     <translation key="window_focus_error">창을 포커스할 수 없습니다</translation>
     
-    <!-- Weitere Textoptionen -->
+    <!-- 기타 텍스트 옵션 -->
     <translation key="preset">프리셋</translation>
     <translation key="project_title">프로젝트 Lyrica</translation>
 </translations>

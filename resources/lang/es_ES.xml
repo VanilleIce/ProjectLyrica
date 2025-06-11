@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- General error and success messages -->
+    <!-- Mensajes generales de error y éxito -->
     <translation key="error_loading_translations">Error al cargar las traducciones: {0}</translation>
     <translation key="lang_config_not_found">No se encontró la configuración del idioma</translation>
     <translation key="language_not_found">Idioma no encontrado</translation>
@@ -11,7 +11,7 @@
     <translation key="language_saved">Idioma guardado</translation>
     <translation key="missing_translations_file">Falta el archivo de traducciones para {0}</translation>
     
-    <!-- GUI: Windows and buttons -->
+    <!-- Interfaz gráfica: ventanas y botones -->
     <translation key="language_window_title">Selección de idioma</translation>
     <translation key="select_language">Seleccionar idioma:</translation>
     <translation key="save_button_text">Guardar</translation>
@@ -23,24 +23,28 @@
     <translation key="select_valid_file">¡Por favor, selecciona un archivo válido!</translation>
     <translation key="file_dialog_title">Selecciona un archivo</translation>
     <translation key="select_button_text">Seleccionar</translation>
+    <translation key="supported_formats">Formatos compatibles</translation>
     
-    <!-- Music player functions -->
+    <!-- Funciones del reproductor de música -->
     <translation key="play_button_text">▶ Reproducir</translation>
     <translation key="key_press">Presión de tecla</translation>
     <translation key="enabled">Habilitado</translation>
     <translation key="disabled">Deshabilitado</translation>
     <translation key="duration">Duración de la presión de la tecla</translation>
     <translation key="key_recognition_error">Error en el reconocimiento de la tecla</translation>
+
+    <translation key="speed_control">Velocidad</translation>
+    <translation key="current_speed">velocidad actual</translation>
     
-    <!-- Play error messages -->
+    <!-- Mensajes de error al reproducir -->
     <translation key="play_error_message">Error al reproducir la música</translation>
     <translation key="missing_key_songNotes">Faltan datos de la canción (Clave: songNotes)</translation>
     
-    <!-- Window functions -->
+    <!-- Funciones de la ventana -->
     <translation key="sky_window_not_found">Ventana Sky no encontrada</translation>
     <translation key="window_focus_error">No se pudo enfocar la ventana</translation>
     
-    <!-- Other text options -->
+    <!-- Otras opciones de texto -->
     <translation key="preset">Preajuste</translation>
     <translation key="project_title">Proyecto Lyrica</translation>
 </translations>

@@ -23,6 +23,7 @@
     <translation key="select_valid_file">有効なファイルを選択してください！</translation>
     <translation key="file_dialog_title">ファイルを選択</translation>
     <translation key="select_button_text">選択</translation>
+    <translation key="supported_formats">サポートされている形式</translation>
     
     <!-- 音楽プレーヤー機能 -->
     <translation key="play_button_text">▶ 再生</translation>
@@ -31,6 +32,9 @@
     <translation key="disabled">無効</translation>
     <translation key="duration">キー入力の時間</translation>
     <translation key="key_recognition_error">キー認識エラー</translation>
+
+    <translation key="speed_control">速度</translation>
+    <translation key="current_speed">現在の速度</translation>
     
     <!-- 再生時のエラーメッセージ -->
     <translation key="play_error_message">音楽の再生エラー</translation>

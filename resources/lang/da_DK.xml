@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- Allgemeine Fehler und Erfolgsmeldungen -->
+    <!-- Generelle fejl og succesmeddelelser -->
     <translation key="error_loading_translations">Fejl ved indlæsning af oversættelser: {0}</translation>
     <translation key="lang_config_not_found">Fejl ved indlæsning af sprogkonfiguration</translation>
     <translation key="language_not_found">Sprog kunne ikke findes</translation>
@@ -11,7 +11,7 @@
     <translation key="language_saved">Sprog er gemt</translation>
     <translation key="missing_translations_file">Manglende oversættelsesfil for {0}</translation>
     
-    <!-- GUI: Fenster und Buttons -->
+    <!-- GUI: Vinduer og knapper -->
     <translation key="language_window_title">Vælg sprog</translation>
     <translation key="select_language">Vælg sprog:</translation>
     <translation key="save_button_text">Gem</translation>
@@ -23,24 +23,28 @@
     <translation key="select_valid_file">Vælg venligst en gyldig fil!</translation>
     <translation key="file_dialog_title">Vælg en fil</translation>
     <translation key="select_button_text">Vælg</translation>
+    <translation key="supported_formats">Understøttede formater</translation>
     
-    <!-- Musikplayer Funktionen -->
+    <!-- Musikafspiller funktioner -->
     <translation key="play_button_text">▶ Afspil</translation>
     <translation key="key_press">Tastetryk</translation>
     <translation key="enabled">Aktiveret</translation>
     <translation key="disabled">Deaktiveret</translation>
     <translation key="duration">Varighed af tastetryk</translation>
     <translation key="key_recognition_error">Fejl ved tastetrykgenkendelse</translation>
+
+    <translation key="speed_control">Hastighed</translation>
+    <translation key="current_speed">aktuel hastighed</translation>
     
-    <!-- Fehlermeldungen beim Abspielen -->
+    <!-- Fejlmeddelelser under afspilning -->
     <translation key="play_error_message">Fejl ved afspilning af musik</translation>
     <translation key="missing_key_songNotes">Sangdata mangler (Key: songNotes)</translation>
     
-    <!-- Fensterfunktionen -->
+    <!-- Vinduesfunktioner -->
     <translation key="sky_window_not_found">Sky-vindue ikke fundet</translation>
     <translation key="window_focus_error">Kan ikke sætte fokus på vinduet</translation>
     
-    <!-- Weitere Textoptionen -->
+    <!-- Yderligere tekstmuligheder -->
     <translation key="preset">Præindstilling</translation>
     <translation key="project_title">Projekt Lyrica</translation>
 </translations>

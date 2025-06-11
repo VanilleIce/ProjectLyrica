@@ -23,6 +23,7 @@
     <translation key="select_valid_file">Seleziona un file valido!</translation>
     <translation key="file_dialog_title">Seleziona un file</translation>
     <translation key="select_button_text">Seleziona</translation>
+    <translation key="supported_formats">Formati supportati</translation>
     
     <!-- Funzioni del lettore musicale -->
     <translation key="play_button_text">▶ Riproduci</translation>
@@ -31,6 +32,9 @@
     <translation key="disabled">Disabilitato</translation>
     <translation key="duration">Durata della pressione del tasto</translation>
     <translation key="key_recognition_error">Errore nel riconoscimento del tasto</translation>
+
+    <translation key="speed_control">Velocità</translation>
+    <translation key="current_speed">velocità corrente</translation>
     
     <!-- Messaggi di errore durante la riproduzione -->
     <translation key="play_error_message">Errore nella riproduzione della musica</translation>

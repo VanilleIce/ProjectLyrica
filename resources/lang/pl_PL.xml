@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- Allgemeine Fehler und Erfolgsmeldungen -->
+    <!-- Ogólne błędy i komunikaty o sukcesie -->
     <translation key="error_loading_translations">Błąd ładowania tłumaczeń: {0}</translation>
     <translation key="lang_config_not_found">Błąd: konfiguracja języka nie została znaleziona</translation>
     <translation key="language_not_found">Nie znaleziono języka</translation>
@@ -11,7 +11,7 @@
     <translation key="language_saved">Język zapisany pomyślnie</translation>
     <translation key="missing_translations_file">Brakujący plik tłumaczeń dla {0}</translation>
     
-    <!-- GUI: Fenster und Buttons -->
+    <!-- GUI: Okna i przyciski -->
     <translation key="language_window_title">Wybór języka</translation>
     <translation key="select_language">Wybierz język:</translation>
     <translation key="save_button_text">Zapisz</translation>
@@ -23,24 +23,28 @@
     <translation key="select_valid_file">Proszę wybrać prawidłowy plik!</translation>
     <translation key="file_dialog_title">Wybierz plik</translation>
     <translation key="select_button_text">Wybierz</translation>
+    <translation key="supported_formats">Obsługiwane formaty</translation>
     
-    <!-- Musikplayer Funktionen -->
+    <!-- Funkcje odtwarzacza muzyki -->
     <translation key="play_button_text">▶ Odtwórz</translation>
     <translation key="key_press">Naciśnij klawisz</translation>
     <translation key="enabled">Włączono</translation>
     <translation key="disabled">Wyłączono</translation>
     <translation key="duration">Czas naciśnięcia klawisza</translation>
     <translation key="key_recognition_error">Błąd rozpoznawania klawisza</translation>
+
+    <translation key="speed_control">Prędkość</translation>
+    <translation key="current_speed">aktualna prędkość</translation>
     
-    <!-- Fehlermeldungen beim Abspielen -->
+    <!-- Komunikaty o błędach podczas odtwarzania -->
     <translation key="play_error_message">Błąd podczas odtwarzania muzyki</translation>
     <translation key="missing_key_songNotes">Brakujące dane utworu (Klucz: songNotes)</translation>
     
-    <!-- Fensterfunktionen -->
+    <!-- Funkcje okna -->
     <translation key="sky_window_not_found">Nie znaleziono okna Sky</translation>
     <translation key="window_focus_error">Nie udało się ustawić okna na pierwszy plan</translation>
     
-    <!-- Weitere Textoptionen -->
+    <!-- Inne opcje tekstowe -->
     <translation key="preset">Ustawienia wstępne</translation>
     <translation key="project_title">Projekt Lyrica</translation>
 </translations>
