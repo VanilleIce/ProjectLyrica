@@ -1,0 +1,14 @@
+name: Merge Guard
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  check-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block non-admin merges
+        if: github.event.pull_request.merged == true && github.event.pull_request.merged_by.login != 'VanilleIce'
+        run: |
+          echo "Nur der Repository-Besitzer darf mergen!" >&2
+          exit 1
