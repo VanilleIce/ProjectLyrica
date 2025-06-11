@@ -378,7 +378,7 @@ class MusikApp:
 
     def setze_geschwindigkeit(self, geschwindigkeit):
         self.player.aktuelle_geschwindigkeit = geschwindigkeit
-        self.geschwindigkeit_label.configure(text=f"{LM.get_translation('geschwindigkeit')}: {geschwindigkeit}")
+        self.geschwindigkeit_label.configure(text=f"{LM.get_translation('current_speed')}: {geschwindigkeit}")
         
         if self.player.abspiel_thread and self.player.abspiel_thread.is_alive():
             self.player.stoppe_abspiel_thread()
