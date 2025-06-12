@@ -162,3 +162,4 @@ cython_debug/
 
 /.github/workflows
 code/.ProjectLyrica.py
+code/-ProjectLyrica.py
