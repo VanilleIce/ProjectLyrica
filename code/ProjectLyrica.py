@@ -100,7 +100,14 @@ class ConfigManager:
     DEFAULT_CONFIG = {
         "key_press_durations": [0.2, 0.248, 0.3, 0.5, 1.0],
         "speed_presets": [600, 800, 1000, 1200],
-        "selected_language": None
+        "selected_language": None,
+        "key_mapping": {
+            "Key0": "z", "Key1": "u", "Key2": "i", "Key3": "o",
+            "Key4": "p", "Key5": "h", "Key6": "j", "Key7": "k",
+            "Key8": "l", "Key9": "ö", "Key10": "n", "Key11": "m",
+            "Key12": ",", "Key13": ".", "Key14": "-"
+        },
+        "pause_key": "#"
     }
 
     @staticmethod
@@ -198,8 +205,19 @@ class MusikPlayer:
         self.stop_event = Event()
         self.abspiel_thread = None
         self.tastatur_steuerung = Controller()
-        self.tastenkarten = {f'{prefix}{key}'.lower(): value for prefix in ['Key', '1Key', '2Key', '3Key']
-                   for key, value in enumerate('zuiophjklönm,.-')}
+
+        config = ConfigManager.load_config()
+        self.tastenkarten = {}
+        for prefix in ['', '1', '2', '3']:
+            for key, value in config["key_mapping"].items():
+                self.tastenkarten[f"{prefix}{key}".lower()] = value
+
+        key_mapping = config.get("key_mapping")
+        if not isinstance(key_mapping, dict):
+            key_mapping = {
+                f"Key{i}": char for i, char in enumerate("zuiophjklönm,.-")
+            }
+            ConfigManager.save_config({"key_mapping": key_mapping})
 
         self.tastendruck_aktiviert = False
         self.tastendruck_dauer = 0.1
@@ -364,7 +382,10 @@ class MusikApp:
         self.dauer_anzeige.configure(text=f"{LM.get_translation('duration')} {self.player.tastendruck_dauer} s")
         
     def tastendruck_erkannt(self, key):
-        if getattr(key, 'char', None) == '#':
+        config = ConfigManager.load_config()
+        pause_key = config.get("pause_key", "#")  # Fallback auf "#", falls nicht gesetzt
+        
+        if getattr(key, 'char', None) == pause_key:
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
                 sky_fenster = self.player.finde_sky_fenster()
