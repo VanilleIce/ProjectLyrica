@@ -371,8 +371,6 @@ class MusicApp:
         self._create_gui_components()
         self._setup_gui_layout()
 
-        self.key_listener = None
-
     def _create_gui_components(self):
         self.root = ctk.CTk()
         self.root.title(LM.get_translation("project_title"))
@@ -475,10 +473,6 @@ class MusicApp:
             self.file_button.configure(text=Path(file_path).name)
 
     def play_selected(self):
-        if not self.key_listener:
-            self.key_listener = Listener(on_press=self.handle_keypress)
-            self.key_listener.start()
-
         if not self.selected_file:
             messagebox.showwarning(LM.get_translation("warning_title"), 
                                 LM.get_translation("choose_song_warning"))
@@ -547,9 +541,6 @@ class MusicApp:
         self.adjust_window_size()
 
     def shutdown(self):
-        if self.key_listener and self.key_listener.is_alive():
-            self.key_listener.stop()
-
         self.player.stop_playback()
         if self.key_listener.is_alive():
             self.key_listener.stop()
