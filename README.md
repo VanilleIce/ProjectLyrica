@@ -1,27 +1,110 @@
-# Project: Lyrica
+# 🎹 Project Lyrica
 
 [![CLA assistant](https://cla-assistant.io/readme/badge/VanilleIce/ProjectLyrica)](https://cla-assistant.io/VanilleIce/ProjectLyrica)
 
-## Contributing
-- This project is licensed under the AGPLv3.  
-- All contributors must sign the [CLA](https://cla-assistant.io/VanilleIce/ProjectLyrica) before submitting code.  
-- Unauthorized distribution or modification is prohibited.
-
-
-Welcome to a unique project that blends music, technology, and creativity. This tool is designed to unlock a hidden experience, brought to life in a distinctive environment.
-
-## What is Lyrica?
-The answer is as simple as it is mysterious: Lyrica is a tool created to build a bridge between humans and harmony. What that truly means can only be discovered through its use.
-
-## Features
-- **Interactive Control:** An intuitive interface that opens up new possibilities.
-- **Integration:** A deep connection to a specific platform.
-- **Automation:** Processes that work like magic.
-
-## Requirements
-- The right setup: Ensure everything is in place before launching Lyrica.
-- A sense of curiosity: Without a willingness to explore, Lyrica remains silent.
+**Automatischer Musik-Player für _Sky: Children of the Light_**  
+Spiele deine Lieblingssongs mit perfektem Timing stilvoll ab.
 
 ---
 
-Want to know more? The only way to uncover Lyrica's secrets is to experience it for yourself.
+## ✨ Was macht Project Lyrica?
+
+**Project Lyrica** verwandelt Songsheets im JSON-Format in präzise Tasteneingaben, um Musik automatisch in **Sky: Children of the Light** abzuspielen.  
+Einfach Song auswählen, auf „Play“ klicken – und genießen!
+
+---
+
+## 🔑 Hauptfunktionen
+
+- 🎼 **Plug & Play** – Lade beliebige Songdateien und spiele sie sofort ab  
+- 🎚️ **Präzise Steuerung**  
+  - Wiedergabegeschwindigkeit: 600–1200 BPM  
+  - Notenlänge einstellbar: 0.1–1.0 Sekunden  
+- ⏯️ **Intelligente Wiedergabe**  
+  - Pause/Fortsetzen während der Wiedergabe mit `#`  
+  - Automatischer Fokus auf das Spiel  
+- 🌐 **Mehrsprachigkeit** – Englisch, Deutsch & mehr (via XML)  
+- 🎛️ **Benutzerdefinierte Tastenzuweisung**  
+- 💾 **Presets** – Lieblingskonfigurationen speichern & laden  
+
+---
+
+## 🛠️ Installation
+
+**Voraussetzungen:**
+
+```bash
+pip install pygetwindow customtkinter pynput
+```
+
+**Projekt herunterladen:**
+
+```bash
+git clone https://github.com/VanilleIce/ProjectLyrica.git
+cd ProjectLyrica
+```
+
+**Anwendung starten:**
+
+```bash
+python _ProjectLyrica.py
+```
+
+> ✅ **Systemanforderungen:** Windows 10/11 • Python 3.10+ • Sky: Children of the Light
+
+---
+
+## 🎮 Anwendung
+
+1. Songdateien nach `/resources/Songs/` verschieben (`.json`, `.txt`, `.skysheet` werden unterstützt)  
+2. Anwendung starten  
+3. Song im Dateibrowser auswählen  
+4. Optional:  
+   - Notendauer aktivieren  
+   - Geschwindigkeit einstellen (1000 = Originaltempo)  
+5. Stelle sicher, dass _Sky_ läuft 
+6. Klicke auf **Play** und genieße das Konzert  
+7. Mit `#` jederzeit pausieren oder fortsetzen
+
+![Lyrica v2.0 Interface](https://via.placeholder.com/500x450?text=Lyrica+v2.0+Interface)
+
+---
+
+## 🚀 Neu in Version 2.0
+
+```diff
++ SMOOTH SPEED RAMPING - Natürlichere Temposprünge
++ DYNAMIC UI - Automatisch skalierende Benutzeroberfläche
++ THREAD-SAFE OPERATIONS - Stabilere Wiedergabe ohne Abstürze
++ IMPROVED TRANSLATIONS - Schnellere Sprachumschaltung
++ OPTIMIZED FOCUS - Zuverlässiger Spiel-Fokus
++ PRESET SYSTEM - Einstellungen speichern & laden
+```
+
+---
+
+## 🤝 Mitwirken
+
+Wir freuen uns über Beiträge! Bitte beachte:
+
+- Unterzeichne das CLA  
+- Beachte die Lizenz (AGPLv3)  
+- Melde Fehler via GitHub-Issues  
+- Reiche Pull Requests ein
+
+---
+
+## ⚠️ Fehlerbehebung
+
+- **Spiel wird nicht erkannt?**  
+  läuft Sky überhaupt?
+
+- **Tasten werden nicht gedrückt?**  
+  Prüfe die Tastenzuweisung in `settings.json`  
+
+- **Sprachprobleme?**  
+  Überprüfe die XML-Dateien im Ordner `/resources/lang/`  
+
+---
+
+> 🌈 _„Project Lyrica schlägt eine Brücke zwischen Komponisten und Spielern und macht Musik in Sky für alle zugänglich.“_
