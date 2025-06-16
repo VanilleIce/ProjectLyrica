@@ -68,7 +68,7 @@ python ProjectLyrica.py
 
 ---
 
-## Tastenbelegung anpassen
+## Customize key assignment
 
 1. open the file `settings.json` in a text editor
 2. search for the section `‘key_mapping’`.
