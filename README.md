@@ -2,109 +2,108 @@
 
 [![CLA assistant](https://cla-assistant.io/readme/badge/VanilleIce/ProjectLyrica)](https://cla-assistant.io/VanilleIce/ProjectLyrica)
 
-**Automatischer Musik-Player für _Sky: Children of the Light_**  
-Spiele deine Lieblingssongs mit perfektem Timing stilvoll ab.
+**Automatic Music Player for _Sky: Children of the Light_**  
+Stylishly play your favorite songs with perfect timing.
 
 ---
 
-## ✨ Was macht Project Lyrica?
+## ✨ What Does Project Lyrica Do?
 
-**Project Lyrica** verwandelt Songsheets im JSON-Format in präzise Tasteneingaben, um Musik automatisch in **Sky: Children of the Light** abzuspielen.  
-Einfach Song auswählen, auf „Play“ klicken – und genießen!
+**Project Lyrica** transforms JSON-format song sheets into precise keystrokes to automatically perform music in **Sky: Children of the Light**.  
+Simply select a song, click “Play” – and enjoy!
 
 ---
 
-## 🔑 Hauptfunktionen
+## 🔑 Key Features
 
-- 🎼 **Plug & Play** – Lade beliebige Songdateien und spiele sie sofort ab  
-- 🎚️ **Präzise Steuerung**  
-  - Wiedergabegeschwindigkeit: 600–1200 BPM  
-  - Notenlänge einstellbar: 0.1–1.0 Sekunden  
-- ⏯️ **Intelligente Wiedergabe**  
-  - Pause/Fortsetzen während der Wiedergabe mit `#`  
-  - Automatischer Fokus auf das Spiel  
-- 🌐 **Mehrsprachigkeit** – Englisch, Deutsch & mehr (via XML)  
-- 🎛️ **Benutzerdefinierte Tastenzuweisung**  
-- 💾 **Presets** – Lieblingskonfigurationen speichern & laden  
+- 🎼 **Plug & Play** – Load any compatible song and play instantly  
+- 🎚️ **Precision Controls**  
+  - Playback speed: 600–1200 BPM  
+  - Custom note duration: 0.1–1.0 seconds  
+- ⏯️ **Smart Playback**  
+  - Pause/resume mid-performance with `#`  
+  - Automatic focus on the game window  
+- 🌐 **Multi-language Support** – English, German & more via XML  
+- 🎛️ **Custom Key Bindings**  
+- 💾 **Presets** – Save and load favorite configurations  
 
 ---
 
 ## 🛠️ Installation
 
-**Voraussetzungen:**
+**Requirements:**
 
 ```bash
 pip install pygetwindow customtkinter pynput
 ```
 
-**Projekt herunterladen:**
+**Download Project:**
 
 ```bash
 git clone https://github.com/VanilleIce/ProjectLyrica.git
 cd ProjectLyrica
 ```
 
-**Anwendung starten:**
+**Launch Application:**
 
 ```bash
 python _ProjectLyrica.py
 ```
 
-> ✅ **Systemanforderungen:** Windows 10/11 • Python 3.10+ • Sky: Children of the Light
+> ✅ **System Requirements:** Windows 10/11 • Python 3.10+ • Sky: Children of the Light
 
 ---
 
-## 🎮 Anwendung
+## 🎮 How to Use
 
-1. Songdateien nach `/resources/Songs/` verschieben (`.json`, `.txt`, `.skysheet` werden unterstützt)  
-2. Anwendung starten  
-3. Song im Dateibrowser auswählen  
+1. Move your song files to `/resources/Songs/` (supports `.json`, `.txt`, `.skysheet`)  
+2. Launch the app  
+3. Select a song using the file browser  
 4. Optional:  
-   - Notendauer aktivieren  
-   - Geschwindigkeit einstellen (1000 = Originaltempo)  
-5. Stelle sicher, dass _Sky_ läuft 
-6. Klicke auf **Play** und genieße das Konzert  
-7. Mit `#` jederzeit pausieren oder fortsetzen
+   - Enable note duration  
+   - Set playback speed (1000 = original tempo)  
+5. Make sure _Sky_ is running  
+6. Click **Play** and enjoy the performance  
+7. Press `#` anytime to pause or resume
 
-![Lyrica v2.0 Interface](https://via.placeholder.com/500x450?text=Lyrica+v2.0+Interface)
 
 ---
 
-## 🚀 Neu in Version 2.0
+## 🚀 What’s New in Version 2.0
 
 ```diff
-+ SMOOTH SPEED RAMPING - Natürlichere Temposprünge
-+ DYNAMIC UI - Automatisch skalierende Benutzeroberfläche
-+ THREAD-SAFE OPERATIONS - Stabilere Wiedergabe ohne Abstürze
-+ IMPROVED TRANSLATIONS - Schnellere Sprachumschaltung
-+ OPTIMIZED FOCUS - Zuverlässiger Spiel-Fokus
-+ PRESET SYSTEM - Einstellungen speichern & laden
++ SMOOTH SPEED RAMPING - More natural tempo changes
++ DYNAMIC UI - Auto-scaling interface
++ THREAD-SAFE OPERATIONS - Crash-resistant playback
++ IMPROVED TRANSLATIONS - Faster language switching
++ OPTIMIZED FOCUS - Reliable window targeting
++ PRESET SYSTEM - Save/load your favorite settings
 ```
 
 ---
 
-## 🤝 Mitwirken
+## 🤝 Contributing
 
-Wir freuen uns über Beiträge! Bitte beachte:
+We welcome your contributions! Please:
 
-- Unterzeichne das CLA  
-- Beachte die Lizenz (AGPLv3)  
-- Melde Fehler via GitHub-Issues  
-- Reiche Pull Requests ein
-
----
-
-## ⚠️ Fehlerbehebung
-
-- **Spiel wird nicht erkannt?**  
-  läuft Sky überhaupt?
-
-- **Tasten werden nicht gedrückt?**  
-  Prüfe die Tastenzuweisung in `settings.json`  
-
-- **Sprachprobleme?**  
-  Überprüfe die XML-Dateien im Ordner `/resources/lang/`  
+- Sign the CLA  
+- Follow the AGPLv3 license terms  
+- Report bugs via GitHub Issues  
+- Submit pull requests to the dev branch
 
 ---
 
-> 🌈 _„Project Lyrica schlägt eine Brücke zwischen Komponisten und Spielern und macht Musik in Sky für alle zugänglich.“_
+## ⚠️ Troubleshooting
+
+- **Sky window not detected?**  
+  Is the game actually running?
+
+- **Keys not pressing?**  
+  Check key bindings in `settings.json`  
+
+- **Translation issues?**  
+  Inspect the XML files in `/resources/lang/`  
+
+---
+
+> 🌈 _“Project Lyrica bridges the gap between composers and performers, making music in Sky accessible to everyone.”_
