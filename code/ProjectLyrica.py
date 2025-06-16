@@ -9,12 +9,22 @@ import winsound
 import pygetwindow as gw
 import customtkinter as ctk
 from pathlib import Path
-from threading import Event, Thread, Timer
+from threading import Event, Thread, Timer, Lock
 from pynput.keyboard import Controller, Listener
 from tkinter import filedialog, messagebox
 import xml.etree.ElementTree as ET
 
 SETTINGS_FILE = 'settings.json'
+DEFAULT_WINDOW_SIZE = (500, 250)
+EXPANDED_SIZE = (500, 350)
+FULL_SIZE = (500, 450)
+
+# Centralized timing configuration
+TIMING_CONFIG = {
+    "initial_delay": 1.2,
+    "pause_resume_delay": 0.6,
+    "ramp_steps": 20
+}
 
 # -------------------------------
 # Language Manager Class
@@ -22,79 +32,58 @@ SETTINGS_FILE = 'settings.json'
 
 class LM:
     _translations_cache = {}
+    _selected_language = None
+    _available_languages = []
 
-    @staticmethod
-    def load_selected_language():
-        config = ConfigManager.load_config()
-        return config.get("selected_language")
-
-    @staticmethod
-    def save_selected_language(language_code):
-        ConfigManager.save_config({"selected_language": language_code})
+    @classmethod
+    def initialize(cls):
+        cls._selected_language = ConfigManager.load_config().get("selected_language")
+        cls._available_languages = cls.load_available_languages()
 
     @staticmethod
     def load_available_languages():
         lang_file = os.path.join('resources', 'config', 'lang.xml')
         try:
             tree = ET.parse(lang_file)
-            root = tree.getroot()
-
-            languages = []
-            for language in root.findall('language'):
-                code = language.get('code')
-                name = language.text
-                if code and name:
-                    languages.append((code, name))
-            return languages
-        except FileNotFoundError:
-            messagebox.showerror(LM.get_translation('error_title'), LM.get_translation('lang_config_not_found'))
-            return []
+            return [(lang.get('code'), lang.text) for lang in tree.findall('language') 
+                    if lang.get('code') and lang.text]
         except Exception as e:
-            messagebox.showerror(LM.get_translation('error_title'), LM.get_translation('error_loading_languages').format(e))
+            messagebox.showerror("Error", f"Error loading languages: {e}")
             return []
 
-    @staticmethod
-    def load_translations(language_code):
-        if language_code in LM._translations_cache:
-            return LM._translations_cache[language_code]
+    @classmethod
+    def load_translations(cls, language_code):
+        if language_code in cls._translations_cache:
+            return cls._translations_cache[language_code]
 
         lang_file = os.path.join('resources', 'lang', f"{language_code}.xml")
         try:
             tree = ET.parse(lang_file)
-            root = tree.getroot()
-
-            translations = {}
-            for translation in root.findall('translation'):
-                key = translation.get('key')
-                value = translation.text
-                if key and value:
-                    translations[key] = value
-
+            translations = {t.get('key'): t.text for t in tree.findall('translation') 
+                          if t.get('key') and t.text}
+            cls._translations_cache[language_code] = translations
+            return translations
         except FileNotFoundError:
             if language_code != 'en_US':
-
-                return LM.load_translations('en_US')
-            else:
-                messagebox.showerror(
-                    LM.get_translation('error_title'), 
-                    LM.get_translation('missing_translations_file').format(language_code)
-                )
-                return {}
+                return cls.load_translations('en_US')
+            return {}
         except Exception as e:
-            messagebox.showerror(
-                LM.get_translation('error_title'), 
-                LM.get_translation('error_loading_translations').format(e)
-            )
+            messagebox.showerror("Error", f"Error loading translations: {e}")
             return {}
 
-        LM._translations_cache[language_code] = translations
-        return translations
-
-    @staticmethod
-    def get_translation(key):
-        selected_language = LM.load_selected_language()
-        translations = LM.load_translations(selected_language)
+    @classmethod
+    def get_translation(cls, key):
+        translations = cls.load_translations(cls._selected_language or 'en_US')
         return translations.get(key, f"[{key}]")
+
+    @classmethod
+    def save_language(cls, language_code):
+        cls._selected_language = language_code
+        ConfigManager.save_config({"selected_language": language_code})
+
+# -------------------------------
+# Config Manager
+# -------------------------------
 
 class ConfigManager:
     DEFAULT_CONFIG = {
@@ -110,467 +99,388 @@ class ConfigManager:
         "pause_key": "#"
     }
 
-    @staticmethod
-    def load_config():
+    @classmethod
+    def load_config(cls):
         try:
             with open(SETTINGS_FILE, 'r', encoding="utf-8") as file:
-                config = json.load(file)
-                return {**ConfigManager.DEFAULT_CONFIG, **config}
+                return {**cls.DEFAULT_CONFIG, **json.load(file)}
         except (FileNotFoundError, json.JSONDecodeError):
-            return ConfigManager.DEFAULT_CONFIG
+            return cls.DEFAULT_CONFIG
 
-    @staticmethod
-    def save_config(config_data):
-        current_config = ConfigManager.load_config()
-        updated_config = {**current_config, **config_data}
+    @classmethod
+    def save_config(cls, config_data):
         with open(SETTINGS_FILE, 'w', encoding="utf-8") as file:
-            json.dump(updated_config, file, indent=3, separators=(', ', ': '), ensure_ascii=False)
+            json.dump({**cls.load_config(), **config_data}, 
+                     file, indent=3, ensure_ascii=False)
 
 # -------------------------------
-# GUI: Language Selection Window
+# GUI: Language Selection
 # -------------------------------
 
-language_window_open = False
+class LanguageWindow:
+    _open = False
 
-
-def language_selection_window():
-    global language_window_open
-    if language_window_open:
-        return
-
-    language_window_open = True
-
-    selected_language = LM.load_selected_language()
-    translations = LM.load_translations(selected_language)
-
-    root = ctk.CTk()
-    root.title(translations.get('language_window_title'))
-    root.geometry("400x200")
-    root.iconbitmap("resources/icons/icon.ico")
-
-    languages = LM.load_available_languages()
-    language_dict = {name: code for code, name in languages}
-    language_names = list(language_dict.keys())
-
-    default_language_name = next((name for name, code in language_dict.items() if code == selected_language), next(iter(language_dict.keys()), "English"))
-
-    ctk.CTkLabel(root, text=translations.get('select_language'), font=("Arial", 14)).pack(pady=10)
-    
-    language_combobox = ctk.CTkComboBox(root, values=language_names, state="readonly", font=("Arial", 12))
-    language_combobox.set(default_language_name)
-    language_combobox.pack(pady=10)
-
-    def on_save():
-        global language_window_open
-
-        selected_name = language_combobox.get()
-        selected_code = language_dict.get(selected_name)
-
-        if not selected_code:
-            messagebox.showerror(
-                translations.get('error_title'), 
-                LM.get_translation('language_not_found')
-            )
+    @classmethod
+    def show(cls):
+        if cls._open:
             return
-
-        LM.save_selected_language(selected_code)
-        messagebox.showinfo(
-            translations.get('info_title'), 
-            LM.get_translation('language_saved')
-        )
-        root.quit()
-        root.destroy()
-        language_window_open = False
-
-    ctk.CTkButton(root, text=translations.get('save_button_text'), command=on_save).pack(pady=20)
-
-    def close_language_window():
-        global language_window_open
+            
+        cls._open = True
+        root = ctk.CTk()
+        root.title(LM.get_translation('language_window_title'))
+        root.geometry("400x200")
+        root.iconbitmap("resources/icons/icon.ico")
         
-        language_window_open = False
-        root.quit()
-        root.destroy()
-
-    root.protocol("WM_DELETE_WINDOW", close_language_window)
-
-    root.mainloop()
+        languages = LM._available_languages
+        language_dict = {name: code for code, name in languages}
+        default_name = next((name for code, name in languages if code == LM._selected_language), languages[0][1] if languages else "English")
+        
+        label = ctk.CTkLabel(root, text=LM.get_translation('select_language'), font=("Arial", 14))
+        label.pack(pady=10)
+        
+        combo = ctk.CTkComboBox(root, values=list(language_dict.keys()), state="readonly")
+        combo.set(default_name)
+        combo.pack(pady=10)
+        
+        def save():
+            selected_code = language_dict.get(combo.get())
+            if selected_code:
+                LM.save_language(selected_code)
+                messagebox.showinfo("Info", LM.get_translation('language_saved'))
+            root.destroy()
+            
+        button = ctk.CTkButton(root, text=LM.get_translation('save_button_text'), command=save)
+        button.pack(pady=20)
+        
+        root.protocol("WM_DELETE_WINDOW", lambda: [root.destroy(), setattr(cls, '_open', False)])
+        root.mainloop()
+        cls._open = False
 
 # -------------------------------
-# Music Player Functions
+# Music Player
 # -------------------------------
 
-class MusikPlayer:
+class MusicPlayer:
     def __init__(self):
         self.pause_flag = Event()
         self.stop_event = Event()
-        self.abspiel_thread = None
-        self.tastatur_steuerung = Controller()
-
+        self.play_thread = None
+        self.keyboard = Controller()
+        
         config = ConfigManager.load_config()
-        self.tastenkarten = {}
+        self.key_map = self._create_key_map(config["key_mapping"])
+        self.press_duration = 0.1
+        self.speed = 1000
+        self.keypress_enabled = False
+        self.speed_enabled = False
+        
+        self.initial_delay = TIMING_CONFIG["initial_delay"]
+        self.pause_resume_delay = TIMING_CONFIG["pause_resume_delay"]
+        self.ramp_steps = TIMING_CONFIG["ramp_steps"]
+        
+        self.speed_lock = Lock()
+        self.current_speed = 1000
+        self.ramp_counter = 0
+        self.is_ramping = False
+
+    def _create_key_map(self, mapping):
+        key_map = {}
         for prefix in ['', '1', '2', '3']:
-            for key, value in config["key_mapping"].items():
-                self.tastenkarten[f"{prefix}{key}".lower()] = value
+            for key, value in mapping.items():
+                key_map[f"{prefix}{key}".lower()] = value
+        return key_map
 
-        key_mapping = config.get("key_mapping")
-        if not isinstance(key_mapping, dict):
-            key_mapping = {
-                f"Key{i}": char for i, char in enumerate("zuiophjklönm,.-")
-            }
-            ConfigManager.save_config({"key_mapping": key_mapping})
+    def find_sky_window(self):
+        return next((w for w in gw.getWindowsWithTitle("Sky") if "Sky" in w.title), None)
 
-        self.tastendruck_aktiviert = False
-        self.tastendruck_dauer = 0.1
+    def focus_window(self, window):
+        if window:
+            try:
+                if window.isMinimized:
+                    window.restore()
+                window.activate()
+                return True
+            except Exception:
+                pass
+        return False
 
-        self.geschwindigkeit_aktiviert = False
-        self.aktuelle_geschwindigkeit = 1000
+    def parse_song(self, path):
+        path = Path(path)
+        if not path.exists():
+            raise FileNotFoundError(LM.get_translation('file_not_found'))
+        
+        with path.open('r', encoding='utf-8') as f:
+            data = json.load(f)
+            return data[0] if isinstance(data, list) else data
 
-    def finde_sky_fenster(self):
-        fenster_liste = gw.getWindowsWithTitle("Sky")
-        return fenster_liste[0] if fenster_liste else None
+    def play_note(self, note, index, notes, current_speed):
+        key = self.key_map.get(note['key'].lower())
+        if key:
+            self.keyboard.press(key)
+            Timer(self.press_duration, self.keyboard.release, [key]).start()
+        
+        if index < len(notes) - 1:
+            next_time = notes[index + 1]['time']
+            wait_time = (next_time - note['time']) / 1000 * (1000 / current_speed)
+            time.sleep(wait_time)
 
-    def fenster_fokus(self, sky_fenster):
-        if not sky_fenster:
-            messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("sky_window_not_found"))
-            return false
-        try:    
-            if sky_fenster.isMinimized:
-                sky_fenster.restore()
-            sky_fenster.activate()
-            return True
-        except Exception as e:
-            messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('window_focus_error')}: {e}")
-            return False
-
-    def musikdatei_parsen(self, dateipfad):
-        dateipfad = Path(dateipfad)
-        if not dateipfad.exists():
-            raise FileNotFoundError(f"{LM.get_translation('file_not_found')}: {dateipfad}")
-
-        try:
-            with dateipfad.open('r') as datei:
-                inhalt = datei.read()
-                if not inhalt.strip():
-                    raise ValueError(f"{LM.get_translation('file_empty_error')}: {dateipfad}")
-
-                daten = json.loads(inhalt)
-
-                if isinstance(daten, list) and daten:
-                    daten = daten[0]
-
-                if "songNotes" in daten:
-                    return {"songNotes": daten["songNotes"]}
-                else:
-                    raise ValueError(f"{LM.get_translation('missing_key_songNotes')}: {dateipfad}")
-
-        except (json.JSONDecodeError, UnicodeDecodeError) as e:
-            raise ValueError(f"{LM.get_translation('file_encoding_error')}: {dateipfad}, {e}")
-
-    def note_abspielen(self, note, i, song_notes, tastendruck_dauer):
-        note_taste = note['key'].lower()
-        note_zeit = note['time']
-
-        if note_taste in self.tastenkarten:
-            self.tastatur_steuerung.press(self.tastenkarten[note_taste])
-            Timer(self.tastendruck_dauer, self.tastatur_steuerung.release, [self.tastenkarten[note_taste]]).start()
-
-        if i < len(song_notes) - 1:
-            nächste_note_zeit = song_notes[i + 1]['time']
-            geschwindigkeits_faktor = 1000 / self.aktuelle_geschwindigkeit
-            warte_zeit = (nächste_note_zeit - note_zeit) / 1000 * geschwindigkeits_faktor
-            time.sleep(warte_zeit)
-
-    def musik_abspielen(self, song_daten, stop_event, tastendruck_dauer):
-        if isinstance(song_daten, list) and song_daten:
-            song_daten = song_daten[0]
-
-        if "songNotes" not in song_daten:
-            raise ValueError(LM.get_translation("missing_key_songNotes"))
-
-        for i, note in enumerate(song_daten["songNotes"]):
-            self.warten_pause()
-            if stop_event.is_set():
+    def play_song(self, song_data):
+        notes = song_data.get("songNotes", [])
+        
+        self.is_ramping = True
+        self.ramp_counter = 0
+        
+        for i, note in enumerate(notes):
+            if self.stop_event.is_set():
                 break
-
-            self.note_abspielen(note, i, song_daten["songNotes"], tastendruck_dauer)
-
+                
+            if self.pause_flag.is_set():
+                self.is_ramping = True
+                self.ramp_counter = 0
+                while self.pause_flag.is_set():
+                    time.sleep(0.1)
+                    if self.stop_event.is_set():
+                        break
+                
+                if not self.stop_event.is_set():
+                    time.sleep(self.pause_resume_delay)
+            
+            with self.speed_lock:
+                target_speed = self.current_speed
+                
+            # Calculate current speed (ramp up at start and after pause)
+            if self.is_ramping and self.ramp_counter < self.ramp_steps:
+                # Smooth ramp: start at 50% and increase to 100%
+                speed_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps)
+                current_speed = max(500, target_speed * speed_factor)
+                self.ramp_counter += 1
+                if self.ramp_counter >= self.ramp_steps:
+                    self.is_ramping = False
+            else:
+                current_speed = target_speed
+                
+            self.play_note(note, i, notes, current_speed)
+            
         winsound.Beep(1000, 500)
 
-    def warten_pause(self):
-        while self.pause_flag.is_set():
-            time.sleep(0.1)
-
-    def stoppe_abspiel_thread(self):
+    def stop_playback(self):
         self.stop_event.set()
         self.pause_flag.clear()
-        if self.abspiel_thread and self.abspiel_thread.is_alive():
-            self.abspiel_thread.join(timeout=1.0)
+        if self.play_thread and self.play_thread.is_alive():
+            self.play_thread.join(timeout=1.0)
         self.stop_event.clear()
+        self.is_ramping = False
+
+    def set_speed(self, speed):
+        with self.speed_lock:
+            self.current_speed = speed
 
 # -------------------------------
-# Main Application (GUI)
+# Main Application
 # -------------------------------
 
-class MusikApp:
+class MusicApp:
     def __init__(self):
-        self.player = MusikPlayer()
-        self.dateipfad_ausgewählt = None
+        LM.initialize()
+        if not LM._selected_language:
+            LanguageWindow.show()
+        
+        self.player = MusicPlayer()
+        self.selected_file = None
         self.root = None
-        self.listener = Listener(on_press=self.tastendruck_erkannt)
-        self.listener.start()
-
-        if LM.load_selected_language() is None:
-            language_selection_window()
-
+        self.key_listener = Listener(on_press=self.handle_keypress)
+        self.key_listener.start()
+        
         config = ConfigManager.load_config()
-        self.presets = config["key_press_durations"]
-        self.geschwindigkeits_presets = config["speed_presets"]
+        self.duration_presets = config["key_press_durations"]
+        self.speed_presets = config["speed_presets"]
+        
+        self._create_gui_components()
+        self._setup_gui_layout()
 
-    def beenden(self):
-        self.player.stoppe_abspiel_thread()
-        if self.listener.is_alive():
-            self.listener.stop()
-        if hasattr(self, 'player'):
-            del self.player
-        if hasattr(self, 'listener'):
-            del self.listener
-        self.root.quit()
-        self.root.destroy()
+    def _create_gui_components(self):
+        self.root = ctk.CTk()
+        self.root.title(LM.get_translation("project_title"))
+        self.root.geometry(f"{DEFAULT_WINDOW_SIZE[0]}x{DEFAULT_WINDOW_SIZE[1]}")
+        self.root.iconbitmap("resources/icons/icon.ico")
+        self.root.protocol('WM_DELETE_WINDOW', self.shutdown)
+        
+        self.title_label = ctk.CTkLabel(self.root, text=LM.get_translation("project_title"), 
+                                      font=("Arial", 18, "bold"))
+        
+        self.file_button = ctk.CTkButton( self.root, text=LM.get_translation("file_select_title"), command=self.select_file, font=("Arial", 14), fg_color="grey", width=300, height=40 )
+        
+        keypress_text = f"{LM.get_translation('key_press')}: " + \
+                       (LM.get_translation("enabled") if self.player.keypress_enabled else LM.get_translation("disabled"))
+        self.keypress_toggle = ctk.CTkButton(self.root, text=keypress_text, command=self.toggle_keypress, width=200, height=30)
+        
+        self.duration_frame = ctk.CTkFrame(self.root)
+        
+        self.duration_slider = ctk.CTkSlider( self.duration_frame, from_=0.1, to=1.0, number_of_steps=90, command=self.set_press_duration, width=100)
+        self.duration_slider.set(0.1)
+        
+        self.duration_label = ctk.CTkLabel(self.duration_frame, text=f"{LM.get_translation('duration')} {self.player.press_duration} s")
+        
+        self.preset_frame = ctk.CTkFrame(self.duration_frame)
 
-    def datei_dialog_öffnen(self):
-        songs_ordner = Path.cwd() / "resources/Songs"
-        dateipfad = filedialog.askopenfilename(
-            initialdir=songs_ordner if songs_ordner.exists() else Path.cwd(),
-            title=LM.get_translation("file_select_title"),
+        self.preset_buttons = []
+        for preset in self.duration_presets:
+            btn = ctk.CTkButton(
+                self.preset_frame, 
+                text=f"{preset} s", 
+                command=lambda p=preset: [self.apply_preset(p), self.root.focus()],
+                width=50
+            )
+            btn.pack(side="left", padx=2)
+            self.preset_buttons.append(btn)
+        
+        speed_text = f"{LM.get_translation('speed_control')}: " + \
+                   (LM.get_translation("enabled") if self.player.speed_enabled else LM.get_translation("disabled"))
+        self.speed_toggle = ctk.CTkButton(self.root, text=speed_text, command=self.toggle_speed, width=200, height=30)
+        
+        self.speed_frame = ctk.CTkFrame(self.root)
+        self.speed_preset_frame = ctk.CTkFrame(self.speed_frame)
+        
+        self.speed_buttons = []
+        for speed in self.speed_presets:
+            btn = ctk.CTkButton(
+                self.speed_preset_frame, 
+                text=str(speed), 
+                command=lambda s=speed: [self.set_speed(s), self.root.focus()],
+                width=50
+            )
+            btn.pack(side="left", padx=2)
+            self.speed_buttons.append(btn)
+        
+        self.speed_label = ctk.CTkLabel(self.speed_frame, text=f"{LM.get_translation('current_speed')}: {self.player.speed}")
+        
+        self.play_button = ctk.CTkButton(self.root, text=LM.get_translation("play_button_text"), command=self.play_selected, font=("Arial", 14), width=200, height=40)
+
+    def _setup_gui_layout(self):
+        self.title_label.pack(pady=10)
+        self.file_button.pack(pady=10)
+        self.keypress_toggle.pack(pady=5)
+        self.speed_toggle.pack(pady=5)
+        self.play_button.pack(pady=10)
+        
+        if self.player.keypress_enabled:
+            self._pack_duration_controls()
+        if self.player.speed_enabled:
+            self._pack_speed_controls()
+        
+        self.adjust_window_size()
+
+    def _pack_duration_controls(self):
+        self.duration_frame.pack(pady=5, before=self.speed_toggle)
+        self.duration_slider.pack(pady=5)
+        self.duration_label.pack()
+        self.preset_frame.pack(pady=5)
+
+    def _pack_speed_controls(self):
+        self.speed_frame.pack(pady=5, before=self.play_button)
+        self.speed_preset_frame.pack(pady=5)
+        self.speed_label.pack(pady=5)
+
+    def adjust_window_size(self):
+        if self.player.keypress_enabled and self.player.speed_enabled:
+            self.root.geometry(f"{FULL_SIZE[0]}x{FULL_SIZE[1]}")
+        elif self.player.keypress_enabled or self.player.speed_enabled:
+            self.root.geometry(f"{EXPANDED_SIZE[0]}x{EXPANDED_SIZE[1]}")
+        else:
+            self.root.geometry(f"{DEFAULT_WINDOW_SIZE[0]}x{DEFAULT_WINDOW_SIZE[1]}")
+
+    def select_file(self):
+        songs_dir = Path.cwd() / "resources/Songs"
+        file_path = filedialog.askopenfilename(
+            initialdir=songs_dir if songs_dir.exists() else Path.cwd(),
             filetypes=[(LM.get_translation("supported_formats"), "*.json *.txt *.skysheet")]
         )
-        if dateipfad:
-            self.dateipfad_ausgewählt = dateipfad
-            self.datei_label.configure(text=Path(dateipfad).name)
+        if file_path:
+            self.selected_file = file_path
+            self.file_button.configure(text=Path(file_path).name)
 
-    def ausgewähltes_lied_abspielen(self):
-        if not self.dateipfad_ausgewählt:
-            messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("choose_song_warning"))
+    def play_selected(self):
+        if not self.selected_file:
+            messagebox.showwarning(LM.get_translation("warning_title"), 
+                                LM.get_translation("choose_song_warning"))
             return
-
-        self.player.stoppe_abspiel_thread()
-
-        if not self.player.tastendruck_aktiviert:
-            self.dauer_slider.set(0.1)
-
-        try:
-            if not Path(self.dateipfad_ausgewählt).exists():
-                raise FileNotFoundError(LM.get_translation("file_not_found"))
-                
-            song_daten = self.player.musikdatei_parsen(self.dateipfad_ausgewählt)
-
-            sky_fenster = self.player.finde_sky_fenster()
-            self.player.fenster_fokus(sky_fenster)
             
-            time.sleep(2) # Wartezeit vor dem Abspielen
-
-            if not self.player.abspiel_thread or not self.player.abspiel_thread.is_alive():
-                self.player.abspiel_thread = Thread(target=self.player.musik_abspielen, 
-                                                args=(song_daten, self.player.stop_event, self.player.tastendruck_dauer), 
-                                                daemon=True)
-                self.player.abspiel_thread.start()
+        self.player.stop_playback()
+        try:
+            song_data = self.player.parse_song(self.selected_file)
+            sky_window = self.player.find_sky_window()
+            self.player.focus_window(sky_window)
+            time.sleep(self.player.initial_delay)
+            
+            self.player.play_thread = Thread(target=self.player.play_song, 
+                                          args=(song_data,), daemon=True)
+            self.player.play_thread.start()
         except Exception as e:
-            messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('play_error_message')}: {e}")
+            messagebox.showerror(LM.get_translation("error_title"), 
+                              f"{LM.get_translation('play_error_message')}: {e}")
 
-    def tastendruck_dauer_setzen(self, wert):
-        self.player.tastendruck_dauer = round(float(wert), 3)
-        self.dauer_anzeige.configure(text=f"{LM.get_translation('duration')} {self.player.tastendruck_dauer} s")
-        
-    def tastendruck_erkannt(self, key):
-        config = ConfigManager.load_config()
-        pause_key = config.get("pause_key", "#")  # Fallback auf "#", falls nicht gesetzt
-        
-        if getattr(key, 'char', None) == pause_key:
+    def set_press_duration(self, value):
+        self.player.press_duration = round(float(value), 3)
+        self.duration_label.configure(text=f"{LM.get_translation('duration')} {self.player.press_duration} s")
+
+    def handle_keypress(self, key):
+        if getattr(key, 'char', None) == ConfigManager.load_config().get("pause_key", "#"):
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
-                sky_fenster = self.player.finde_sky_fenster()
-                if sky_fenster:
-                    self.player.fenster_fokus(sky_fenster)
-                    time.sleep(1.2)
+                if sky_window := self.player.find_sky_window():
+                    self.player.focus_window(sky_window)
             else:
                 self.player.pause_flag.set()
 
-    def setze_geschwindigkeit(self, geschwindigkeit):
-        self.player.aktuelle_geschwindigkeit = geschwindigkeit
-        self.geschwindigkeit_label.configure(text=f"{LM.get_translation('current_speed')}: {geschwindigkeit}")
-        
-        if self.player.abspiel_thread and self.player.abspiel_thread.is_alive() and not self.player.pause_flag.is_set():
-            self.player.stoppe_abspiel_thread()
-            self.ausgewähltes_lied_abspielen()
+    def set_speed(self, speed):
+        self.player.set_speed(speed)
+        self.speed_label.configure(text=f"{LM.get_translation('current_speed')}: {speed}")
 
-    def toggle_tastendruck(self):
-        self.player.tastendruck_aktiviert = not self.player.tastendruck_aktiviert
-        status = LM.get_translation("enabled" if self.player.tastendruck_aktiviert else "disabled")
-        self.tastendruck_button.configure(text=f"{LM.get_translation('key_press')}: {status}")
-        
-        if not self.player.tastendruck_aktiviert:
-            self.player.tastendruck_dauer = 0.1
-            self.dauer_slider.set(0.1)
-            self.dauer_anzeige.configure(text=f"{LM.get_translation('duration')} 0.1 s")
-        
-        self.tastendruck_controls_frame.pack(pady=5, before=self.geschwindigkeit_button) \
-            if self.player.tastendruck_aktiviert else self.tastendruck_controls_frame.pack_forget()
-        
-        self.anpassen_fenstergroesse()
+    def apply_preset(self, duration):
+        self.player.press_duration = duration
+        self.duration_slider.set(duration)
+        self.duration_label.configure(text=f"{LM.get_translation('duration')} {duration} s")
 
-    def preset_button_click(self, dauer):
-        self.player.tastendruck_dauer = dauer
-        self.dauer_slider.set(dauer)
-        self.dauer_anzeige.configure(text=f"{LM.get_translation('duration')} {dauer} s")
-
-    def toggle_geschwindigkeit(self):
-        self.player.geschwindigkeit_aktiviert = not self.player.geschwindigkeit_aktiviert
+    def toggle_keypress(self):
+        self.player.keypress_enabled = not self.player.keypress_enabled
+        status = LM.get_translation("enabled" if self.player.keypress_enabled else "disabled")
+        self.keypress_toggle.configure(text=f"{LM.get_translation('key_press')}: {status}")
         
-        if not self.player.geschwindigkeit_aktiviert:
-            self.player.aktuelle_geschwindigkeit = 1000
-            self.geschwindigkeit_label.configure(text=f"{LM.get_translation('current_speed')}: 1000")
-        
-        status = LM.get_translation("enabled" if self.player.geschwindigkeit_aktiviert else "disabled")
-        self.geschwindigkeit_button.configure(text=f"{LM.get_translation('speed_control')}: {status}")
-        
-        if self.player.geschwindigkeit_aktiviert:
-            self.geschwindigkeit_controls_frame.pack(pady=5, before=self.play_button)
+        if self.player.keypress_enabled:
+            self._pack_duration_controls()
         else:
-            self.geschwindigkeit_controls_frame.pack_forget()
-        
-        self.anpassen_fenstergroesse()
+            self.duration_frame.pack_forget()
+            self.player.press_duration = 0.1
+            
+        self.adjust_window_size()
 
-    def anpassen_fenstergroesse(self):
-        if self.player.tastendruck_aktiviert and self.player.geschwindigkeit_aktiviert:
-            self.root.geometry("500x450")
-        elif self.player.tastendruck_aktiviert:
-            self.root.geometry("500x350")
-        elif self.player.geschwindigkeit_aktiviert:
-            self.root.geometry("500x350")
+    def toggle_speed(self):
+        self.player.speed_enabled = not self.player.speed_enabled
+        status = LM.get_translation("enabled" if self.player.speed_enabled else "disabled")
+        self.speed_toggle.configure(text=f"{LM.get_translation('speed_control')}: {status}")
+        
+        if self.player.speed_enabled:
+            self._pack_speed_controls()
         else:
-            self.root.geometry("500x250")
+            self.speed_frame.pack_forget()
+            self.player.speed = 1000
+            
+        self.adjust_window_size()
 
-# -------------------------------
-# Frontend GUI
-# -------------------------------
+    def shutdown(self):
+        self.player.stop_playback()
+        if self.key_listener.is_alive():
+            self.key_listener.stop()
+        self.root.quit()
+        self.root.destroy()
 
-    def gui_starten(self):
-        ctk.set_appearance_mode("dark")
-        self.root = ctk.CTk()
-        self.root.title(LM.get_translation("project_title"))
-        self.root.geometry("500x250")
-        self.root.iconbitmap("resources/icons/icon.ico")
-
-        titel_label = ctk.CTkLabel(self.root, text=LM.get_translation("project_title"), 
-                                font=("Arial", 18, "bold"))
-        titel_label.pack(pady=10)
-
-        self.datei_label = ctk.CTkButton(
-            self.root, 
-            text=LM.get_translation("file_select_title"),
-            command=self.datei_dialog_öffnen,
-            font=("Arial", 14),
-            fg_color="grey",
-            width=300,
-            height=40
-        )
-        self.datei_label.pack(pady=10)
-
-        tastendruck_status = LM.get_translation("enabled" if self.player.tastendruck_aktiviert else "disabled")
-        self.tastendruck_button = ctk.CTkButton(
-            self.root,
-            text=f"{LM.get_translation('key_press')}: {tastendruck_status}",
-            command=self.toggle_tastendruck,
-            width=200,
-            height=30
-        )
-        self.tastendruck_button.pack(pady=5)
-
-        self.tastendruck_controls_frame = ctk.CTkFrame(self.root)
-        
-        self.dauer_slider = ctk.CTkSlider(
-            self.tastendruck_controls_frame,
-            from_=0.1,
-            to=1.0,
-            number_of_steps=100,
-            command=self.tastendruck_dauer_setzen,
-            width=200
-        )
-        self.dauer_slider.pack(pady=5)
-        
-        self.dauer_anzeige = ctk.CTkLabel(
-            self.tastendruck_controls_frame,
-            text=LM.get_translation("duration") + f" {self.player.tastendruck_dauer} s"
-        )
-        self.dauer_anzeige.pack()
-        
-        self.presets_button_frame = ctk.CTkFrame(self.tastendruck_controls_frame)
-        for wert in self.presets:
-            ctk.CTkButton(
-                self.presets_button_frame,
-                text=f"{wert} s",
-                command=lambda v=wert: self.preset_button_click(v),
-                width=50
-            ).pack(side="left", padx=2)
-        self.presets_button_frame.pack(pady=5)
-
-        geschwindigkeit_status = LM.get_translation("enabled" if self.player.geschwindigkeit_aktiviert else "disabled")
-        self.geschwindigkeit_button = ctk.CTkButton(
-            self.root,
-            text=f"{LM.get_translation('speed_control')}: {geschwindigkeit_status}",
-            command=self.toggle_geschwindigkeit,
-            width=200,
-            height=30
-        )
-        self.geschwindigkeit_button.pack(pady=5)
-
-        self.geschwindigkeit_controls_frame = ctk.CTkFrame(self.root)
-        
-        self.geschwindigkeit_presets_frame = ctk.CTkFrame(self.geschwindigkeit_controls_frame)
-        for geschwindigkeit in self.geschwindigkeits_presets:
-            ctk.CTkButton(
-                self.geschwindigkeit_presets_frame,
-                text=str(geschwindigkeit),
-                command=lambda g=geschwindigkeit: self.setze_geschwindigkeit(g),
-                fg_color="green" if geschwindigkeit == 1000 else None,
-                width=50
-            ).pack(side="left", padx=2)
-        self.geschwindigkeit_presets_frame.pack(pady=5)
-        
-        self.geschwindigkeit_label = ctk.CTkLabel(
-            self.geschwindigkeit_controls_frame,
-            text=f"{LM.get_translation('current_speed')}: {self.player.aktuelle_geschwindigkeit}"
-        )
-        self.geschwindigkeit_label.pack(pady=5)
-
-        self.play_button = ctk.CTkButton(
-            self.root,
-            text=LM.get_translation("play_button_text"),
-            command=self.ausgewähltes_lied_abspielen,
-            font=("Arial", 14),
-            width=200,
-            height=40
-        )
-        self.play_button.pack(pady=10)
-
-        if self.player.tastendruck_aktiviert:
-            self.tastendruck_controls_frame.pack(pady=5, before=self.geschwindigkeit_button)
-        else:
-            self.tastendruck_controls_frame.pack_forget()
-        
-        if self.player.geschwindigkeit_aktiviert:
-            self.geschwindigkeit_controls_frame.pack(pady=5, before=self.play_button)
-        else:
-            self.geschwindigkeit_controls_frame.pack_forget()
-
-        self.root.protocol('WM_DELETE_WINDOW', self.beenden)
+    def run(self):
         self.root.mainloop()
 
 # -------------------------------
-# Start Application
+# Application Start
 # -------------------------------
 
 if __name__ == "__main__":
-    ConfigManager.load_config()
-    app = MusikApp()
-    app.gui_starten()
+    app = MusicApp()
+    app.run()
