@@ -66,6 +66,19 @@ python ProjectLyrica.py
 6. Click **Play** and enjoy the performance  
 7. Press `#` anytime to pause or resume
 
+---
+
+## Tastenbelegung anpassen
+
+1. open the file `settings.json` in a text editor
+2. search for the section `‘key_mapping’`.
+3. change the values as required:
+   ```json
+   "key_mapping": {
+       "Key0": "your key",
+       "Key1": "your key",
+       ...
+   }
 
 ---
 

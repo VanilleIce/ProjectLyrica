@@ -19,13 +19,6 @@ DEFAULT_WINDOW_SIZE = (500, 250)
 EXPANDED_SIZE = (500, 350)
 FULL_SIZE = (500, 450)
 
-# Centralized timing configuration
-TIMING_CONFIG = {
-    "initial_delay": 1.2,
-    "pause_resume_delay": 0.6,
-    "ramp_steps": 20
-}
-
 # -------------------------------
 # Language Manager Class
 # -------------------------------
@@ -45,8 +38,14 @@ class LM:
         lang_file = os.path.join('resources', 'config', 'lang.xml')
         try:
             tree = ET.parse(lang_file)
-            return [(lang.get('code'), lang.text) for lang in tree.findall('language') 
-                    if lang.get('code') and lang.text]
+            languages = []
+            for lang in tree.findall('language'):
+                code = lang.get('code')
+                text = lang.text
+                key_layout = lang.get('key_layout', 'QWERTY')  # Default-Wert
+                if code and text:
+                    languages.append((code, text, key_layout))
+            return languages
         except Exception as e:
             messagebox.showerror("Error", f"Error loading languages: {e}")
             return []
@@ -79,7 +78,28 @@ class LM:
     @classmethod
     def save_language(cls, language_code):
         cls._selected_language = language_code
-        ConfigManager.save_config({"selected_language": language_code})
+        config = ConfigManager.load_config()
+        
+        # Finde das zugehörige Tastaturlayout
+        layout_name = "QWERTY"  # Default
+        for code, name, key_layout in cls._available_languages:
+            if code == language_code:
+                layout_name = key_layout
+                break
+        
+        # Lade das Layout
+        try:
+            layout_mapping = KeyboardLayoutManager.load_layout(layout_name)
+        except Exception as e:
+            messagebox.showerror("Error", f"Error loading layout: {e}")
+            layout_mapping = config.get("key_mapping", {})
+        
+        # Aktualisiere die Konfiguration
+        ConfigManager.save_config({
+            "selected_language": language_code,
+            "keyboard_layout": layout_name,
+            "key_mapping": layout_mapping
+        })
 
 # -------------------------------
 # Config Manager
@@ -90,11 +110,17 @@ class ConfigManager:
         "key_press_durations": [0.2, 0.248, 0.3, 0.5, 1.0],
         "speed_presets": [600, 800, 1000, 1200],
         "selected_language": None,
+        "keyboard_layout": "QWERTZ",
         "key_mapping": {
             "Key0": "z", "Key1": "u", "Key2": "i", "Key3": "o",
             "Key4": "p", "Key5": "h", "Key6": "j", "Key7": "k",
             "Key8": "l", "Key9": "ö", "Key10": "n", "Key11": "m",
             "Key12": ",", "Key13": ".", "Key14": "-"
+        },
+        "timing_config": {
+            "initial_delay": 1.2,
+            "pause_resume_delay": 0.6,
+            "ramp_steps": 20
         },
         "pause_key": "#"
     }
@@ -103,15 +129,34 @@ class ConfigManager:
     def load_config(cls):
         try:
             with open(SETTINGS_FILE, 'r', encoding="utf-8") as file:
-                return {**cls.DEFAULT_CONFIG, **json.load(file)}
+                user_config = json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
-            return cls.DEFAULT_CONFIG
+            user_config = {}
+        
+        config = cls.DEFAULT_CONFIG.copy()
+        
+        for key, value in user_config.items():
+            if key == "timing_config" and isinstance(value, dict):
+                config[key] = {**config[key], **value}
+            elif key == "key_mapping" and isinstance(value, dict):
+                config[key] = {**config[key], **value}
+            else:
+                config[key] = value
+        
+        return config
 
     @classmethod
     def save_config(cls, config_data):
+        current_config = cls.load_config()
+        
+        for key, value in config_data.items():
+            if key in ["timing_config", "key_mapping"] and isinstance(value, dict):
+                current_config[key] = {**current_config.get(key, {}), **value}
+            else:
+                current_config[key] = value
+                
         with open(SETTINGS_FILE, 'w', encoding="utf-8") as file:
-            json.dump({**cls.load_config(), **config_data}, 
-                     file, indent=3, ensure_ascii=False)
+            json.dump(current_config, file, indent=3, ensure_ascii=False)
 
 # -------------------------------
 # GUI: Language Selection
@@ -132,8 +177,9 @@ class LanguageWindow:
         root.iconbitmap("resources/icons/icon.ico")
         
         languages = LM._available_languages
-        language_dict = {name: code for code, name in languages}
-        default_name = next((name for code, name in languages if code == LM._selected_language), languages[0][1] if languages else "English")
+        language_dict = {name: code for code, name, _ in languages}
+        default_name = next((name for code, name, _ in languages if code == LM._selected_language), 
+                            languages[0][1] if languages else "English (Amerika)")
         
         label = ctk.CTkLabel(root, text=LM.get_translation('select_language'), font=("Arial", 14))
         label.pack(pady=10)
@@ -157,6 +203,31 @@ class LanguageWindow:
         cls._open = False
 
 # -------------------------------
+# KeyboardLayoutManager
+# -------------------------------        
+
+class KeyboardLayoutManager:
+    @classmethod
+    def load_layout(cls, layout_name):
+        try:
+            file_path = os.path.join('resources', 'layouts', f"{layout_name.lower()}.xml")
+            if not os.path.exists(file_path):
+                raise FileNotFoundError(f"Layout file not found: {file_path}")
+                
+            tree = ET.parse(file_path)
+            mapping = {}
+            
+            for key in tree.getroot().findall('key'):
+                key_id = key.get('id')
+                key_value = key.text.strip() if key.text else ""
+                if key_id and key_value:
+                    mapping[key_id] = key_value
+                
+            return mapping
+        except Exception as e:
+            raise Exception(f"Error loading layout '{layout_name}': {str(e)}")
+
+# -------------------------------
 # Music Player
 # -------------------------------
 
@@ -174,9 +245,10 @@ class MusicPlayer:
         self.keypress_enabled = False
         self.speed_enabled = False
         
-        self.initial_delay = TIMING_CONFIG["initial_delay"]
-        self.pause_resume_delay = TIMING_CONFIG["pause_resume_delay"]
-        self.ramp_steps = TIMING_CONFIG["ramp_steps"]
+        timing_config = config.get("timing_config", {})
+        self.initial_delay = timing_config.get("initial_delay", 1.2)
+        self.pause_resume_delay = timing_config.get("pause_resume_delay", 0.6)
+        self.ramp_steps = timing_config.get("ramp_steps", 20)
         
         self.speed_lock = Lock()
         self.current_speed = 1000
@@ -248,9 +320,7 @@ class MusicPlayer:
             with self.speed_lock:
                 target_speed = self.current_speed
                 
-            # Calculate current speed (ramp up at start and after pause)
             if self.is_ramping and self.ramp_counter < self.ramp_steps:
-                # Smooth ramp: start at 50% and increase to 100%
                 speed_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps)
                 current_speed = max(500, target_speed * speed_factor)
                 self.ramp_counter += 1
@@ -484,3 +554,6 @@ class MusicApp:
 if __name__ == "__main__":
     app = MusicApp()
     app.run()
+
+## wichtiges
+## yuiophjkl;nm,./
