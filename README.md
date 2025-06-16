@@ -47,7 +47,7 @@ cd ProjectLyrica
 **Launch Application:**
 
 ```bash
-python _ProjectLyrica.py
+python ProjectLyrica.py
 ```
 
 > ✅ **System Requirements:** Windows 10/11 • Python 3.10+ • Sky: Children of the Light
