@@ -278,8 +278,11 @@ class MusicPlayer:
 
     def parse_song(self, path):
         path = Path(path)
-        if not path.exists():
-            raise FileNotFoundError(LM.get_translation('file_not_found'))
+        if not path.resolve().as_posix().startswith(Path.cwd().as_posix()):
+            raise SecurityError("Attempted path traversal")
+
+        if path.suffix.lower() not in ['.json', '.txt', '.skysheet']:
+            raise ValueError("Invalid file format")
         
         with path.open('r', encoding='utf-8') as f:
             data = json.load(f)
@@ -367,6 +370,8 @@ class MusicApp:
         
         self._create_gui_components()
         self._setup_gui_layout()
+
+        self.key_listener = None
 
     def _create_gui_components(self):
         self.root = ctk.CTk()
@@ -470,6 +475,10 @@ class MusicApp:
             self.file_button.configure(text=Path(file_path).name)
 
     def play_selected(self):
+        if not self.key_listener:
+            self.key_listener = Listener(on_press=self.handle_keypress)
+            self.key_listener.start()
+
         if not self.selected_file:
             messagebox.showwarning(LM.get_translation("warning_title"), 
                                 LM.get_translation("choose_song_warning"))
@@ -538,6 +547,9 @@ class MusicApp:
         self.adjust_window_size()
 
     def shutdown(self):
+        if self.key_listener and self.key_listener.is_alive():
+            self.key_listener.stop()
+
         self.player.stop_playback()
         if self.key_listener.is_alive():
             self.key_listener.stop()
@@ -554,6 +566,3 @@ class MusicApp:
 if __name__ == "__main__":
     app = MusicApp()
     app.run()
-
-## wichtiges
-## yuiophjkl;nm,./
