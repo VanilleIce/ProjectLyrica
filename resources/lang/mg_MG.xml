@@ -1,50 +1,66 @@
+<!-- mg_MG.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- Hadisoana sy hafatra fahombiazana ankapobeny -->
+    <!-- ==================== -->
+    <!-- LAHATSORATRA FOTOTR'NY RINDRA -->
+    <!-- ==================== -->
+    <translation key="project_title">Tetikas Lyrica</translation>
+    <translation key="file_select_title">Misafidiana hira</translation>
+    <translation key="play_button_text">▶ Lalao</translation>
+    <translation key="supported_formats">Endrika tohanana</translation>
+
+    <!-- ================= -->
+    <!-- FAMpitandremana & Fahadisoana -->
+    <!-- ================= -->
+    <translation key="warning_title">Fampitandremana</translation>
+    <translation key="error_title">Hadisoana</translation>
+    <translation key="choose_song_warning">Misafidiana hira alohan'ny hanohizana.</translation>
+    <translation key="play_error_message">Nisy olana tamin'ny filalaovana ny hira</translation>
+    <translation key="security_error_path">Lalan-drakitra tsy azo ekena</translation>
+    <translation key="invalid_file_format">Endrika rakitra tsy manan-kery. Tohana: .json, .txt, .skysheet</translation>
+    <translation key="sky_window_not_found">Tsy hita ny varavarankely Sky</translation>
+    <translation key="window_focus_error">Tsy afaka nampifantoka ny varavarankely</translation>
+    <translation key="browser_open_error">Tsy afaka nanokatra ny navigatera</translation>
+    <translation key="sky_not_running">Tokony hiasa ny Sky!</translation>
+    <translation key="missing_song_notes">Tsy hita ny angona momba ny hira (songNotes)</translation>
     <translation key="error_loading_translations">Nisy olana tamin'ny famakiana ny fandikan-teny: {0}</translation>
     <translation key="lang_config_not_found">Tsy hita ny fikirakirana fiteny</translation>
     <translation key="language_not_found">Tsy hita ny fiteny</translation>
     <translation key="file_not_found">Tsy hita ny rakitra</translation>
     <translation key="unknown_file_format">Endrika rakitra tsy fantatra</translation>
     <translation key="error_loading_languages">Nisy olana tamin'ny famakiana ny fiteny</translation>
-    <translation key="error_title">Hadisoana</translation>
-    <translation key="language_saved">Voavonjy ny fiteny</translation>
     <translation key="missing_translations_file">Tsy misy rakitra fandikan-teny ho an'ny {0}</translation>
-    
-    <!-- GUI: Varavarankely sy bokotra -->
-    <translation key="language_window_title">Safidy fiteny</translation>
-    <translation key="select_language">Misafidiana fiteny:</translation>
-    <translation key="save_button_text">Tehirizo</translation>
-    <translation key="info_title">Fampahafantarana</translation>
     <translation key="no_song_selected">Tsy misy hira voafantina</translation>
-    <translation key="file_select_title">Misafidiana hira</translation>
-    <translation key="warning_title">Fampitandremana</translation>
-    <translation key="choose_song_warning">Misafidiana hira alohan'ny hanohizana.</translation>
     <translation key="select_valid_file">Misafidiana rakitra manankery!</translation>
-    <translation key="file_dialog_title">Misafidiana rakitra</translation>
-    <translation key="select_button_text">Safidio</translation>
-    <translation key="supported_formats">Endrika tohanana</translation>
-    
-    <!-- Asa ny mpilalao mozika -->
-    <translation key="play_button_text">▶ Lalao</translation>
+    <translation key="info_title">Fampahafantarana</translation>
+
+    <!-- ================= -->
+    <!-- ASA NY MPILALAO MOZIKA -->
+    <!-- ================= -->
     <translation key="key_press">Tsindrio ny bokotra</translation>
     <translation key="enabled">Ampiasaina</translation>
     <translation key="disabled">Foana</translation>
     <translation key="duration">Faharetan’ny fanindriana</translation>
-    <translation key="key_recognition_error">Olana amin'ny fanekena bokotra</translation>
-
     <translation key="speed_control">Fifehezana hafainganana</translation>
     <translation key="current_speed">Hafainganana ankehitriny</translation>
-    
-    <!-- Hadisoana amin'ny filalaovana hira -->
-    <translation key="play_error_message">Nisy olana tamin'ny filalaovana ny hira</translation>
-    <translation key="missing_key_songNotes">Tsy hita ny angona momba ny hira (Key: songNotes)</translation>
-    
-    <!-- Asa varavarankely -->
-    <translation key="sky_window_not_found">Tsy hita ny varavarankely Sky</translation>
-    <translation key="window_focus_error">Tsy afaka nampifantoka ny varavarankely</translation>
-    
-    <!-- Safidy fanampiny -->
     <translation key="preset">Preset</translation>
-    <translation key="project_title">Tetikas Lyrica</translation>
+    <translation key="key_recognition_error">Olana amin'ny fanekena bokotra</translation>
+
+    <!-- ================= -->
+    <!-- FITENY & FANORATANA -->
+    <!-- ================= -->
+    <translation key="language_window_title">Safidy fiteny</translation>
+    <translation key="select_language">Misafidiana fiteny:</translation>
+    <translation key="language_saved">Voavonjy ny fiteny</translation>
+    <translation key="save_button_text">Tehirizo</translation>
+    <translation key="select_button_text">Safidio</translation>
+    <translation key="file_dialog_title">Misafidiana rakitra</translation>
+    
+    <!-- ================= -->
+    <!-- FAMPANDRAISANA NY VERSIONS -->
+    <!-- ================= -->
+    <translation key="update_available_text">Misy fanavaozana! v {}</translation>
+    <translation key="current_version_text">v {}</translation>
+    <translation key="update_error_text">Tsy nahomby ny fanamarinana</translation>
+    <translation key="no_connection_text">Tsy misy fifandraisana amin'ny mpizara</translation>
 </translations>

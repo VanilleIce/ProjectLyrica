@@ -1,50 +1,66 @@
+<!-- ja_JA.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- 一般的なエラーメッセージと成功メッセージ -->
+    <!-- ==================== -->
+    <!-- メインアプリケーションテキスト -->
+    <!-- ==================== -->
+    <translation key="project_title">プロジェクト Lyrica</translation>
+    <translation key="file_select_title">曲を選択</translation>
+    <translation key="play_button_text">▶ 再生</translation>
+    <translation key="supported_formats">サポートされている形式</translation>
+
+    <!-- ================= -->
+    <!-- 警告とエラー -->
+    <!-- ================= -->
+    <translation key="warning_title">警告</translation>
+    <translation key="error_title">エラー</translation>
+    <translation key="choose_song_warning">続行する前に曲を選択してください。</translation>
+    <translation key="play_error_message">音楽の再生エラー</translation>
+    <translation key="security_error_path">不正なファイルパス</translation>
+    <translation key="invalid_file_format">無効なファイル形式。サポート形式: .json, .txt, .skysheet</translation>
+    <translation key="sky_window_not_found">Skyウィンドウが見つかりません</translation>
+    <translation key="window_focus_error">ウィンドウを前面に表示できませんでした</translation>
+    <translation key="browser_open_error">ブラウザを開けません</translation>
+    <translation key="sky_not_running">Skyが起動している必要があります！</translation>
+    <translation key="missing_song_notes">曲データが欠けています (songNotes)</translation>
     <translation key="error_loading_translations">翻訳の読み込みエラー: {0}</translation>
     <translation key="lang_config_not_found">言語設定が見つかりません</translation>
     <translation key="language_not_found">言語が見つかりません</translation>
     <translation key="file_not_found">ファイルが見つかりません</translation>
     <translation key="unknown_file_format">不明なファイル形式</translation>
     <translation key="error_loading_languages">利用可能な言語の読み込みエラー</translation>
-    <translation key="error_title">エラー</translation>
-    <translation key="language_saved">言語が保存されました</translation>
     <translation key="missing_translations_file">{0}の翻訳ファイルが欠けています</translation>
-    
-    <!-- GUI: ウィンドウとボタン -->
-    <translation key="language_window_title">言語選択</translation>
-    <translation key="select_language">言語を選択：</translation>
-    <translation key="save_button_text">保存</translation>
-    <translation key="info_title">情報</translation>
     <translation key="no_song_selected">曲が選択されていません</translation>
-    <translation key="file_select_title">曲を選択</translation>
-    <translation key="warning_title">警告</translation>
-    <translation key="choose_song_warning">続行する前に曲を選択してください。</translation>
     <translation key="select_valid_file">有効なファイルを選択してください！</translation>
-    <translation key="file_dialog_title">ファイルを選択</translation>
-    <translation key="select_button_text">選択</translation>
-    <translation key="supported_formats">サポートされている形式</translation>
-    
+    <translation key="info_title">情報</translation>
+
+    <!-- ================= -->
     <!-- 音楽プレーヤー機能 -->
-    <translation key="play_button_text">▶ 再生</translation>
+    <!-- ================= -->
     <translation key="key_press">キー入力</translation>
     <translation key="enabled">有効</translation>
     <translation key="disabled">無効</translation>
     <translation key="duration">キー入力の時間</translation>
-    <translation key="key_recognition_error">キー認識エラー</translation>
-
     <translation key="speed_control">速度</translation>
     <translation key="current_speed">現在の速度</translation>
-    
-    <!-- 再生時のエラーメッセージ -->
-    <translation key="play_error_message">音楽の再生エラー</translation>
-    <translation key="missing_key_songNotes">曲データが欠けています (キー: songNotes)</translation>
-    
-    <!-- ウィンドウ機能 -->
-    <translation key="sky_window_not_found">Skyウィンドウが見つかりません</translation>
-    <translation key="window_focus_error">ウィンドウを前面に表示できませんでした</translation>
-    
-    <!-- その他のテキストオプション -->
     <translation key="preset">プリセット</translation>
-    <translation key="project_title">プロジェクト Lyrica</translation>
+    <translation key="key_recognition_error">キー認識エラー</translation>
+
+    <!-- ================= -->
+    <!-- 言語とレイアウト -->
+    <!-- ================= -->
+    <translation key="language_window_title">言語選択</translation>
+    <translation key="select_language">言語を選択：</translation>
+    <translation key="language_saved">言語が保存されました</translation>
+    <translation key="save_button_text">保存</translation>
+    <translation key="select_button_text">選択</translation>
+    <translation key="file_dialog_title">ファイルを選択</translation>
+    
+    <!-- ================= -->
+    <!-- バージョン情報 -->
+    <!-- ================= -->
+    <translation key="update_available_text">アップデートが利用可能です！ v {}</translation>
+    <translation key="current_version_text">v {}</translation>
+    <translation key="update_error_text">チェックに失敗しました</translation>
+    <translation key="no_connection_text">サーバーに接続できません</translation>
 </translations>

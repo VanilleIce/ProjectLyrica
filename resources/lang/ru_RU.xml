@@ -1,50 +1,66 @@
+<!-- ru_RU.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
-    <!-- Общие ошибки и сообщения об успехе -->
+    <!-- ==================== -->
+    <!-- ОСНОВНЫЕ ТЕКСТЫ ПРИЛОЖЕНИЯ -->
+    <!-- ==================== -->
+    <translation key="project_title">Проект Lyrica</translation>
+    <translation key="file_select_title">Выбор песни</translation>
+    <translation key="play_button_text">▶ Воспроизвести</translation>
+    <translation key="supported_formats">Поддерживаемые форматы</translation>
+
+    <!-- ================= -->
+    <!-- ПРЕДУПРЕЖДЕНИЯ И ОШИБКИ -->
+    <!-- ================= -->
+    <translation key="warning_title">Предупреждение</translation>
+    <translation key="error_title">Ошибка</translation>
+    <translation key="choose_song_warning">Пожалуйста, выберите песню перед продолжением.</translation>
+    <translation key="play_error_message">Ошибка воспроизведения музыки</translation>
+    <translation key="security_error_path">Несанкционированный путь к файлу</translation>
+    <translation key="invalid_file_format">Недопустимый формат файла. Поддерживается: .json, .txt, .skysheet</translation>
+    <translation key="sky_window_not_found">Окно Sky не найдено</translation>
+    <translation key="window_focus_error">Не удалось установить фокус на окно</translation>
+    <translation key="browser_open_error">Не удалось открыть браузер</translation>
+    <translation key="sky_not_running">Sky должен быть запущен!</translation>
+    <translation key="missing_song_notes">Отсутствуют данные песни (songNotes)</translation>
     <translation key="error_loading_translations">Ошибка загрузки переводов: {0}</translation>
-    <translation key="lang_config_not_found">Ошибка: не найдена конфигурация языка</translation>
+    <translation key="lang_config_not_found">Конфигурация языка не найдена</translation>
     <translation key="language_not_found">Язык не найден</translation>
     <translation key="file_not_found">Файл не найден</translation>
     <translation key="unknown_file_format">Неизвестный формат файла</translation>
     <translation key="error_loading_languages">Ошибка загрузки доступных языков</translation>
-    <translation key="error_title">Ошибка</translation>
-    <translation key="language_saved">Язык был сохранен</translation>
     <translation key="missing_translations_file">Отсутствует файл переводов для {0}</translation>
-    
-    <!-- GUI: окна и кнопки -->
-    <translation key="language_window_title">Выбор языка</translation>
-    <translation key="select_language">Выберите язык:</translation>
-    <translation key="save_button_text">Сохранить</translation>
-    <translation key="info_title">Информация</translation>
     <translation key="no_song_selected">Песня не выбрана</translation>
-    <translation key="file_select_title">Выбор песни</translation>
-    <translation key="warning_title">Предупреждение</translation>
-    <translation key="choose_song_warning">Пожалуйста, выберите песню перед продолжением.</translation>
     <translation key="select_valid_file">Пожалуйста, выберите действительный файл!</translation>
-    <translation key="file_dialog_title">Выберите файл</translation>
-    <translation key="select_button_text">Выбрать</translation>
-    <translation key="supported_formats">Поддерживаемые форматы</translation>
-    
-    <!-- Функции музыкального плеера -->
-    <translation key="play_button_text">▶ Воспроизвести</translation>
+    <translation key="info_title">Информация</translation>
+
+    <!-- ================= -->
+    <!-- ФУНКЦИИ МУЗЫКАЛЬНОГО ПЛЕЕРА -->
+    <!-- ================= -->
     <translation key="key_press">Нажатие клавиши</translation>
     <translation key="enabled">Включено</translation>
     <translation key="disabled">Выключено</translation>
     <translation key="duration">Длительность нажатия клавиши</translation>
-    <translation key="key_recognition_error">Ошибка распознавания клавиши</translation>
-
     <translation key="speed_control">Скорость</translation>
     <translation key="current_speed">Текущая скорость</translation>
-    
-    <!-- Ошибки при воспроизведении -->
-    <translation key="play_error_message">Ошибка воспроизведения музыки</translation>
-    <translation key="missing_key_songNotes">Отсутствуют данные песни (Ключ: songNotes)</translation>
-    
-    <!-- Функции окна -->
-    <translation key="sky_window_not_found">Окно Sky не найдено</translation>
-    <translation key="window_focus_error">Не удалось установить фокус на окно</translation>
-    
-    <!-- Другие текстовые опции -->
     <translation key="preset">Пресет</translation>
-    <translation key="project_title">Проект Lyrica</translation>
+    <translation key="key_recognition_error">Ошибка распознавания клавиши</translation>
+
+    <!-- ================= -->
+    <!-- ЯЗЫК И МАКЕТ -->
+    <!-- ================= -->
+    <translation key="language_window_title">Выбор языка</translation>
+    <translation key="select_language">Выберите язык:</translation>
+    <translation key="language_saved">Язык был сохранен</translation>
+    <translation key="save_button_text">Сохранить</translation>
+    <translation key="select_button_text">Выбрать</translation>
+    <translation key="file_dialog_title">Выберите файл</translation>
+    
+    <!-- ================= -->
+    <!-- ИНФОРМАЦИЯ О ВЕРСИИ -->
+    <!-- ================= -->
+    <translation key="update_available_text">Доступно обновление! v {}</translation>
+    <translation key="current_version_text">v {}</translation>
+    <translation key="update_error_text">Проверка не удалась</translation>
+    <translation key="no_connection_text">Нет соединения с сервером</translation>
 </translations>
