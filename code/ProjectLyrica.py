@@ -22,7 +22,7 @@ from update_checker import check_update
 SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
 EXPANDED_SIZE = (400, 380)
-FULL_SIZE = (400, 480)
+FULL_SIZE = (400, 470)
 version = "2.1.0"
 
 # -------------------------------
@@ -423,7 +423,7 @@ class MusicApp:
             return True
         return False
 
-    def _create_button(self, text, command, width=200, height=30, font=("Arial", 12), is_main=False, color=None):
+    def _create_button(self, text, command, width=200, height=30, font=("Arial", 13), is_main=False, color=None):
         button = ctk.CTkButton(
             self.root, 
             text=text, 
@@ -480,7 +480,7 @@ class MusicApp:
         self.duration_label = ctk.CTkLabel(
             self.duration_frame, 
             text=f"{LM.get_translation('duration')} {self.player.press_duration} s",
-            font=("Arial", 11)
+            font=("Arial", 12)
         )
         
         self.preset_frame = ctk.CTkFrame(self.duration_frame)
@@ -492,7 +492,7 @@ class MusicApp:
                 text=f"{preset} s", 
                 command=lambda p=preset: [self.apply_preset(p), self.root.focus()],
                 width=50,
-                font=("Arial", 10)
+                font=("Arial", 12)
             )
             btn.pack(side="left", padx=2)
             self.preset_buttons.append(btn)
@@ -511,7 +511,7 @@ class MusicApp:
                 text=str(speed), 
                 command=lambda s=speed: [self.set_speed(s), self.root.focus()],
                 width=50,
-                font=("Arial", 10)
+                font=("Arial", 12)
             )
             btn.pack(side="left", padx=2)
             self.speed_buttons.append(btn)
@@ -519,7 +519,7 @@ class MusicApp:
         self.speed_label = ctk.CTkLabel(
             self.speed_frame, 
             text=f"{LM.get_translation('current_speed')}: {self.player.speed}",
-            font=("Arial", 11)
+            font=("Arial", 12)
         )
         
         self.play_button = self._create_button(
