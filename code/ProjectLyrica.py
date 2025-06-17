@@ -416,10 +416,11 @@ class MusicApp:
 
     @staticmethod
     def is_already_running():
-        current_pid = os.getpid()
-        for proc in psutil.process_iter(['pid', 'name']):
-            if "ProjectLyrica" in proc.info['name'] and proc.info['pid'] != current_pid:
-                return True
+        mutex = ctypes.windll.kernel32.CreateMutexW(None, False, "ProjectLyricaMutex")
+        error = ctypes.windll.kernel32.GetLastError()
+        
+        if error == 183:
+            return True
         return False
 
     def _create_button(self, text, command, width=200, height=30, font=("Arial", 12), is_main=False, color=None):
