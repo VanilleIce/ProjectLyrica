@@ -5,7 +5,10 @@
 import json
 import time
 import os
+import sys
 import winsound
+import psutil
+import ctypes
 import pygetwindow as gw
 import customtkinter as ctk
 from pathlib import Path
@@ -13,11 +16,14 @@ from threading import Event, Thread, Timer, Lock
 from pynput.keyboard import Controller, Listener
 from tkinter import filedialog, messagebox
 import xml.etree.ElementTree as ET
+import webbrowser
+from update_checker import check_update
 
 SETTINGS_FILE = 'settings.json'
-DEFAULT_WINDOW_SIZE = (500, 250)
-EXPANDED_SIZE = (500, 350)
-FULL_SIZE = (500, 450)
+DEFAULT_WINDOW_SIZE = (400, 280)
+EXPANDED_SIZE = (400, 380)
+FULL_SIZE = (400, 480)
+version = "2.1.0"
 
 # -------------------------------
 # Language Manager Class
@@ -42,7 +48,7 @@ class LM:
             for lang in tree.findall('language'):
                 code = lang.get('code')
                 text = lang.text
-                key_layout = lang.get('key_layout', 'QWERTY')  # Default-Wert
+                key_layout = lang.get('key_layout', 'QWERTY')
                 if code and text:
                     languages.append((code, text, key_layout))
             return languages
@@ -80,21 +86,18 @@ class LM:
         cls._selected_language = language_code
         config = ConfigManager.load_config()
         
-        # Finde das zugehörige Tastaturlayout
-        layout_name = "QWERTY"  # Default
+        layout_name = "QWERTY"
         for code, name, key_layout in cls._available_languages:
             if code == language_code:
                 layout_name = key_layout
                 break
         
-        # Lade das Layout
         try:
             layout_mapping = KeyboardLayoutManager.load_layout(layout_name)
         except Exception as e:
             messagebox.showerror("Error", f"Error loading layout: {e}")
             layout_mapping = config.get("key_mapping", {})
-        
-        # Aktualisiere die Konfiguration
+
         ConfigManager.save_config({
             "selected_language": language_code,
             "keyboard_layout": layout_name,
@@ -266,23 +269,32 @@ class MusicPlayer:
         return next((w for w in gw.getWindowsWithTitle("Sky") if "Sky" in w.title), None)
 
     def focus_window(self, window):
-        if window:
+        if window is None:
+            return False
+            
+        try:
+            if window.isMinimized:
+                window.restore()
+                
+            window.activate()
+            return True
+        except Exception:
             try:
-                if window.isMinimized:
-                    window.restore()
-                window.activate()
+                user32 = ctypes.windll.user32
+                hwnd = window._hWnd
+                user32.ShowWindow(hwnd, 9)
+                user32.SetForegroundWindow(hwnd)
                 return True
             except Exception:
-                pass
-        return False
+                return False
 
     def parse_song(self, path):
         path = Path(path)
         if not path.resolve().as_posix().startswith(Path.cwd().as_posix()):
-            raise SecurityError("Attempted path traversal")
+            raise ValueError(LM.get_translation('security_error_path'))
 
         if path.suffix.lower() not in ['.json', '.txt', '.skysheet']:
-            raise ValueError("Invalid file format")
+            raise ValueError(LM.get_translation('invalid_file_format'))
         
         with path.open('r', encoding='utf-8') as f:
             data = json.load(f)
@@ -301,6 +313,17 @@ class MusicPlayer:
 
     def play_song(self, song_data):
         notes = song_data.get("songNotes", [])
+
+        if not notes:
+            messagebox.showerror(LM.get_translation("error_title"), LM.get_translation("missing_song_notes"))
+            return
+
+        def is_sky_running():
+            return any(p.name() == "Sky.exe" for p in psutil.process_iter())
+
+        if not is_sky_running():
+            messagebox.showerror(LM.get_translation("error_title"), LM.get_translation("sky_not_running"))
+            return
         
         self.is_ramping = True
         self.ramp_counter = 0
@@ -357,42 +380,107 @@ class MusicApp:
         LM.initialize()
         if not LM._selected_language:
             LanguageWindow.show()
+
+        if self.is_already_running():
+            messagebox.showerror("Error", "Application is already running!")
+            sys.exit(1)
         
-        self.player = MusicPlayer()
-        self.selected_file = None
-        self.root = None
         self.key_listener = Listener(on_press=self.handle_keypress)
         self.key_listener.start()
         
         config = ConfigManager.load_config()
         self.duration_presets = config["key_press_durations"]
         self.speed_presets = config["speed_presets"]
-        
+
+        self.version = version
+        self.update_status = "checking"
+        self.latest_version = ""
+        self.update_url = ""
+
+        self.player = MusicPlayer()
+        self.selected_file = None
+        self.root = None
+
+        try:
+            result = check_update(self.version, "VanilleIce/ProjectLyrica")
+            self.update_status = result[0]
+            self.latest_version = result[1]
+            self.update_url = result[2]
+        except Exception:
+            self.update_status = "error"
+            self.latest_version = ""
+            self.update_url = ""
+
         self._create_gui_components()
         self._setup_gui_layout()
+
+    @staticmethod
+    def is_already_running():
+        current_pid = os.getpid()
+        for proc in psutil.process_iter(['pid', 'name']):
+            if "ProjectLyrica" in proc.info['name'] and proc.info['pid'] != current_pid:
+                return True
+        return False
+
+    def _create_button(self, text, command, width=200, height=30, font=("Arial", 12), is_main=False, color=None):
+        button = ctk.CTkButton(
+            self.root, 
+            text=text, 
+            command=command,
+            font=font,
+            width=width,
+            height=height
+        )
+        
+        if color:
+            button.configure(fg_color=color)
+        
+        if is_main:
+            button.configure(font=("Arial", 14), height=40)
+        
+        return button
 
     def _create_gui_components(self):
         self.root = ctk.CTk()
         self.root.title(LM.get_translation("project_title"))
-        self.root.geometry(f"{DEFAULT_WINDOW_SIZE[0]}x{DEFAULT_WINDOW_SIZE[1]}")
         self.root.iconbitmap("resources/icons/icon.ico")
         self.root.protocol('WM_DELETE_WINDOW', self.shutdown)
+
+        self.status_frame = ctk.CTkFrame(self.root, fg_color="transparent", height=1)
+        self.status_frame.pack(side="bottom", fill="x", padx=10, pady=3)
         
-        self.title_label = ctk.CTkLabel(self.root, text=LM.get_translation("project_title"), 
-                                      font=("Arial", 18, "bold"))
+        self.title_label = ctk.CTkLabel(self.root, text=LM.get_translation("project_title"), font=("Arial", 18, "bold"))
         
-        self.file_button = ctk.CTkButton( self.root, text=LM.get_translation("file_select_title"), command=self.select_file, font=("Arial", 14), fg_color="grey", width=300, height=40 )
+        self.file_button = self._create_button(
+            LM.get_translation("file_select_title"), 
+            self.select_file, 
+            width=300,
+            height=40,
+            font=("Arial", 14),
+            color="grey"
+        )
         
         keypress_text = f"{LM.get_translation('key_press')}: " + \
                        (LM.get_translation("enabled") if self.player.keypress_enabled else LM.get_translation("disabled"))
-        self.keypress_toggle = ctk.CTkButton(self.root, text=keypress_text, command=self.toggle_keypress, width=200, height=30)
+        self.keypress_toggle = self._create_button(keypress_text, self.toggle_keypress)
         
         self.duration_frame = ctk.CTkFrame(self.root)
         
-        self.duration_slider = ctk.CTkSlider( self.duration_frame, from_=0.1, to=1.0, number_of_steps=90, command=self.set_press_duration, width=100)
+        self.duration_slider = ctk.CTkSlider(
+            self.duration_frame, 
+            from_=0.1, 
+            to=1.0, 
+            number_of_steps=90, 
+            command=self.set_press_duration, 
+            width=200
+        )
         self.duration_slider.set(0.1)
         
-        self.duration_label = ctk.CTkLabel(self.duration_frame, text=f"{LM.get_translation('duration')} {self.player.press_duration} s")
+        self.duration_label = ctk.CTkLabel(
+            self.duration_frame, 
+            text=f"{LM.get_translation('duration')} {self.player.press_duration} s",
+            font=("Arial", 11)
+        )
         
         self.preset_frame = ctk.CTkFrame(self.duration_frame)
 
@@ -402,14 +490,15 @@ class MusicApp:
                 self.preset_frame, 
                 text=f"{preset} s", 
                 command=lambda p=preset: [self.apply_preset(p), self.root.focus()],
-                width=50
+                width=50,
+                font=("Arial", 10)
             )
             btn.pack(side="left", padx=2)
             self.preset_buttons.append(btn)
         
         speed_text = f"{LM.get_translation('speed_control')}: " + \
                    (LM.get_translation("enabled") if self.player.speed_enabled else LM.get_translation("disabled"))
-        self.speed_toggle = ctk.CTkButton(self.root, text=speed_text, command=self.toggle_speed, width=200, height=30)
+        self.speed_toggle = self._create_button(speed_text, self.toggle_speed)
         
         self.speed_frame = ctk.CTkFrame(self.root)
         self.speed_preset_frame = ctk.CTkFrame(self.speed_frame)
@@ -420,14 +509,62 @@ class MusicApp:
                 self.speed_preset_frame, 
                 text=str(speed), 
                 command=lambda s=speed: [self.set_speed(s), self.root.focus()],
-                width=50
+                width=50,
+                font=("Arial", 10)
             )
             btn.pack(side="left", padx=2)
             self.speed_buttons.append(btn)
         
-        self.speed_label = ctk.CTkLabel(self.speed_frame, text=f"{LM.get_translation('current_speed')}: {self.player.speed}")
+        self.speed_label = ctk.CTkLabel(
+            self.speed_frame, 
+            text=f"{LM.get_translation('current_speed')}: {self.player.speed}",
+            font=("Arial", 11)
+        )
         
-        self.play_button = ctk.CTkButton(self.root, text=LM.get_translation("play_button_text"), command=self.play_selected, font=("Arial", 14), width=200, height=40)
+        self.play_button = self._create_button(
+            LM.get_translation("play_button_text"), 
+            self.play_selected,
+            width=200,
+            is_main=True
+        )
+
+        if self.update_status == "update":
+            version_text = LM.get_translation('update_available_text').format(self.latest_version)
+            text_color = "#FFA500"
+        elif self.update_status == "no_connection":
+            version_text = LM.get_translation('no_connection_text')
+            text_color = "#FF0000"
+        elif self.update_status == "error":
+            version_text = LM.get_translation('update_error_text')
+            text_color = "#FF0000"
+        else:
+            version_text = LM.get_translation('current_version_text').format(self.version)
+            text_color = "#1E90FF"
+        
+        self.version_link = ctk.CTkLabel(
+            self.status_frame,
+            text=version_text,
+            font=("Arial", 11),
+            text_color=text_color,
+            cursor="hand2"
+        )
+        
+        self.version_link.pack(side="right")
+        self.version_link.bind("<Button-1>", self.open_github_releases)
+
+    def open_github_releases(self, event):
+        try:
+            if (self.update_status == "update" and 
+                self.update_url and 
+                self.update_url.startswith("https://github.com/") and 
+                "VanilleIce/ProjectLyrica" in self.update_url):
+                
+                webbrowser.open(self.update_url)
+            else:
+                webbrowser.open("https://github.com/VanilleIce/ProjectLyrica")
+        except Exception as e:
+            error_message = f"{LM.get_translation('browser_open_error')}: {str(e)}"
+            messagebox.showerror(LM.get_translation('error_title'), error_message)
 
     def _setup_gui_layout(self):
         self.title_label.pack(pady=10)
@@ -471,26 +608,26 @@ class MusicApp:
         if file_path:
             self.selected_file = file_path
             self.file_button.configure(text=Path(file_path).name)
+            self.root.focus()
 
     def play_selected(self):
         if not self.selected_file:
-            messagebox.showwarning(LM.get_translation("warning_title"), 
-                                LM.get_translation("choose_song_warning"))
+            messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("choose_song_warning"))
             return
             
         self.player.stop_playback()
         try:
             song_data = self.player.parse_song(self.selected_file)
             sky_window = self.player.find_sky_window()
+            
             self.player.focus_window(sky_window)
+            
             time.sleep(self.player.initial_delay)
             
-            self.player.play_thread = Thread(target=self.player.play_song, 
-                                          args=(song_data,), daemon=True)
+            self.player.play_thread = Thread(target=self.player.play_song, args=(song_data,), daemon=True)
             self.player.play_thread.start()
         except Exception as e:
-            messagebox.showerror(LM.get_translation("error_title"), 
-                              f"{LM.get_translation('play_error_message')}: {e}")
+            messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('play_error_message')}: {e}")
 
     def set_press_duration(self, value):
         self.player.press_duration = round(float(value), 3)
