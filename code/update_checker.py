@@ -1,12 +1,14 @@
+# Copyright (C) 2025 VanilleIce
+# This program is licensed under the GNU AGPLv3. See LICENSE for details.
+# Source code: https://github.com/VanilleIce/ProjectLyrica
+
 import requests
 import re
 import socket
 import json
 
 def check_update(current_version: str, repo: str):
-    """Prüft auf Updates - Rückgabe: (status, latest_version, url)"""
     try:
-        # Verbindungsprüfung mit Timeout
         try:
             socket.create_connection(("api.github.com", 443), timeout=2)
         except (socket.timeout, OSError):
@@ -19,7 +21,6 @@ def check_update(current_version: str, repo: str):
             verify=True
         )
         
-        # HTTP-Status prüfen
         response.raise_for_status()
         
         data = response.json()

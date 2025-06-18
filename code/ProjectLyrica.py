@@ -21,9 +21,9 @@ from update_checker import check_update
 
 SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
-EXPANDED_SIZE = (400, 380)
+EXPANDED_SIZE = (400, 370)
 FULL_SIZE = (400, 470)
-version = "2.1.0"
+version = "2.1.1"
 
 # -------------------------------
 # Language Manager Class
@@ -113,7 +113,7 @@ class ConfigManager:
         "key_press_durations": [0.2, 0.248, 0.3, 0.5, 1.0],
         "speed_presets": [600, 800, 1000, 1200],
         "selected_language": None,
-        "keyboard_layout": "QWERTZ",
+        "keyboard_layout": None,
         "key_mapping": {
             "Key0": "z", "Key1": "u", "Key2": "i", "Key3": "o",
             "Key4": "p", "Key5": "h", "Key6": "j", "Key7": "k",
@@ -182,7 +182,7 @@ class LanguageWindow:
         languages = LM._available_languages
         language_dict = {name: code for code, name, _ in languages}
         default_name = next((name for code, name, _ in languages if code == LM._selected_language), 
-                            languages[0][1] if languages else "English (Amerika)")
+                            languages[0][1] if languages else "English")
         
         label = ctk.CTkLabel(root, text=LM.get_translation('select_language'), font=("Arial", 14))
         label.pack(pady=10)
