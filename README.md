@@ -2,8 +2,12 @@
 
 [![CLA assistant](https://cla-assistant.io/readme/badge/VanilleIce/ProjectLyrica)](https://cla-assistant.io/VanilleIce/ProjectLyrica)
 
-**Automatic Music Player for _Sky: Children of the Light_**  
-Stylishly play your favorite songs with perfect timing.
+## 📜 License
+
+Project Lyrica is licensed under the **AGPLv3 with commercial use restriction**.  
+You may not use this software for any commercial purpose without explicit permission.
+
+[View Full License](LICENSE) | [Contributor Agreement](CLA.md)
 
 ---
 
