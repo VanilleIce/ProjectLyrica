@@ -38,7 +38,7 @@ Simply select a song, click “Play” – and enjoy!
 **Requirements:**
 
 ```bash
-pip install pygetwindow customtkinter pynput
+pip install requirements.txt
 ```
 
 **Download Project:**
