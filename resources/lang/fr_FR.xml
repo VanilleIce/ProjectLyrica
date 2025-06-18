@@ -1,4 +1,3 @@
-<!-- fr_FR.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
     <!-- ==================== -->
@@ -23,16 +22,6 @@
     <translation key="browser_open_error">Impossible d'ouvrir le navigateur</translation>
     <translation key="sky_not_running">Sky doit être en cours d'exécution !</translation>
     <translation key="missing_song_notes">Données de chanson manquantes (songNotes)</translation>
-    <translation key="error_loading_translations">Erreur lors du chargement des traductions : {0}</translation>
-    <translation key="lang_config_not_found">Configuration de la langue non trouvée</translation>
-    <translation key="language_not_found">Langue introuvable</translation>
-    <translation key="file_not_found">Fichier non trouvé</translation>
-    <translation key="unknown_file_format">Format de fichier inconnu</translation>
-    <translation key="error_loading_languages">Erreur lors du chargement des langues disponibles</translation>
-    <translation key="missing_translations_file">Fichier de traduction manquant pour {0}</translation>
-    <translation key="no_song_selected">Aucune chanson sélectionnée</translation>
-    <translation key="select_valid_file">Veuillez sélectionner un fichier valide !</translation>
-    <translation key="info_title">Informations</translation>
 
     <!-- ================= -->
     <!-- FONCTIONS DU LECTEUR DE MUSIQUE -->
@@ -44,7 +33,6 @@
     <translation key="speed_control">Vitesse</translation>
     <translation key="current_speed">vitesse actuelle</translation>
     <translation key="preset">Préréglage</translation>
-    <translation key="key_recognition_error">Erreur de reconnaissance de la touche</translation>
 
     <!-- ================= -->
     <!-- LANGUE ET MISE EN PAGE -->
@@ -53,8 +41,6 @@
     <translation key="select_language">Sélectionner la langue :</translation>
     <translation key="language_saved">Langue enregistrée</translation>
     <translation key="save_button_text">Enregistrer</translation>
-    <translation key="select_button_text">Sélectionner</translation>
-    <translation key="file_dialog_title">Sélectionner un fichier</translation>
     
     <!-- ================= -->
     <!-- INFORMATION SUR LA VERSION -->
@@ -63,4 +49,5 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">Échec de la vérification</translation>
     <translation key="no_connection_text">Pas de connexion au serveur</translation>
+    
 </translations>

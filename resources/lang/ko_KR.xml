@@ -1,4 +1,3 @@
-<!-- ko_KR.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
     <!-- ==================== -->
@@ -23,16 +22,6 @@
     <translation key="browser_open_error">브라우저를 열 수 없습니다</translation>
     <translation key="sky_not_running">Sky가 실행 중이어야 합니다!</translation>
     <translation key="missing_song_notes">노래 데이터 누락 (songNotes)</translation>
-    <translation key="error_loading_translations">번역 로딩 오류: {0}</translation>
-    <translation key="lang_config_not_found">언어 설정을 찾을 수 없습니다</translation>
-    <translation key="language_not_found">언어를 찾을 수 없습니다</translation>
-    <translation key="file_not_found">파일을 찾을 수 없습니다</translation>
-    <translation key="unknown_file_format">알 수 없는 파일 형식</translation>
-    <translation key="error_loading_languages">사용 가능한 언어를 로드하는 오류</translation>
-    <translation key="missing_translations_file">{0}에 대한 번역 파일이 없습니다</translation>
-    <translation key="no_song_selected">노래가 선택되지 않았습니다</translation>
-    <translation key="select_valid_file">유효한 파일을 선택해 주세요!</translation>
-    <translation key="info_title">정보</translation>
 
     <!-- ================= -->
     <!-- 음악 플레이어 기능 -->
@@ -44,7 +33,6 @@
     <translation key="speed_control">속도</translation>
     <translation key="current_speed">현재 속도</translation>
     <translation key="preset">프리셋</translation>
-    <translation key="key_recognition_error">키 인식 오류</translation>
 
     <!-- ================= -->
     <!-- 언어 및 레이아웃 -->
@@ -53,8 +41,6 @@
     <translation key="select_language">언어 선택:</translation>
     <translation key="language_saved">언어가 저장되었습니다</translation>
     <translation key="save_button_text">저장</translation>
-    <translation key="select_button_text">선택</translation>
-    <translation key="file_dialog_title">파일 선택</translation>
     
     <!-- ================= -->
     <!-- 버전 정보 -->
@@ -63,4 +49,5 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">확인 실패</translation>
     <translation key="no_connection_text">서버에 연결할 수 없음</translation>
+    
 </translations>
