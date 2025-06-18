@@ -616,6 +616,23 @@ an absolute waiver of all civil liability in connection with the
 Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 
+
+ADDITIONAL TERM PURSUANT TO SECTION 7 OF AGPLv3:
+
+Notwithstanding any other provision of this License, the following 
+additional term applies to Project Lyrica:
+
+Commercial Use Restriction. 
+You may not use the Program (Project Lyrica) for any commercial purpose. 
+"Commercial purpose" includes but is not limited to:
+- Any monetized usage
+- Integration into paid services or products
+- Distribution in commercial offerings
+- Use in any business, commercial, or revenue-generating activity
+
+This additional term constitutes a further restriction under Section 7 
+of the AGPLv3 and is incorporated as part of this License.
+
                      END OF TERMS AND CONDITIONS
 
             How to Apply These Terms to Your New Programs
