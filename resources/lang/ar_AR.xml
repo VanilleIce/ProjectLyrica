@@ -1,4 +1,3 @@
-<!-- ar_AR.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
     <!-- ==================== -->
@@ -23,16 +22,6 @@
     <translation key="browser_open_error">تعذر فتح المتصفح</translation>
     <translation key="sky_not_running">يجب أن يكون سكاي قيد التشغيل!</translation>
     <translation key="missing_song_notes">بيانات الأغنية مفقودة (songNotes)</translation>
-    <translation key="error_loading_translations">خطأ في تحميل الترجمات: {0}</translation>
-    <translation key="lang_config_not_found">خطأ في تحميل تكوين اللغة</translation>
-    <translation key="language_not_found">تعذر العثور على اللغة</translation>
-    <translation key="file_not_found">الملف غير موجود</translation>
-    <translation key="unknown_file_format">تنسيق الملف غير معروف</translation>
-    <translation key="error_loading_languages">خطأ في تحميل اللغات المتاحة</translation>
-    <translation key="missing_translations_file">ملف الترجمات مفقود لـ {0}</translation>
-    <translation key="no_song_selected">لم يتم اختيار أغنية</translation>
-    <translation key="select_valid_file">يرجى اختيار ملف صالح!</translation>
-    <translation key="info_title">معلومات</translation>
 
     <!-- ================= -->
     <!-- وظائف مشغل الموسيقى -->
@@ -44,7 +33,6 @@
     <translation key="speed_control">السرعة</translation>
     <translation key="current_speed">السرعة الحالية</translation>
     <translation key="preset">الإعدادات المسبقة</translation>
-    <translation key="key_recognition_error">خطأ في التعرف على المفتاح</translation>
 
     <!-- ================= -->
     <!-- اللغة والتخطيط -->
@@ -53,8 +41,6 @@
     <translation key="select_language">اختار اللغة:</translation>
     <translation key="language_saved">تم حفظ اللغة</translation>
     <translation key="save_button_text">حفظ</translation>
-    <translation key="select_button_text">اختيار</translation>
-    <translation key="file_dialog_title">اختيار ملف</translation>
     
     <!-- ================= -->
     <!-- معلومات الإصدار -->
@@ -63,4 +49,5 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">فشل في التحقق</translation>
     <translation key="no_connection_text">لا يوجد اتصال بالخادم</translation>
+    
 </translations>

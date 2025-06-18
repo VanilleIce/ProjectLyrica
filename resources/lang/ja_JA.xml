@@ -1,4 +1,3 @@
-<!-- ja_JA.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
     <!-- ==================== -->
@@ -23,16 +22,6 @@
     <translation key="browser_open_error">ブラウザを開けません</translation>
     <translation key="sky_not_running">Skyが起動している必要があります！</translation>
     <translation key="missing_song_notes">曲データが欠けています (songNotes)</translation>
-    <translation key="error_loading_translations">翻訳の読み込みエラー: {0}</translation>
-    <translation key="lang_config_not_found">言語設定が見つかりません</translation>
-    <translation key="language_not_found">言語が見つかりません</translation>
-    <translation key="file_not_found">ファイルが見つかりません</translation>
-    <translation key="unknown_file_format">不明なファイル形式</translation>
-    <translation key="error_loading_languages">利用可能な言語の読み込みエラー</translation>
-    <translation key="missing_translations_file">{0}の翻訳ファイルが欠けています</translation>
-    <translation key="no_song_selected">曲が選択されていません</translation>
-    <translation key="select_valid_file">有効なファイルを選択してください！</translation>
-    <translation key="info_title">情報</translation>
 
     <!-- ================= -->
     <!-- 音楽プレーヤー機能 -->
@@ -44,7 +33,6 @@
     <translation key="speed_control">速度</translation>
     <translation key="current_speed">現在の速度</translation>
     <translation key="preset">プリセット</translation>
-    <translation key="key_recognition_error">キー認識エラー</translation>
 
     <!-- ================= -->
     <!-- 言語とレイアウト -->
@@ -53,8 +41,6 @@
     <translation key="select_language">言語を選択：</translation>
     <translation key="language_saved">言語が保存されました</translation>
     <translation key="save_button_text">保存</translation>
-    <translation key="select_button_text">選択</translation>
-    <translation key="file_dialog_title">ファイルを選択</translation>
     
     <!-- ================= -->
     <!-- バージョン情報 -->
@@ -63,4 +49,5 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">チェックに失敗しました</translation>
     <translation key="no_connection_text">サーバーに接続できません</translation>
+    
 </translations>

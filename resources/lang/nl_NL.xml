@@ -1,4 +1,3 @@
-<!-- nl_NL.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
     <!-- ==================== -->
@@ -23,16 +22,6 @@
     <translation key="browser_open_error">Browser kon niet worden geopend</translation>
     <translation key="sky_not_running">Sky moet actief zijn!</translation>
     <translation key="missing_song_notes">Songdata ontbreekt (songNotes)</translation>
-    <translation key="error_loading_translations">Fout bij het laden van vertalingen: {0}</translation>
-    <translation key="lang_config_not_found">Taalconfiguratie niet gevonden</translation>
-    <translation key="language_not_found">Taal niet gevonden</translation>
-    <translation key="file_not_found">Bestand niet gevonden</translation>
-    <translation key="unknown_file_format">Onbekend bestandsformaat</translation>
-    <translation key="error_loading_languages">Fout bij het laden van beschikbare talen</translation>
-    <translation key="missing_translations_file">Vertaalbestand ontbreekt voor {0}</translation>
-    <translation key="no_song_selected">Geen nummer geselecteerd</translation>
-    <translation key="select_valid_file">Selecteer een geldig bestand!</translation>
-    <translation key="info_title">Informatie</translation>
 
     <!-- ================= -->
     <!-- MUZIEKSPELERFUNCTIES -->
@@ -44,7 +33,6 @@
     <translation key="speed_control">Snelheid</translation>
     <translation key="current_speed">huidige snelheid</translation>
     <translation key="preset">Preset</translation>
-    <translation key="key_recognition_error">Fout bij het herkennen van de toets</translation>
 
     <!-- ================= -->
     <!-- TAAL & LAYOUT -->
@@ -53,8 +41,6 @@
     <translation key="select_language">Kies taal:</translation>
     <translation key="language_saved">Taal is opgeslagen</translation>
     <translation key="save_button_text">Opslaan</translation>
-    <translation key="select_button_text">Kies</translation>
-    <translation key="file_dialog_title">Bestand kiezen</translation>
     
     <!-- ================= -->
     <!-- VERSIE-INFORMATIE -->
@@ -63,4 +49,5 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">Controle mislukt</translation>
     <translation key="no_connection_text">Geen verbinding met server</translation>
+    
 </translations>
