@@ -17,9 +17,9 @@ By contributing to Project Lyrica, you agree to the following terms:
 
 3. **Representations**
    You represent that:
-   a) You are legally entitled to grant the above license
-   b) Your contributions are your original creation
-   c) Your contributions do not violate any third-party rights
+   - You are legally entitled to grant the above license
+   - Your contributions are your original creation
+   - Your contributions do not violate any third-party rights
 
 4. **No Trademark Rights**
    This agreement does not grant any trademark rights.
