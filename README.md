@@ -82,46 +82,6 @@ python ProjectLyrica.py
 
 ---
 
-### What's New in v2.0 🚀
-
-**🌟 Major Features**
-
-```
-Added smooth speed ramping for natural transitions
-Redesigned dynamic UI with collapsible sections
-Automatic keyboard layout detection based on language selection
-Support for international keyboard layouts (QWERTY, QWERTZ, AZERTY, ЙЦУКЕН, JIS, Arabic)
-```
-
-**⚙️ Technical Improvements**
-
-```
-Thread-safe speed adjustments
-Improved window focus handling
-Optimized translation caching
-Fixed race conditions during playback
-Intelligent layout management with XML-based configuration
-```
-
-**🌍 Internationalization**
-
-```
-Smart keyboard mapping for 16+ languages
-Layout-aware key binding that matches Sky's display
-Expanded language support with automatic layout switching
-```
-> 
-
-**🔧 Configuration**
-
-```
-Unified settings management with automatic defaults
-Manual key customization via settings.json
-Layout-preserving architecture for easy expansion
-```
-
----
-
 ## 🤝 Contributing
 
 We welcome your contributions! Please:
