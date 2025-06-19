@@ -7,12 +7,12 @@ import time
 import os
 import sys
 import winsound
-import psutil
+import heapq
 import ctypes
 import pygetwindow as gw
 import customtkinter as ctk
 from pathlib import Path
-from threading import Event, Thread, Timer, Lock
+from threading import Event, Thread, Lock
 from pynput.keyboard import Controller, Listener
 from tkinter import filedialog, messagebox
 import xml.etree.ElementTree as ET
@@ -21,9 +21,9 @@ from update_checker import check_update
 
 SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
-EXPANDED_SIZE = (400, 370)
+EXPANDED_SIZE = (400, 375)
 FULL_SIZE = (400, 470)
-version = "2.1.1"
+version = "2.2.0"
 
 # -------------------------------
 # Language Manager Class
@@ -48,7 +48,7 @@ class LM:
             for lang in tree.findall('language'):
                 code = lang.get('code')
                 text = lang.text
-                key_layout = lang.get('key_layout', 'QWERTY')
+                key_layout = lang.get('key_layout')
                 if code and text:
                     languages.append((code, text, key_layout))
             return languages
@@ -114,18 +114,14 @@ class ConfigManager:
         "speed_presets": [600, 800, 1000, 1200],
         "selected_language": None,
         "keyboard_layout": None,
-        "key_mapping": {
-            "Key0": "z", "Key1": "u", "Key2": "i", "Key3": "o",
-            "Key4": "p", "Key5": "h", "Key6": "j", "Key7": "k",
-            "Key8": "l", "Key9": "ö", "Key10": "n", "Key11": "m",
-            "Key12": ",", "Key13": ".", "Key14": "-"
-        },
+        "key_mapping": {},
         "timing_config": {
             "initial_delay": 1.2,
             "pause_resume_delay": 0.6,
             "ramp_steps": 20
         },
-        "pause_key": "#"
+        "pause_key": "#",
+        "theme": "dark"
     }
 
     @classmethod
@@ -207,7 +203,7 @@ class LanguageWindow:
 
 # -------------------------------
 # KeyboardLayoutManager
-# -------------------------------        
+# ------------------------------- 
 
 class KeyboardLayoutManager:
     @classmethod
@@ -231,6 +227,40 @@ class KeyboardLayoutManager:
             raise Exception(f"Error loading layout '{layout_name}': {str(e)}")
 
 # -------------------------------
+# NoteScheduler
+# ------------------------------- 
+
+class NoteScheduler:
+    def __init__(self, release_callback):
+        self.queue = []
+        self.callback = release_callback
+        self.lock = Lock()
+        self.thread = Thread(target=self.run, daemon=True)
+        self.thread.start()
+        
+    def add(self, key, delay):
+        with self.lock:
+            heapq.heappush(self.queue, (time.time() + delay, key))
+    
+    def run(self):
+        while True:
+            with self.lock:
+                now = time.time()
+                to_release = []
+                while self.queue and self.queue[0][0] <= now:
+                    to_release.append(heapq.heappop(self.queue)[1])
+                next_time = self.queue[0][0] if self.queue else None
+            
+            for key in to_release:
+                self.callback(key)
+            
+            if next_time:
+                time.sleep(max(0.01, next_time - time.time()))
+            else:
+                time.sleep(0.1)
+
+
+# -------------------------------
 # Music Player
 # -------------------------------
 
@@ -240,13 +270,13 @@ class MusicPlayer:
         self.stop_event = Event()
         self.play_thread = None
         self.keyboard = Controller()
+
+        self.keypress_enabled = False
+        self.speed_enabled = False
         
         config = ConfigManager.load_config()
         self.key_map = self._create_key_map(config["key_mapping"])
         self.press_duration = 0.1
-        self.speed = 1000
-        self.keypress_enabled = False
-        self.speed_enabled = False
         
         timing_config = config.get("timing_config", {})
         self.initial_delay = timing_config.get("initial_delay", 1.2)
@@ -257,59 +287,82 @@ class MusicPlayer:
         self.current_speed = 1000
         self.ramp_counter = 0
         self.is_ramping = False
+        
+        self.window_cache = None
+        self.cache_time = 0
+        self.CACHE_EXPIRY = 5
+        self.scheduler = NoteScheduler(self.keyboard.release)
 
     def _create_key_map(self, mapping):
-        key_map = {}
-        for prefix in ['', '1', '2', '3']:
-            for key, value in mapping.items():
-                key_map[f"{prefix}{key}".lower()] = value
-        return key_map
+        return {f"{prefix}{key}".lower(): value 
+                for prefix in ['', '1', '2', '3'] 
+                for key, value in mapping.items()}
 
     def find_sky_window(self):
-        return next((w for w in gw.getWindowsWithTitle("Sky") if "Sky" in w.title), None)
+        if (self.window_cache and 
+            (time.time() - self.cache_time) < self.CACHE_EXPIRY):
+            return self.window_cache
+        
+        titles = ["Sky", "Sky: Children of the Light"]
+        for title in titles:
+            window = next((w for w in gw.getWindowsWithTitle(title) if title in w.title), None)
+            if window:
+                self.window_cache = window
+                self.cache_time = time.time()
+                return window
+        return None
 
-    def focus_window(self, window):
-        if window is None:
+    def focus_window(self, window=None):
+        target = window or self.window_cache
+        if not target:
             return False
             
         try:
-            if window.isMinimized:
-                window.restore()
-                
-            window.activate()
+            if target.isMinimized:
+                target.restore()
+            target.activate()
             return True
         except Exception:
             try:
+                SW_RESTORE = 9
                 user32 = ctypes.windll.user32
-                hwnd = window._hWnd
-                user32.ShowWindow(hwnd, 9)
-                user32.SetForegroundWindow(hwnd)
+                user32.ShowWindow(target._hWnd, SW_RESTORE)
+                user32.SetForegroundWindow(target._hWnd)
                 return True
             except Exception:
+                self.window_cache = None
                 return False
 
     def parse_song(self, path):
         path = Path(path)
-        if not path.resolve().as_posix().startswith(Path.cwd().as_posix()):
-            raise ValueError(LM.get_translation('security_error_path'))
-
+        
         if path.suffix.lower() not in ['.json', '.txt', '.skysheet']:
             raise ValueError(LM.get_translation('invalid_file_format'))
         
         with path.open('r', encoding='utf-8') as f:
             data = json.load(f)
-            return data[0] if isinstance(data, list) else data
+            song_data = data[0] if isinstance(data, list) else data
+            
+        for note in song_data.get("songNotes", []):
+            key_value = note.get('key', '')
+            note['key_lower'] = key_value.lower()
+                
+        return song_data
 
     def play_note(self, note, index, notes, current_speed):
-        key = self.key_map.get(note['key'].lower())
+        key = self.key_map.get(note['key_lower'])
         if key:
             self.keyboard.press(key)
-            Timer(self.press_duration, self.keyboard.release, [key]).start()
+            self.scheduler.add(key, self.press_duration)
         
         if index < len(notes) - 1:
-            next_time = notes[index + 1]['time']
-            wait_time = (next_time - note['time']) / 1000 * (1000 / current_speed)
-            time.sleep(wait_time)
+            if 'time' in note and 'time' in notes[index + 1]:
+                next_time = notes[index + 1]['time']
+                current_time = note['time']
+                wait_time = (next_time - current_time) / 1000 * (1000 / current_speed)
+                time.sleep(wait_time)
+            else:
+                time.sleep(0.1)
 
     def play_song(self, song_data):
         notes = song_data.get("songNotes", [])
@@ -318,10 +371,8 @@ class MusicPlayer:
             messagebox.showerror(LM.get_translation("error_title"), LM.get_translation("missing_song_notes"))
             return
 
-        def is_sky_running():
-            return any(p.name() == "Sky.exe" for p in psutil.process_iter())
-
-        if not is_sky_running():
+        sky_window = self.find_sky_window()
+        if not sky_window:
             messagebox.showerror(LM.get_translation("error_title"), LM.get_translation("sky_not_running"))
             return
         
@@ -443,6 +494,10 @@ class MusicApp:
 
     def _create_gui_components(self):
         self.root = ctk.CTk()
+        
+        saved_theme = ConfigManager.load_config().get("theme", "light")
+        ctk.set_appearance_mode(saved_theme)
+        
         self.root.title(LM.get_translation("project_title"))
         self.root.iconbitmap("resources/icons/icon.ico")
         self.root.protocol('WM_DELETE_WINDOW', self.shutdown)
@@ -482,7 +537,6 @@ class MusicApp:
             text=f"{LM.get_translation('duration')} {self.player.press_duration} s",
             font=("Arial", 12)
         )
-        
         self.preset_frame = ctk.CTkFrame(self.duration_frame)
 
         self.preset_buttons = []
@@ -517,8 +571,8 @@ class MusicApp:
             self.speed_buttons.append(btn)
         
         self.speed_label = ctk.CTkLabel(
-            self.speed_frame, 
-            text=f"{LM.get_translation('current_speed')}: {self.player.speed}",
+            self.speed_frame,
+            text=f"{LM.get_translation('current_speed')}: {self.player.current_speed}",
             font=("Arial", 12)
         )
         
@@ -549,9 +603,27 @@ class MusicApp:
             text_color=text_color,
             cursor="hand2"
         )
-        
         self.version_link.pack(side="right")
         self.version_link.bind("<Button-1>", self.open_github_releases)
+
+        theme_icon = "☀️" if saved_theme == "light" else "🌙"
+        self.theme_btn = ctk.CTkButton(
+            self.status_frame,
+            text=theme_icon,
+            command=self.toggle_theme,
+            width=30,
+            height=30,
+            font=("Arial", 16)
+        )
+        self.theme_btn.pack(side="right", padx=(0, 5))
+    
+    def toggle_theme(self):
+        current = ctk.get_appearance_mode().lower()
+        new_theme = "dark" if current == "light" else "light"
+        
+        ctk.set_appearance_mode(new_theme)
+        self.theme_btn.configure(text="🌞" if new_theme == "light" else "🌙")
+        ConfigManager.save_config({"theme": new_theme})
 
     def open_github_releases(self, event):
         try:
@@ -582,13 +654,13 @@ class MusicApp:
         self.adjust_window_size()
 
     def _pack_duration_controls(self):
-        self.duration_frame.pack(pady=5, before=self.speed_toggle)
+        self.duration_frame.pack(pady=5)
         self.duration_slider.pack(pady=5)
         self.duration_label.pack()
         self.preset_frame.pack(pady=5)
 
     def _pack_speed_controls(self):
-        self.speed_frame.pack(pady=5, before=self.play_button)
+        self.speed_frame.pack(pady=5)
         self.speed_preset_frame.pack(pady=5)
         self.speed_label.pack(pady=5)
 
@@ -608,7 +680,16 @@ class MusicApp:
         )
         if file_path:
             self.selected_file = file_path
-            self.file_button.configure(text=Path(file_path).name)
+            filename = Path(file_path).name
+            
+            display_name = filename if len(filename) <= 30 else filename[:27] + "..."
+            self.file_button.configure(text=display_name)
+            
+            if len(filename) > 30:
+                width = max(400, len(filename) * 8)
+                height = self.root.winfo_height() or DEFAULT_WINDOW_SIZE[1]
+                self.root.geometry(f"{width}x{height}")
+            
             self.root.focus()
 
     def play_selected(self):
@@ -639,7 +720,8 @@ class MusicApp:
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
                 if sky_window := self.player.find_sky_window():
-                    self.player.focus_window(sky_window)
+                    if not sky_window.isActive:
+                        self.player.focus_window(sky_window)
             else:
                 self.player.pause_flag.set()
 
@@ -674,7 +756,8 @@ class MusicApp:
             self._pack_speed_controls()
         else:
             self.speed_frame.pack_forget()
-            self.player.speed = 1000
+            self.player.current_speed = 1000
+            self.speed_label.configure(text=f"{LM.get_translation('current_speed')}: {self.player.current_speed}")
             
         self.adjust_window_size()
 

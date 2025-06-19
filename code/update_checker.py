@@ -1,6 +1,6 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
-# Source code: https://github.com/VanilleIce/ProjectLyrica
+# Source code: https://github.com/VanilleIce/ProjectLyrica 
 
 import requests
 import re
