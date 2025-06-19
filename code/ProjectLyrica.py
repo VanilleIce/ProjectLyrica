@@ -654,13 +654,13 @@ class MusicApp:
         self.adjust_window_size()
 
     def _pack_duration_controls(self):
-        self.duration_frame.pack(pady=5)
+        self.duration_frame.pack(pady=5, before=self.speed_toggle)
         self.duration_slider.pack(pady=5)
         self.duration_label.pack()
         self.preset_frame.pack(pady=5)
 
     def _pack_speed_controls(self):
-        self.speed_frame.pack(pady=5)
+        self.speed_frame.pack(pady=5, before=self.play_button)
         self.speed_preset_frame.pack(pady=5)
         self.speed_label.pack(pady=5)
 
