@@ -23,7 +23,7 @@ SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
 EXPANDED_SIZE = (400, 375)
 FULL_SIZE = (400, 470)
-version = "2.2.0"
+version = "2.2.1"
 
 # -------------------------------
 # Language Manager Class
@@ -235,15 +235,22 @@ class NoteScheduler:
         self.queue = []
         self.callback = release_callback
         self.lock = Lock()
+        self.stop_event = Event()
         self.thread = Thread(target=self.run, daemon=True)
         self.thread.start()
-        
+    
     def add(self, key, delay):
         with self.lock:
             heapq.heappush(self.queue, (time.time() + delay, key))
     
+    def stop(self):
+        self.stop_event.set()
+    
+    def reset(self):
+        self.stop_event.clear()
+    
     def run(self):
-        while True:
+        while not self.stop_event.is_set():
             with self.lock:
                 now = time.time()
                 to_release = []
@@ -255,7 +262,9 @@ class NoteScheduler:
                 self.callback(key)
             
             if next_time:
-                time.sleep(max(0.01, next_time - time.time()))
+                sleep_time = max(0.01, next_time - time.time())
+                if sleep_time > 0 and not self.stop_event.wait(sleep_time):
+                    continue
             else:
                 time.sleep(0.1)
 
@@ -365,6 +374,9 @@ class MusicPlayer:
                 time.sleep(0.1)
 
     def play_song(self, song_data):
+        self.scheduler.stop()
+        self.scheduler = NoteScheduler(self.keyboard.release)
+        
         notes = song_data.get("songNotes", [])
 
         if not notes:
@@ -413,10 +425,14 @@ class MusicPlayer:
     def stop_playback(self):
         self.stop_event.set()
         self.pause_flag.clear()
+        self.scheduler.stop()
+
         if self.play_thread and self.play_thread.is_alive():
             self.play_thread.join(timeout=1.0)
+
         self.stop_event.clear()
         self.is_ramping = False
+        self.scheduler.reset()
 
     def set_speed(self, speed):
         with self.speed_lock:
