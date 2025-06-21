@@ -676,35 +676,28 @@ class MusicApp:
         timing = config.get("timing_config", {})
         key_mapping = config.get("key_mapping", {})
         
-        # 1. Ermittle das Standard-Layout für die aktuelle Sprache
         lang_code = LM._selected_language or 'en_US'
-        standard_layout_name = "QWERTY"  # Default-Fallback
+        standard_layout_name = "QWERTY"
         layout_file_path = ""
         layout_keys = 0
         
-        # Durchsuche die verfügbaren Sprachen für das Layout
         for code, _, layout in LM.get_available_languages():
             if code == lang_code:
                 standard_layout_name = layout
                 break
         
-        # Bestimme den Pfad der Layout-Datei
         layout_file_path = os.path.join('resources', 'layouts', f"{standard_layout_name.lower()}.xml")
         
-        # 2. Bestimme den Mapping-Typ und lade ggf. das Standard-Layout
         mapping_type = "STANDARD"
         diff_info = ""
         
         try:
-            # Lade das Standard-Layout für diese Sprache
             standard_layout = KeyboardLayoutManager.load_layout(standard_layout_name)
             layout_keys = len(standard_layout)
             
-            # Vergleiche mit dem konfigurierten Mapping
             if key_mapping != standard_layout:
                 mapping_type = "CUSTOM"
                 
-                # Berechne Unterschiede für Debug-Info
                 diff = {}
                 for key in set(key_mapping.keys()) | set(standard_layout.keys()):
                     custom_val = key_mapping.get(key)
@@ -717,7 +710,6 @@ class MusicApp:
             logger.error(f"Could not verify mapping type: {e}")
             mapping_type = f"UNKNOWN ({e})"
         
-        # 3. Erstelle die Systeminformationen
         info = [
             f"Version: {self.version}",
             f"Language: {lang_code}",
@@ -743,7 +735,6 @@ class MusicApp:
             f"Entries: {len(key_mapping)}"
         ]
         
-        # 4. Logge die Informationen mit Debug-Details
         logger.info("System Configuration:\n\t" + "\n\t".join(info))
         
         if diff_info:
