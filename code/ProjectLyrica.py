@@ -433,6 +433,7 @@ class MusicPlayer:
             last_note_time = 0
             for i, note in enumerate(notes):
                 if self.stop_event.is_set():
+                    logging.info("Playback stopped by user")
                     break
                     
                 with self.speed_lock:
@@ -480,6 +481,10 @@ class MusicPlayer:
                 
             if not self.stop_event.is_set():
                 winsound.Beep(1000, 500)
+                logging.info("Playback completed - beep played")
+                
+        except Exception as e:
+            logging.error(f"Playback error: {str(e)}")
         finally:
             self._release_all_keys()
 
@@ -491,10 +496,7 @@ class MusicPlayer:
             except Exception:
                 pass
 
-    def stop_playback(self):
-        if self.was_paused:
-            winsound.Beep(1000, 500)
-            
+    def stop_playback(self):      
         self.stop_event.set()
         self.pause_flag.clear()
         self.scheduler.stop()
@@ -535,6 +537,7 @@ class MusicApp:
         config = ConfigManager.load_config()
         self.duration_presets = config["key_press_durations"]
         self.speed_presets = config["speed_presets"]
+        self.pause_key = config.get("pause_key", "#")
 
         self.version = version
         self.update_status = "checking"
@@ -544,6 +547,7 @@ class MusicApp:
         self.player = MusicPlayer()
         self.selected_file = None
         self.root = None
+        self.is_playing = False
 
         self._log_system_info()
 
@@ -809,13 +813,22 @@ class MusicApp:
             self.root.focus()
 
     def _play_song_thread(self, song_data):
-        sky_window = self.player.find_sky_window()
-        if sky_window:
-            self.player.focus_window(sky_window)
+        try:
+            sky_window = self.player.find_sky_window()
+            if sky_window:
+                self.player.focus_window(sky_window)
             
-        time.sleep(self.player.initial_delay)
-        
-        self.player.play_song(song_data)
+            time.sleep(self.player.initial_delay)
+            
+            self.player.play_song(song_data)
+
+            winsound.Beep(1000, 500)
+            logging.info("End beep played (including after pause/exit)")
+                
+        except Exception as e:
+            logging.error(f"Playback thread error: {e}")
+        finally:
+            self.is_playing = False
 
     def play_selected(self):
         logging.info("Play button pressed")
@@ -824,12 +837,13 @@ class MusicApp:
             logging.warning("No song file selected - showing warning to user")
             messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("choose_song_warning"))
             return
-            
-        filename = Path(self.selected_file).name
-        logging.info(f"Starting playback for song: {filename}")
+               
+        self.player.stop_playback()
+        self.is_playing = True
         
         try:
-            self.player.stop_playback()
+            filename = Path(self.selected_file).name
+            logging.info(f"Starting playback for song: {filename}")
             
             song_data = self.player.parse_song(self.selected_file)
             
@@ -841,6 +855,7 @@ class MusicApp:
             self.player.play_thread.start()
         except Exception as e:
             logging.error(f"Playback error: {e}")
+            self.is_playing = False
             messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('play_error_message')}: {e}")
 
     def set_press_duration(self, value):
@@ -849,7 +864,7 @@ class MusicApp:
         self.duration_label.configure(text=f"{LM.get_translation('duration')} {self.player.press_duration} s")
 
     def handle_keypress(self, key):
-        if hasattr(key, 'char') and key.char == ConfigManager.get_value("pause_key", "#"):
+        if hasattr(key, 'char') and key.char == self.pause_key:
             if self.player.pause_flag.is_set():
                 logging.info("Resume triggered by pause key")
                 self.player.pause_flag.clear()
@@ -907,7 +922,8 @@ class MusicApp:
         try:
             if hasattr(self, 'player') and self.player:
                 self.player.stop_playback()
-                if hasattr(self.player, 'play_thread') and self.player.play_thread and self.player.play_thread.is_alive():
+                self.is_playing = False
+                if hasattr(self.player, 'play_thread') and self.player.play_thread:
                     self.player.play_thread.join(timeout=0.5)
         except Exception as e:
             logging.error(f"Shutdown error: {e}")
