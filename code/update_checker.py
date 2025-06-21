@@ -1,6 +1,6 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
-# Source code: https://github.com/VanilleIce/ProjectLyrica 
+# Source code: https://github.com/VanilleIce/ProjectLyrica
 
 import requests
 import re
@@ -9,10 +9,10 @@ import json
 
 def check_update(current_version: str, repo: str):
     try:
-        try:
-            socket.create_connection(("api.github.com", 443), timeout=2)
-        except (socket.timeout, OSError):
-            return ("no_connection", "", "")
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(2)
+            if s.connect_ex(("api.github.com", 443)) != 0:
+                return ("no_connection", "", "")
         
         response = requests.get(
             f"https://api.github.com/repos/{repo}/releases/latest",
@@ -43,6 +43,8 @@ def check_update(current_version: str, repo: str):
         return ("error", "", "")
 
 def version_tuple(v: str):
-    cleaned = re.sub(r'[^0-9.]', '', v)
-    parts = cleaned.split('.')
-    return tuple(int(part) for part in parts if part.isdigit())
+    return tuple(
+        int(part) 
+        for part in re.sub(r'[^0-9.]', '', v).split('.') 
+        if part.isdigit()
+    )
