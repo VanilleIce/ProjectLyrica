@@ -2,13 +2,12 @@
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 # Source code: https://github.com/VanilleIce/ProjectLyrica
 
-import requests
-import re
-import socket
-import json
+import requests, re, socket, json, logging
+from logging_setup import setup_logging
 
 def check_update(current_version: str, repo: str):
     try:
+        logging.info(f"Checking for updates... Current version: {current_version}")
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(2)
             if s.connect_ex(("api.github.com", 443)) != 0:
@@ -31,15 +30,18 @@ def check_update(current_version: str, repo: str):
             return ("error", "", "")
         
         if version_tuple(latest) > version_tuple(current_version):
+            logging.info(f"Update available: {latest}")
             return ("update", latest, url)
         else:
+            logging.info("No update available")
             return ("current", latest, url)
             
     except requests.exceptions.RequestException:
         return ("error", "", "")
     except json.JSONDecodeError:
         return ("error", "", "")
-    except Exception:
+    except Exception as e:
+        logging.error(f"Update check failed: {str(e)}")
         return ("error", "", "")
 
 def version_tuple(v: str):

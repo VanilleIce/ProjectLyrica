@@ -2,7 +2,7 @@
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 # Source code: https://github.com/VanilleIce/ProjectLyrica
 
-import json, time, os, sys, winsound, heapq, ctypes, webbrowser
+import json, time, os, sys, winsound, heapq, ctypes, webbrowser, logging
 import pygetwindow as gw
 import customtkinter as ctk
 from pathlib import Path
@@ -11,12 +11,15 @@ from pynput.keyboard import Controller, Listener
 from tkinter import filedialog, messagebox
 import xml.etree.ElementTree as ET
 from update_checker import check_update
+from datetime import datetime
+from logging_setup import setup_logging
+
 
 SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
 EXPANDED_SIZE = (400, 375)
 FULL_SIZE = (400, 470)
-version = "2.2.1"
+version = "2.3.0"
 
 # -------------------------------
 # Language Manager Class
@@ -326,6 +329,10 @@ class MusicPlayer:
         self.CACHE_EXPIRY = 10
         self.scheduler = NoteScheduler(self.keyboard.release)
 
+        logging.info(f"Key mapping loaded: {len(self.key_map)} keys")
+        if config["key_mapping"]:
+            logging.debug(f"Key mapping details: {json.dumps(config['key_mapping'], indent=2)}")
+
     def _create_key_map(self, mapping):
         return {f"{prefix}{key}".lower(): value 
                 for prefix in ['', '1', '2', '3'] 
@@ -511,6 +518,8 @@ class MusicPlayer:
 
 class MusicApp:
     def __init__(self):
+        setup_logging(version)
+
         self._mutex_handle = None
         LM.initialize()
         if not LM._selected_language:
@@ -536,6 +545,8 @@ class MusicApp:
         self.selected_file = None
         self.root = None
 
+        self._log_system_info()
+
         try:
             result = check_update(self.version, "VanilleIce/ProjectLyrica")
             self.update_status = result[0]
@@ -548,6 +559,19 @@ class MusicApp:
 
         self._create_gui_components()
         self._setup_gui_layout()
+
+    def _log_system_info(self):
+        """Loggt wichtige System- und Konfigurationsinformationen"""
+        try:
+            config = ConfigManager.load_config()
+            logging.info(f"Selected Language: {LM._selected_language}")
+            logging.info(f"Keyboard Layout: {config.get('keyboard_layout', 'Default')}")
+            logging.info(f"Pause Key: {config.get('pause_key', '#')}")
+            logging.info(f"Initial Delay: {config.get('timing_config', {}).get('initial_delay', 1.2)}s")
+            logging.info(f"Press Duration: {self.player.press_duration}s")
+            logging.info(f"Current Speed: {self.player.current_speed}")
+        except Exception as e:
+            logging.error(f"Error logging system info: {e}")
 
     def is_already_running(self):
         self._mutex_handle = ctypes.windll.kernel32.CreateMutexW(None, False, "ProjectLyricaMutex")
@@ -763,6 +787,12 @@ class MusicApp:
             self.selected_file = file_path
             filename = Path(file_path).name
 
+            try:
+                relative_path = Path(file_path).relative_to(Path.cwd())
+                logging.info(f"Selected file: {relative_path}")
+            except ValueError:
+                logging.info(f"Selected file: {filename}")
+
             if len(filename) > 30:
                 shortened = filename[:25]
                 if len(filename) > 25:
@@ -788,13 +818,19 @@ class MusicApp:
         self.player.play_song(song_data)
 
     def play_selected(self):
+        logging.info("Play button pressed")
+        
         if not self.selected_file:
+            logging.warning("No song file selected - showing warning to user")
             messagebox.showwarning(LM.get_translation("warning_title"), LM.get_translation("choose_song_warning"))
             return
             
-        self.player.stop_playback()
+        filename = Path(self.selected_file).name
+        logging.info(f"Starting playback for song: {filename}")
         
         try:
+            self.player.stop_playback()
+            
             song_data = self.player.parse_song(self.selected_file)
             
             self.player.play_thread = Thread(
@@ -804,15 +840,18 @@ class MusicApp:
             )
             self.player.play_thread.start()
         except Exception as e:
+            logging.error(f"Playback error: {e}")
             messagebox.showerror(LM.get_translation("error_title"), f"{LM.get_translation('play_error_message')}: {e}")
 
     def set_press_duration(self, value):
         self.player.press_duration = round(float(value), 3)
+        logging.info(f"Set press duration: {self.player.press_duration}s")
         self.duration_label.configure(text=f"{LM.get_translation('duration')} {self.player.press_duration} s")
 
     def handle_keypress(self, key):
         if hasattr(key, 'char') and key.char == ConfigManager.get_value("pause_key", "#"):
             if self.player.pause_flag.is_set():
+                logging.info("Resume triggered by pause key")
                 self.player.pause_flag.clear()
                 if sky_window := self.player.find_sky_window():
                     try:
@@ -820,20 +859,24 @@ class MusicApp:
                     except Exception:
                         pass
             else:
+                logging.info("Pause triggered by pause key")
                 self.player.pause_flag.set()
 
     def set_speed(self, speed):
         self.player.set_speed(speed)
+        logging.info(f"Set playback speed: {speed}")
         self.speed_label.configure(text=f"{LM.get_translation('current_speed')}: {speed}")
 
     def apply_preset(self, duration):
         self.player.press_duration = duration
+        logging.info(f"Applied duration preset: {duration}s")
         self.duration_slider.set(duration)
         self.duration_label.configure(text=f"{LM.get_translation('duration')}: {duration}s")
 
     def toggle_keypress(self):
         self.player.keypress_enabled = not self.player.keypress_enabled
         status = LM.get_translation("enabled" if self.player.keypress_enabled else "disabled")
+        logging.info(f"Keypress adjustment {status}")
         self.keypress_toggle.configure(text=f"{LM.get_translation('key_press')}: {status}")
         
         if self.player.keypress_enabled:
@@ -847,6 +890,7 @@ class MusicApp:
     def toggle_speed(self):
         self.player.speed_enabled = not self.player.speed_enabled
         status = LM.get_translation("enabled" if self.player.speed_enabled else "disabled")
+        logging.info(f"Speed control {status}")
         self.speed_toggle.configure(text=f"{LM.get_translation('speed_control')}: {status}")
         
         if self.player.speed_enabled:
@@ -858,15 +902,22 @@ class MusicApp:
             
         self.adjust_window_size()
 
-    def shutdown(self):    
-        if hasattr(self, 'player') and self.player and self.player.was_paused:
-            self.player.stop_playback()            
-            if hasattr(self.player, 'play_thread') and self.player.play_thread:
-                self.player.play_thread.join(timeout=0.5)        
+    def shutdown(self):
+        logging.info("Application shutdown")
+        try:
+            if hasattr(self, 'player') and self.player:
+                self.player.stop_playback()
+                if hasattr(self.player, 'play_thread') and self.player.play_thread and self.player.play_thread.is_alive():
+                    self.player.play_thread.join(timeout=0.5)
+        except Exception as e:
+            logging.error(f"Shutdown error: {e}")
+        
         if hasattr(self, 'key_listener') and self.key_listener.is_alive():
-            self.key_listener.stop()        
+            self.key_listener.stop()
+        
         if hasattr(self, '_mutex_handle'):
             ctypes.windll.kernel32.CloseHandle(self._mutex_handle)
+        
         if hasattr(self, 'root'):
             self.root.quit()
             self.root.destroy()
