@@ -376,6 +376,7 @@ class MusicPlayer:
         self.window_cache = None
         self.cache_time = 0
         self.CACHE_EXPIRY = 10
+        self.window_lock = Lock()
         self.scheduler = NoteScheduler(self.keyboard.release)
 
         logger.info(f"Key mapping loaded: {len(self.key_map)} keys")
@@ -387,34 +388,40 @@ class MusicPlayer:
                 for prefix in ['', '1', '2', '3'] 
                 for key, value in mapping.items()}
 
-    def find_sky_window(self):
+    def find_sky_window(self, force_search=False):
         now = time.time()
-        if self.window_cache and (now - self.cache_time) < self.CACHE_EXPIRY:
-            return self.window_cache
         
-        titles = ["Sky", "Sky: Children of the Light"]
-        found = False
-        
-        for title in titles:
-            windows = gw.getWindowsWithTitle(title)
-            if windows:
-                self.window_cache = windows[0]
-                self.cache_time = time.time()
-                logger.info(f"Found Sky window: {title}")
-                found = True
-                return windows[0]
-        
-        if not found:
-            logger.warning("Sky window not found - searched titles: %s", titles)
-            try:
-                all_windows = gw.getAllWindows()
-                all_titles = [w.title for w in all_windows if w.title.strip()]
-                logger.debug("Top 10 available window titles: %s", all_titles[:10])
-            except Exception as e:
-                logger.error("Error listing windows: %s", str(e))
-        
-        self.cache_time = now
-        return None
+        with self.window_lock:
+            if not force_search and self.window_cache and (now - self.cache_time) < self.CACHE_EXPIRY:
+                return self.window_cache
+                
+            titles = ["Sky", "Sky: Children of the Light"]
+            found_window = None
+            
+            for title in titles:
+                try:
+                    windows = gw.getWindowsWithTitle(title)
+                    if windows:
+                        found_window = windows[0]
+                        break
+                except Exception as e:
+                    logger.error(f"Error searching for window '{title}': {e}")
+            
+            if found_window:
+                logger.debug(f"Found Sky window: {found_window.title}")
+            else:
+                if not self.window_cache or force_search:
+                    logger.warning("Sky window not found - searched titles: %s", titles)
+                    try:
+                        all_windows = gw.getAllWindows()
+                        all_titles = [w.title for w in all_windows if w.title.strip()]
+                        logger.debug("Top 10 available window titles: %s", all_titles[:10])
+                    except Exception as e:
+                        logger.error("Error listing windows: %s", str(e))
+            
+            self.window_cache = found_window
+            self.cache_time = now
+            return found_window
 
     def focus_window(self, window=None):
         target = window or self.window_cache
@@ -478,7 +485,7 @@ class MusicPlayer:
             note['key_lower'] = note.get('key', '').lower()
 
         self.song_cache[path] = song_data
-        logger.info(f"Song parsed | Notes: {len(song_data['songNotes'])} | Duration: {song_data.get('songDuration', 'N/A')}ms")
+        logger.info(f"Song parsed | Notes: {len(song_data['songNotes'])}")
         return song_data
 
     def play_song(self, song_data):
@@ -501,10 +508,11 @@ class MusicPlayer:
             messagebox.showerror(LM.get_translation("error_title"), LM.get_translation("missing_song_notes"))
             return
 
-        sky_window = self.find_sky_window()
+        sky_window = self.find_sky_window(force_search=True)
         if not sky_window:
             logger.error("Sky not running - playback aborted")
             messagebox.showerror(LM.get_translation("error_title"), LM.get_translation("sky_not_running"))
+            self.playback_active = False
             return
         
         self.is_ramping = True
@@ -973,7 +981,7 @@ class MusicApp:
     def _play_song_thread(self, song_data):
         try:
             logger.info("Playback thread started")
-            sky_window = self.player.find_sky_window()
+            sky_window = self.player.window_cache
             if sky_window:
                 logger.debug("Focusing Sky window")
                 self.player.focus_window(sky_window)
@@ -982,7 +990,7 @@ class MusicApp:
             time.sleep(self.player.initial_delay)
             
             self.player.play_song(song_data)
-
+            
             winsound.Beep(1000, 500)
             logger.info("Playback thread completed")
                 
