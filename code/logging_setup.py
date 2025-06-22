@@ -1,77 +1,95 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
-# Source code: https://github.com/VanilleIce/ProjectLyrica
 
-import logging, platform, sys, subprocess, ctypes
+import logging
+import platform
+import sys
+import subprocess
+import ctypes
 from ctypes import wintypes
 
 def setup_logging(version):
-    LOG_FILE = "project_lyrica.log"
-    system_info = [
+    log_file = "project_lyrica.log"
+    
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+
+    file_handler = logging.FileHandler(log_file, mode='w')
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    ))
+    root_logger.addHandler(file_handler)
+    
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.WARNING)
+    console_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    ))
+    root_logger.addHandler(console_handler)
+    
+    setup_logger = logging.getLogger("logger")
+    
+    sys_info = [
         f"Project Lyrica v{version}",
         f"OS: {platform.platform()}",
         f"Python: {sys.version.split()[0]}",
-        f"Architecture: {platform.architecture()[0]}"
     ]
-    
-    # Processor info
-    processor_info = platform.processor()
+
+    processor = platform.processor()
     if platform.system() == "Windows":
         try:
-            result = subprocess.check_output(
+            output = subprocess.check_output(
                 'wmic cpu get name /value', 
                 shell=True,
                 text=True,
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
+                encoding='utf-8'
             ).strip()
-            if "Name=" in result:
-                processor_info = result.split("Name=", 1)[1].strip()
-        except: pass
-    system_info.append(f"Processor: {processor_info}")
-    
-    # RAM info (Windows only)
+            if "Name=" in output:
+                processor = output.split("Name=", 1)[1].strip()
+        except Exception as e:
+            setup_logger.error(f"CPU info error: {e}")
+    sys_info.append(f"Processor: {processor}")
+
+    ram_info = "RAM: Unknown"
     if platform.system() == "Windows":
         try:
-            kernel32 = ctypes.windll.kernel32
-            mem_kb = wintypes.DWORDLONG()
-            kernel32.GetPhysicallyInstalledSystemMemory(ctypes.byref(mem_kb))
-            ram_gb = mem_kb.value / 1024 / 1024
-            system_info.append(f"RAM: {ram_gb:.1f} GB (installed)")
-        except: pass
+            mem_kb = ctypes.c_ulonglong()
+            
+            kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+            kernel32.GetPhysicallyInstalledSystemMemory.argtypes = [ctypes.POINTER(ctypes.c_ulonglong)]
+            kernel32.GetPhysicallyInstalledSystemMemory.restype = ctypes.c_bool
+            
+            if kernel32.GetPhysicallyInstalledSystemMemory(ctypes.byref(mem_kb)):
+                ram_gb = mem_kb.value / (1024 * 1024)
+                ram_info = f"RAM: {ram_gb:.1f} GB"
+            else:
+                setup_logger.error("GetPhysicallyInstalledSystemMemory API call failed")
+        except Exception as e:
+            setup_logger.error(f"RAM detection error: {e}")
+    sys_info.append(ram_info)
     
-    # GPU info (Windows only)
+    gpu_info = "GPU: Unknown"
     if platform.system() == "Windows":
         try:
-            import winreg
-            system_info.append("GPU Info:")
-            key = winreg.OpenKey(
-                winreg.HKEY_LOCAL_MACHINE,
-                r"SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
-            )
-            for i in range(10):
-                try:
-                    subkey = winreg.EnumKey(key, i)
-                    gpu_key = winreg.OpenKey(key, subkey)
-                    name = winreg.QueryValueEx(gpu_key, "DriverDesc")[0]
-                    driver_version = winreg.QueryValueEx(gpu_key, "DriverVersion")[0]
-                    system_info.append(f"  - {name} | v{driver_version}")
-                    winreg.CloseKey(gpu_key)
-                except OSError: break
-        except: pass
+            output = subprocess.check_output(
+                'wmic path win32_VideoController get name /value', 
+                shell=True,
+                text=True,
+                stderr=subprocess.DEVNULL,
+                encoding='utf-8'
+            ).strip()
+            gpu_names = [line.split('=')[1] for line in output.splitlines() if line.startswith('Name=')]
+            if gpu_names:
+                gpu_info = f"GPU: {gpu_names[0]}"
+        except Exception as e:
+            setup_logger.error(f"GPU info error: {e}")
+    sys_info.append(gpu_info)
+
+    setup_logger.info("=" * 60)
+    for info in sys_info:
+        setup_logger.info(info)
+    setup_logger.info("=" * 60)
     
-    # Logging setup
-    logging.basicConfig(
-        filename=LOG_FILE,
-        filemode='w',
-        level=logging.INFO,
-        format='%(asctime)s - %(filename)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    
-    # Log system info
-    logging.info("=" * 70)
-    for info in system_info:
-        logging.info(info)
-    logging.info("=" * 70)
-    
-    return LOG_FILE
+    return log_file
