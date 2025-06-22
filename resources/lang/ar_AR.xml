@@ -22,6 +22,7 @@
     <translation key="browser_open_error">تعذر فتح المتصفح</translation>
     <translation key="sky_not_running">يجب أن يكون سكاي قيد التشغيل!</translation>
     <translation key="missing_song_notes">بيانات الأغنية مفقودة (songNotes)</translation>
+    <translation key="invalid_speed">سرعة غير صالحة! يجب أن تكون أكبر من 0.</translation>
 
     <!-- ================= -->
     <!-- وظائف مشغل الموسيقى -->
