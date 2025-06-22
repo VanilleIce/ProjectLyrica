@@ -1,11 +1,7 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import logging
-import platform
-import sys
-import subprocess
-import ctypes
+import logging, platform, sys, subprocess, ctypes
 from ctypes import wintypes
 
 def setup_logging(version):
@@ -14,14 +10,28 @@ def setup_logging(version):
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
 
-    file_handler = logging.FileHandler(log_file, mode='w')
+    file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     ))
     root_logger.addHandler(file_handler)
+
+    class UnicodeSafeConsoleHandler(logging.StreamHandler):
+        def emit(self, record):
+            try:
+                msg = self.format(record)
+                stream = self.stream
+                stream.write(msg + self.terminator)
+                self.flush()
+            except UnicodeEncodeError:
+                cleaned_msg = msg.encode('ascii', 'replace').decode('ascii')
+                stream.write(cleaned_msg + self.terminator)
+                self.flush()
+            except Exception:
+                self.handleError(record)
     
-    console_handler = logging.StreamHandler()
+    console_handler = UnicodeSafeConsoleHandler()
     console_handler.setLevel(logging.WARNING)
     console_handler.setFormatter(logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

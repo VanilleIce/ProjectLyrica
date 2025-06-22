@@ -1,35 +1,32 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import json
-import time
-import os
-import sys
-import winsound
-import heapq
-import ctypes
-import webbrowser
-import logging
-import html
+import json, time, os, sys, winsound, heapq, ctypes, webbrowser, logging
 import pygetwindow as gw
 import customtkinter as ctk
 from pathlib import Path
 from threading import Event, Thread, Lock
-from pynput.keyboard import Controller, Listener
+from pynput.keyboard import Controller, Listener, Key
 from tkinter import filedialog, messagebox
 import xml.etree.ElementTree as ET
 from update_checker import check_update
-from pynput.keyboard import Key
 from logging_setup import setup_logging
 
 logger = logging.getLogger("ProjectLyrica")
 
-# Constants
+# -------------------------------
+# Constante
+# -------------------------------
+
 SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
 EXPANDED_SIZE = (400, 375)
 FULL_SIZE = (400, 470)
 VERSION = "2.3.1"
+
+# -------------------------------
+# Language Manager
+# -------------------------------
 
 class LanguageManager:
     _translations = {}
@@ -83,13 +80,17 @@ class LanguageManager:
     @classmethod
     def set_language(cls, lang_code):
         config = ConfigManager.get_config()
-        layout = next((lyt for code, _, lyt in cls._languages if code == lang_code), "QWERTY")
+        try:
+            layout = next((lyt for code, _, lyt in cls._languages if code == lang_code), "QWERTY")
+        except StopIteration:
+            layout = "QWERTY"
+            logger.warning(f"Layout not found for language: {lang_code}, using default")
         
         try:
             key_map = KeyboardLayoutManager.load(layout)
         except Exception as e:
             logger.error(f"Layout error: {e}")
-            key_map = config.get("key_mapping", {})
+            key_map = config.get("key_mapping", KeyboardLayoutManager.load("QWERTY"))
         
         ConfigManager.save({
             "selected_language": lang_code,
@@ -102,6 +103,10 @@ class LanguageManager:
     def get_languages(cls):
         return cls._languages
 
+# -------------------------------
+# Config Manager
+# -------------------------------
+
 class ConfigManager:
     DEFAULT = {
         "key_press_durations": [0.2, 0.248, 0.3, 0.5, 1.0],
@@ -111,7 +116,7 @@ class ConfigManager:
         "key_mapping": {},
         "timing_config": {
             "initial_delay": 1.4,
-            "pause_resume_delay": 0.8,
+            "pause_resume_delay": 1.2,
             "ramp_steps": 20
         },
         "pause_key": "#",
@@ -126,7 +131,7 @@ class ConfigManager:
             return cls._config
             
         try:
-            with open(SETTINGS_FILE, 'r') as f:
+            with open(SETTINGS_FILE, 'r', encoding="utf-8") as f:
                 user_config = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             user_config = {}
@@ -148,8 +153,8 @@ class ConfigManager:
             else:
                 config[key] = value
         
-        with open(SETTINGS_FILE, 'w') as f:
-            json.dump(config, f, indent=3)
+        with open(SETTINGS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(config, f, indent=3, ensure_ascii=False)
 
     @classmethod
     def get_value(cls, key, default=None):
@@ -159,18 +164,20 @@ class ConfigManager:
             value = value.get(k, {})
         return value or default or cls.DEFAULT.get(key)
 
+# -------------------------------
+# Keyboard Layout Manager
+# -------------------------------
+
 class KeyboardLayoutManager:
     @staticmethod
     def load(name):
         file_path = Path(f'resources/layouts/{name.lower()}.xml')
         try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                content = file.read()
-                content = html.unescape(content)
-                tree = ET.fromstring(content)
+            tree = ET.parse(file_path)
+            root = tree.getroot()
             
             layout = {}
-            for key in tree.findall('key'):
+            for key in root.findall('key'):
                 key_id = key.get('id')
                 if key_id:
                     key_text = key.text.strip() if key.text else ""
@@ -178,7 +185,12 @@ class KeyboardLayoutManager:
             return layout
         except Exception as e:
             logger.error(f"Layout load error: {e}")
-            raise
+            logger.error(f"Failed to load layout from: {file_path.resolve()}")
+            raise RuntimeError(f"Could not load keyboard layout: {name}") from e
+
+# -------------------------------
+# Note Scheduler
+# -------------------------------
 
 class NoteScheduler:
     def __init__(self, release_callback):
@@ -202,6 +214,8 @@ class NoteScheduler:
         if self.active:
             self.stop_event.set()
             self.thread.join(timeout=0.5)
+            if self.thread.is_alive():
+                logger.warning("Scheduler thread did not terminate gracefully")
             self.active = False
 
     def restart(self):
@@ -234,6 +248,10 @@ class NoteScheduler:
                     sleep_time = 0.05
                     
             time.sleep(sleep_time)
+
+# -------------------------------
+# Music Player
+# -------------------------------
 
 class MusicPlayer:
     def __init__(self):
@@ -271,12 +289,13 @@ class MusicPlayer:
         key_map = {}
         for prefix in ['', '1', '2', '3']:
             for key, value in mapping.items():
-                if isinstance(value, str) and '\\u' in value:
-                    try:
+                try:
+                    if isinstance(value, str) and '\\u' in value:
                         value = bytes(value, 'latin1').decode('unicode_escape')
-                    except UnicodeDecodeError:
-                        logger.warning(f"Invalid escape sequence: {value}")
-                key_map[f"{prefix}{key}".lower()] = value
+                    key_map[f"{prefix}{key}".lower()] = value
+                except Exception as e:
+                    logger.error(f"Key mapping error for {key}: {value} - {e}")
+                    key_map[f"{prefix}{key}".lower()] = value
         return key_map
 
     def _find_sky_window(self):
@@ -287,12 +306,19 @@ class MusicPlayer:
         return None
 
     def _focus_window(self, window):
-        if window.isMinimized: 
-            window.restore()
-        if not window.isActive: 
-            window.activate()
-        time.sleep(0.1)
-        return window.isActive
+        try:
+            if window.isMinimized: 
+                window.restore()
+            if not window.isActive:
+                for _ in range(3):
+                    window.activate()
+                    time.sleep(0.1)
+                    if window.isActive:
+                        break
+            return window.isActive
+        except Exception as e:
+            logger.error(f"Window focus error: {e}")
+            return False
 
     def parse_song(self, path):
         self.logger.debug(f"Parsing song: {path}")
@@ -447,6 +473,10 @@ class MusicPlayer:
     def set_speed(self, speed):
         self.current_speed = speed
 
+# -------------------------------
+# Language Window
+# -------------------------------
+
 class LanguageWindow:
     _open = False
 
@@ -483,6 +513,10 @@ class LanguageWindow:
         root.mainloop()
         cls._open = False
 
+# -------------------------------
+# Music App
+# -------------------------------
+
 class MusicApp:
     def __init__(self):
         setup_logging(VERSION)
@@ -518,14 +552,72 @@ class MusicApp:
 
     def _log_system_info(self):
         config = ConfigManager.get_config()
-        lang_code = LanguageManager._current_lang or 'en_US'
-        layout = next((lyt for code, _, lyt in LanguageManager.get_languages() if code == lang_code), "QWERTY")
+        lang_code = LanguageManager._current_lang
+        layout = next((lyt for code, _, lyt in LanguageManager.get_languages() if code == lang_code))
+        
+        is_custom = False
+        key_map_details = []
+        default_key_map = {}
+        
+        try:
+            default_key_map = KeyboardLayoutManager.load(layout)
+            
+            is_custom = config["key_mapping"] != default_key_map
+        except Exception as e:
+            logger.error(f"Layout load error in logging: {e}")
+            is_custom = True
+        
+        for key, value in config["key_mapping"].items():
+            if key in default_key_map:
+                default_value = default_key_map[key]
+                if value != default_value:
+                    key_map_details.append(f"  {key}: {value} (modified from '{default_value}')")
+                else:
+                    key_map_details.append(f"  {key}: {value} (default)")
+            else:
+                key_map_details.append(f"  {key}: {value} (custom key)")
+        
+        missing_keys = [k for k in default_key_map if k not in config["key_mapping"]]
+        for key in missing_keys:
+            key_map_details.append(f"  {key}: MISSING (default: '{default_key_map[key]}')")
+        
+        timing = config.get("timing_config", {})
         
         info = [
+            "== Player Config ==",
             f"Language: {lang_code}",
-            f"Layout: {layout}"
+            f"Keyboard Layout: {layout} ({'Custom' if is_custom else 'Standard'})",
+            f"Theme: {config.get('theme')}",
+            "",
+            "== Timing Config ==",
+            f"Initial Delay: {timing.get('initial_delay')}s",
+            f"Pause/Resume Delay: {timing.get('pause_resume_delay')}s",
+            f"Ramp Steps: {timing.get('ramp_steps')}",
+            "",
+            "== Player Settings ==",
+            f"Pause Key: '{config.get('pause_key')}'",
+            f"Speed Presets: {config.get('speed_presets')}",
+            f"Press Duration Presets: {config.get('key_press_durations')}",
+            "",
+            "== Key Mapping =="
         ]
-        logger.info("Application Config:\n\t" + "\n\t".join(info))
+        
+        info.extend(key_map_details)
+        
+        try:
+            log_message = "Application Config:\n\t" + "\n\t".join(info)
+            logger.info(log_message)
+        except UnicodeEncodeError:
+            cleaned_info = []
+            for line in info:
+                try:
+                    line.encode('utf-8')
+                    cleaned_info.append(line)
+                except UnicodeEncodeError:
+                    cleaned_line = line.encode('ascii', 'replace').decode('ascii')
+                    cleaned_info.append(cleaned_line)
+            
+            logger.info("Application Config:\n\t" + "\n\t".join(cleaned_info))
 
     def _init_gui(self):
         self.root = ctk.CTk()
@@ -761,6 +853,13 @@ class MusicApp:
         finally:
             winsound.Beep(1000, 500)
             logger.info("Playback thread completed")
+            self.root.after(0, lambda: self.play_btn.configure(
+                text=LanguageManager.get("play_button_text"),
+                state="normal"
+            ))
+            self.root.after(0, lambda: self.status_label.configure(
+                text=LanguageManager.get("play_complete")
+            ))
 
     def _handle_keypress(self, key):
         if hasattr(key, 'char') and key.char == self.pause_key:
@@ -834,6 +933,10 @@ class MusicApp:
 
     def run(self):
         self.root.mainloop()
+
+# -------------------------------
+# App Starter
+# -------------------------------
 
 if __name__ == "__main__":
     MusicApp().run()

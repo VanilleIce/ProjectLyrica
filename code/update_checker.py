@@ -1,15 +1,11 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import requests
-import re
-import socket
-import logging
+import requests, re, socket, logging
 
-logger = logging.getLogger("ProjectLyrica.UpdateChecker")
+logger = logging.getLogger("UpdateChecker")
 
 def version_tuple(v):
-    """Convert version string to comparable tuple"""
     clean = re.sub(r'[^0-9.]', '', v)
     parts = clean.split('.')
     while len(parts) < 3:
