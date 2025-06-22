@@ -22,7 +22,7 @@ SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
 EXPANDED_SIZE = (400, 375)
 FULL_SIZE = (400, 470)
-VERSION = "2.3.1"
+VERSION = "2.3.3"
 
 # -------------------------------
 # Language Manager
@@ -380,6 +380,9 @@ class MusicPlayer:
 
         song_title = song_data.get("songTitle", "Unknown")
         logger.info(f"Playing song: '{song_title}' with {self.note_count} notes at speed {self.current_speed}")
+        
+        time.sleep(self.initial_delay)
+        
         self.start_time = time.time()
         last_time = 0
         
@@ -818,6 +821,8 @@ class MusicApp:
         window_focused = False
         focus_attempts = 3
         
+        focus_start_time = time.time()
+        
         for attempt in range(1, focus_attempts + 1):
             try:
                 window = self.player._find_sky_window()
@@ -841,8 +846,14 @@ class MusicApp:
             self.root.after(0, lambda: messagebox.showerror("Error", LanguageManager.get("sky_not_running")))
             return
         
-        logger.debug(f"Waiting initial delay: {self.player.initial_delay}s")
-        time.sleep(self.player.initial_delay)
+        elapsed_time = time.time() - focus_start_time
+        remaining_delay = max(0, self.player.initial_delay - elapsed_time)
+        
+        if remaining_delay > 0:
+            logger.debug(f"Waiting initial delay: {remaining_delay:.2f}s (of {self.player.initial_delay}s)")
+            time.sleep(remaining_delay)
+        else:
+            logger.debug(f"Focus took longer than initial delay ({elapsed_time:.2f}s), skipping wait")
         
         try:
             logger.info("Starting actual playback")
