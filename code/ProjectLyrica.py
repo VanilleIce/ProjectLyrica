@@ -22,7 +22,7 @@ SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 280)
 EXPANDED_SIZE = (400, 375)
 FULL_SIZE = (400, 470)
-VERSION = "2.3.1"
+VERSION = "2.3.2"
 
 # -------------------------------
 # Language Manager
@@ -399,6 +399,10 @@ class MusicPlayer:
                 else:
                     speed = self.current_speed
 
+                if speed <= 0:
+                    logger.warning(f"Invalid speed {speed}, resetting to 1000")
+                    speed = 1000
+
                 if last_time > 0:
                     interval = (note['time'] - last_time) / 1000 * (1000 / speed)
                     start = time.perf_counter()
@@ -471,7 +475,11 @@ class MusicPlayer:
         self.playback_active = False
 
     def set_speed(self, speed):
-        self.current_speed = speed
+        if speed <= 0:
+            logger.warning(f"Invalid speed {speed}, resetting to 1000")
+            self.current_speed = 1000
+        else:
+            self.current_speed = speed
 
 # -------------------------------
 # Language Window
@@ -701,6 +709,9 @@ class MusicApp:
         
         self.speed_preset_frame = ctk.CTkFrame(self.speed_frame)
         for speed in self.speed_presets:
+            if speed <= 0:
+                continue
+                
             btn = ctk.CTkButton(
                 self.speed_preset_frame, text=str(speed), width=50,
                 command=lambda s=speed: self._set_speed(s)
@@ -857,9 +868,6 @@ class MusicApp:
                 text=LanguageManager.get("play_button_text"),
                 state="normal"
             ))
-            self.root.after(0, lambda: self.status_label.configure(
-                text=LanguageManager.get("play_complete")
-            ))
 
     def _handle_keypress(self, key):
         if hasattr(key, 'char') and key.char == self.pause_key:
@@ -882,6 +890,10 @@ class MusicApp:
         self.duration_label.configure(text=f"{LanguageManager.get('duration')} {duration} s")
 
     def _set_speed(self, speed):
+        if speed <= 0:
+            messagebox.showerror("Error", LanguageManager.get("invalid_speed"))
+            return
+            
         self.player.set_speed(speed)
         self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {speed}")
 

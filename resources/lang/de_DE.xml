@@ -22,6 +22,7 @@
     <translation key="browser_open_error">Browser konnte nicht geöffnet werden</translation>
     <translation key="sky_not_running">Sky muss laufen!</translation>
     <translation key="missing_song_notes">Song-Daten fehlen (songNotes)</translation>
+    <translation key="invalid_speed">Ungültige Geschwindigkeit! Muss größer als 0 sein.</translation>
 
     <!-- ================= -->
     <!-- MUSIKPLAYER-FUNKTIONEN -->

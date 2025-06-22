@@ -22,6 +22,7 @@
     <translation key="browser_open_error">Tsy afaka nanokatra ny navigatera</translation>
     <translation key="sky_not_running">Tokony hiasa ny Sky!</translation>
     <translation key="missing_song_notes">Tsy hita ny angona momba ny hira (songNotes)</translation>
+    <translation key="invalid_speed">Hafainganana tsy manan-kery! Tokony lehibe noho ny 0.</translation>
 
     <!-- ================= -->
     <!-- ASA NY MPILALAO MOZIKA -->
