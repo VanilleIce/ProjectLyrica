@@ -12,9 +12,9 @@
   <language code="da_DK" key_layout="QWERTY">Dansk</language>
   <language code="mg_MG" key_layout="QWERTY">Malagasy</language>
   <language code="ko_KR" key_layout="QWERTY">한국어</language>
-  <language code="zh_CN" key_layout="QWERTY">中文</language>
+  <language code="zh_ZH" key_layout="QWERTY">中文</language>
   <language code="ru_RU" key_layout="ЙЦУКЕН">Русский</language>
   <language code="id_ID" key_layout="QWERTY">Bahasa Indonesia</language>
-  <language code="ja_JP" key_layout="JIS">日本語</language>
+  <language code="ja_JA" key_layout="QWERTY">日本語</language>
   <language code="ar_AR" key_layout="Arabic">العربية</language>
 </languages>
