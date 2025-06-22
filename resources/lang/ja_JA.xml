@@ -22,6 +22,7 @@
     <translation key="browser_open_error">ブラウザを開けません</translation>
     <translation key="sky_not_running">Skyが起動している必要があります！</translation>
     <translation key="missing_song_notes">曲データが欠けています (songNotes)</translation>
+    <translation key="invalid_speed">無効な速度です！0より大きい必要があります。</translation>
 
     <!-- ================= -->
     <!-- 音楽プレーヤー機能 -->
