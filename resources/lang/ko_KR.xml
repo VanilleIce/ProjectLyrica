@@ -42,6 +42,7 @@
     <translation key="select_language">언어 선택:</translation>
     <translation key="language_saved">언어가 저장되었습니다</translation>
     <translation key="save_button_text">저장</translation>
+    <translation key="enable_smooth_start">부드러운 시작</translation>
     
     <!-- ================= -->
     <!-- 버전 정보 -->

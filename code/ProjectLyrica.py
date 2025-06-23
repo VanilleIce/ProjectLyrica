@@ -19,10 +19,10 @@ logger = logging.getLogger("ProjectLyrica")
 # -------------------------------
 
 SETTINGS_FILE = 'settings.json'
-DEFAULT_WINDOW_SIZE = (400, 280)
-EXPANDED_SIZE = (400, 375)
-FULL_SIZE = (400, 470)
-VERSION = "2.3.3"
+DEFAULT_WINDOW_SIZE = (400, 310)
+EXPANDED_SIZE = (400, 420)
+FULL_SIZE = (400, 515)
+VERSION = "2.3.4"
 
 # -------------------------------
 # Language Manager
@@ -120,7 +120,8 @@ class ConfigManager:
             "ramp_steps": 20
         },
         "pause_key": "#",
-        "theme": "dark"
+        "theme": "dark",
+        "enable_ramping": True
     }
 
     _config = None
@@ -271,6 +272,7 @@ class MusicPlayer:
         
         self.keypress_enabled = False
         self.speed_enabled = False
+        self.enable_ramping = config.get("enable_ramping", True)
 
         timing = config["timing_config"]
         self.initial_delay = timing["initial_delay"]
@@ -365,8 +367,11 @@ class MusicPlayer:
         self.playback_active = True
         self.scheduler.reset()
         self.stop_event.clear()
-        self.is_ramping = True
-        self.ramp_counter = 0
+        
+        if self.enable_ramping:
+            self.is_ramping = True
+            self.ramp_counter = 0
+        
         self.pause_count = 0
         self.total_pause_time = 0
         
@@ -392,7 +397,7 @@ class MusicPlayer:
                     logger.info("Playback stopped by user")
                     break
                     
-                if self.is_ramping:
+                if self.enable_ramping and self.is_ramping:
                     ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps)
                     speed = max(500, self.current_speed * min(1.0, ramp_factor))
                     self.ramp_counter += 1
@@ -430,8 +435,10 @@ class MusicPlayer:
                             self.total_pause_time += pause_duration
                             
                             logger.info(f"Playback resumed after {pause_duration:.2f}s pause")
-                            self.is_ramping = True
-                            self.ramp_counter = 0
+                            
+                            if self.enable_ramping:
+                                self.is_ramping = True
+                                self.ramp_counter = 0
                             
                             time.sleep(self.pause_resume_delay)
                             start = time.perf_counter()
@@ -555,7 +562,7 @@ class MusicApp:
         self.selected_file = None
         self.duration_presets = config["key_press_durations"]
         self.speed_presets = config["speed_presets"]
-        self.pause_key = config.get("pause_key", "#")
+        self.pause_key = config.get("pause_key")
 
     def _setup_key_listener(self):
         self.key_listener = Listener(on_press=self._handle_keypress)
@@ -609,6 +616,7 @@ class MusicApp:
             f"Pause Key: '{config.get('pause_key')}'",
             f"Speed Presets: {config.get('speed_presets')}",
             f"Press Duration Presets: {config.get('key_press_durations')}",
+            f"Enable Ramping: {config.get('enable_ramping')}",
             "",
             "== Key Mapping =="
         ]
@@ -684,7 +692,7 @@ class MusicApp:
         self.duration_frame = ctk.CTkFrame(self.root)
         self.duration_slider = ctk.CTkSlider(
             self.duration_frame, from_=0.1, to=1.0, 
-            number_of_steps=90, width=200
+            number_of_steps=90, width=100
         )
         self.duration_slider.set(0.1)
         self.duration_slider.bind("<B1-Motion>", self._set_duration)
@@ -716,10 +724,29 @@ class MusicApp:
                 continue
                 
             btn = ctk.CTkButton(
-                self.speed_preset_frame, text=str(speed), width=50,
+                self.speed_preset_frame, 
+                text=str(speed), 
+                width=40,
+                height=25,
+                font=("Arial", 12),
                 command=lambda s=speed: self._set_speed(s)
             )
             btn.pack(side="left", padx=2)
+            
+        self.ramping_var = ctk.BooleanVar(
+            value=ConfigManager.get_value("enable_ramping", True)
+        )
+        is_enabled = self.ramping_var.get()
+
+        self.ramping_btn = ctk.CTkCheckBox(
+            self.speed_frame,
+            text=LanguageManager.get('enable_smooth_start'),
+            variable=self.ramping_var,
+            command=self._toggle_ramping,
+            border_width=2,
+            font=("Arial", 11)
+        )
+
 
     def _create_button(self, text, command, width=200, height=30, main=False):
         btn = ctk.CTkButton(
@@ -756,8 +783,8 @@ class MusicApp:
         ctk.CTkLabel(self.root, text=LanguageManager.get("project_title"), 
                     font=("Arial", 18, "bold")).pack(pady=10)
         self.file_btn.pack(pady=10)
-        self.keypress_btn.pack(pady=5)
-        self.speed_btn.pack(pady=5)
+        self.keypress_btn.pack(pady=10)
+        self.speed_btn.pack(pady=10)
         self.play_btn.pack(pady=10)
         
         self._adjust_window_size()
@@ -769,6 +796,12 @@ class MusicApp:
             self.root.geometry(f"{EXPANDED_SIZE[0]}x{EXPANDED_SIZE[1]}")
         else:
             self.root.geometry(f"{DEFAULT_WINDOW_SIZE[0]}x{DEFAULT_WINDOW_SIZE[1]}")
+
+    def _toggle_ramping(self):
+        enable = self.ramping_var.get()
+        self.player.enable_ramping = enable
+        ConfigManager.save({"enable_ramping": enable})
+        logger.info(f"Ramping {'aktiv' if enable else 'deaktiv'}")
 
     def _toggle_theme(self):
         current = ctk.get_appearance_mode().lower()
@@ -931,8 +964,9 @@ class MusicApp:
         
         if self.player.speed_enabled:
             self.speed_frame.pack(pady=5, before=self.play_btn)
-            self.speed_preset_frame.pack(pady=5)
-            self.speed_label.pack(pady=5)
+            self.speed_preset_frame.pack(pady=(0, 8))
+            self.speed_label.pack(pady=(0, 8))
+            self.ramping_btn.pack(pady=(0, 8))
         else:
             self.speed_frame.pack_forget()
             self.player.current_speed = 1000

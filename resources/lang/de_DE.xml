@@ -42,6 +42,7 @@
     <translation key="select_language">Sprache auswählen:</translation>
     <translation key="language_saved">Sprache wurde gespeichert</translation>
     <translation key="save_button_text">Speichern</translation>
+    <translation key="enable_smooth_start">Sanfter Start</translation>
     
     <!-- ================= -->
     <!-- VERSIONSINFORMATION -->

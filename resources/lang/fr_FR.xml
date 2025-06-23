@@ -42,6 +42,7 @@
     <translation key="select_language">Sélectionner la langue :</translation>
     <translation key="language_saved">Langue enregistrée</translation>
     <translation key="save_button_text">Enregistrer</translation>
+    <translation key="enable_smooth_start">Démarrage en douceur</translation>
     
     <!-- ================= -->
     <!-- INFORMATION SUR LA VERSION -->

@@ -42,6 +42,7 @@
     <translation key="select_language">选择语言：</translation>
     <translation key="language_saved">语言已保存</translation>
     <translation key="save_button_text">保存</translation>
+    <translation key="enable_smooth_start">平滑启动</translation>
     
     <!-- ================= -->
     <!-- 版本信息 -->
