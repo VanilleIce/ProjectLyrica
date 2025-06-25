@@ -42,7 +42,8 @@
     <translation key="select_language">Vælg sprog:</translation>
     <translation key="language_saved">Sprog er gemt</translation>
     <translation key="save_button_text">Gem</translation>
-    <translation key="enable_smooth_start">Blød start</translation>
+    <translation key="smooth_start">Blød start</translation>
+    <translation key="smooth_start_info">Gradvis acceleration</translation>
     
     <!-- ================= -->
     <!-- VERSIONOPLYSNINGER -->
