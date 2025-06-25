@@ -42,7 +42,8 @@
     <translation key="select_language">Seleziona lingua:</translation>
     <translation key="language_saved">Lingua salvata</translation>
     <translation key="save_button_text">Salva</translation>
-    <translation key="enable_smooth_start">Avvio graduale</translation>
+    <translation key="smooth_start">Avvio graduale</translation>
+    <translation key="smooth_start_info">Accelerazione graduale</translation>
     
     <!-- ================= -->
     <!-- INFORMAZIONI SULLA VERSIONE -->

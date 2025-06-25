@@ -19,10 +19,12 @@ logger = logging.getLogger("ProjectLyrica")
 # -------------------------------
 
 SETTINGS_FILE = 'settings.json'
-DEFAULT_WINDOW_SIZE = (400, 310)
-EXPANDED_SIZE = (400, 420)
-FULL_SIZE = (400, 515)
-VERSION = "2.3.4"
+DEFAULT_WINDOW_SIZE = (400, 365)
+EXPANDED_SIZE = (400, 460)
+FULL_SIZE = (400, 560)
+RAMPING_INFO_HEIGHT = 50
+MAX_RAMPING_INFO_DISPLAY = 6
+VERSION = "2.3.5"
 
 # -------------------------------
 # Language Manager
@@ -121,7 +123,8 @@ class ConfigManager:
         },
         "pause_key": "#",
         "theme": "dark",
-        "enable_ramping": True
+        "enable_ramping": False,
+        "ramping_info_display_count": 0
     }
 
     _config = None
@@ -354,7 +357,7 @@ class MusicPlayer:
             self.song_cache[path] = song_data
             return song_data
         except Exception as e:
-            logger.error(f"Parse error: {e}")
+            logger.error(f"Song parse error [{path}]: {e}", exc_info=True)
             raise
 
     def play(self, song_data):
@@ -563,6 +566,8 @@ class MusicApp:
         self.duration_presets = config["key_press_durations"]
         self.speed_presets = config["speed_presets"]
         self.pause_key = config.get("pause_key")
+        self.ramping_enabled = config.get("enable_ramping")
+        self.ramping_info_display_count = config.get("ramping_info_display_count")
 
     def _setup_key_listener(self):
         self.key_listener = Listener(on_press=self._handle_keypress)
@@ -617,6 +622,7 @@ class MusicApp:
             f"Speed Presets: {config.get('speed_presets')}",
             f"Press Duration Presets: {config.get('key_press_durations')}",
             f"Enable Ramping: {config.get('enable_ramping')}",
+            f"Ramping Info Display Count: {config.get('ramping_info_display_count')}",
             "",
             "== Key Mapping =="
         ]
@@ -637,6 +643,8 @@ class MusicApp:
                     cleaned_info.append(cleaned_line)
             
             logger.info("Application Config:\n\t" + "\n\t".join(cleaned_info))
+        
+        logger.info("Full configuration logged")
 
     def _init_gui(self):
         self.root = ctk.CTk()
@@ -682,6 +690,11 @@ class MusicApp:
         self.speed_btn = self._create_button(
             f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}", 
             self._toggle_speed
+        )
+
+        self.ramping_btn = self._create_button(
+            f"{LanguageManager.get('smooth_start')}: {LanguageManager.get('enabled' if self.ramping_enabled else 'disabled')}", 
+            self._toggle_ramping
         )
         
         self.play_btn = self._create_button(
@@ -732,21 +745,16 @@ class MusicApp:
                 command=lambda s=speed: self._set_speed(s)
             )
             btn.pack(side="left", padx=2)
-            
-        self.ramping_var = ctk.BooleanVar(
-            value=ConfigManager.get_value("enable_ramping", True)
+        
+        self.ramping_frame = ctk.CTkFrame(self.root)
+        self.ramping_label = ctk.CTkLabel(
+            self.ramping_frame,
+            text=LanguageManager.get('smooth_start_info'),
+            font=ctk.CTkFont(family="Segoe UI", size=11),
+            wraplength=350,
+            justify="left"
         )
-        is_enabled = self.ramping_var.get()
-
-        self.ramping_btn = ctk.CTkCheckBox(
-            self.speed_frame,
-            text=LanguageManager.get('enable_smooth_start'),
-            variable=self.ramping_var,
-            command=self._toggle_ramping,
-            border_width=2,
-            font=("Arial", 11)
-        )
-
+        self.ramping_label.pack(pady=5, padx=5)
 
     def _create_button(self, text, command, width=200, height=30, main=False):
         btn = ctk.CTkButton(
@@ -785,23 +793,49 @@ class MusicApp:
         self.file_btn.pack(pady=10)
         self.keypress_btn.pack(pady=10)
         self.speed_btn.pack(pady=10)
+        self.ramping_btn.pack(pady=10)
         self.play_btn.pack(pady=10)
+        
+        if not self.ramping_enabled and self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY:
+            self.ramping_frame.pack(pady=5, before=self.play_btn)
         
         self._adjust_window_size()
 
     def _adjust_window_size(self):
         if self.player.keypress_enabled and self.player.speed_enabled:
-            self.root.geometry(f"{FULL_SIZE[0]}x{FULL_SIZE[1]}")
+            base_height = FULL_SIZE[1]
         elif self.player.keypress_enabled or self.player.speed_enabled:
-            self.root.geometry(f"{EXPANDED_SIZE[0]}x{EXPANDED_SIZE[1]}")
+            base_height = EXPANDED_SIZE[1]
         else:
-            self.root.geometry(f"{DEFAULT_WINDOW_SIZE[0]}x{DEFAULT_WINDOW_SIZE[1]}")
+            base_height = DEFAULT_WINDOW_SIZE[1]
+        
+        if not self.ramping_enabled and self.ramping_info_display_count < 6:
+            base_height += RAMPING_INFO_HEIGHT
+        
+        self.root.geometry(f"{FULL_SIZE[0]}x{base_height}")
 
     def _toggle_ramping(self):
-        enable = self.ramping_var.get()
-        self.player.enable_ramping = enable
-        ConfigManager.save({"enable_ramping": enable})
-        logger.info(f"Ramping {'aktiv' if enable else 'deaktiv'}")
+        self.ramping_enabled = not self.ramping_enabled
+        self.player.enable_ramping = self.ramping_enabled
+        
+        status = "enabled" if self.ramping_enabled else "disabled"
+        self.ramping_btn.configure(
+            text=f"{LanguageManager.get('smooth_start')}: {LanguageManager.get(status)}"
+        )
+        
+        if self.ramping_enabled:
+            self.ramping_frame.pack_forget()
+        elif self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY:
+            self.ramping_frame.pack(pady=5, before=self.play_btn)
+            self.ramping_info_display_count += 1
+
+        ConfigManager.save({
+            "enable_ramping": self.ramping_enabled,
+            "ramping_info_display_count": self.ramping_info_display_count
+        })
+        
+        self._adjust_window_size()
+        logger.info(f"Ramping {'aktiv' if self.ramping_enabled else 'deaktiv'}")
 
     def _toggle_theme(self):
         current = ctk.get_appearance_mode().lower()
@@ -903,8 +937,8 @@ class MusicApp:
             logger.info("Starting actual playback")
             self.player.play(song_data)
         except Exception as e:
-            logger.error(f"Playback error: {e}", exc_info=True)
-            self.root.after(0, lambda: messagebox.showerror("Error", f"Playback failed: {str(e)}"))
+            logger.critical(f"Playback thread crashed: {e}", exc_info=True)
+            self.root.after(0, lambda: messagebox.showerror("Critical Error", f"Playback failed: {str(e)}"))
         finally:
             winsound.Beep(1000, 500)
             logger.info("Playback thread completed")
@@ -963,14 +997,13 @@ class MusicApp:
         self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get(status)}")
         
         if self.player.speed_enabled:
-            self.speed_frame.pack(pady=5, before=self.play_btn)
+            self.speed_frame.pack(pady=5, before=self.ramping_btn)
             self.speed_preset_frame.pack(pady=(0, 8))
             self.speed_label.pack(pady=(0, 8))
-            self.ramping_btn.pack(pady=(0, 8))
         else:
             self.speed_frame.pack_forget()
             self.player.current_speed = 1000
-            
+
         self._adjust_window_size()
 
     def _shutdown(self):
@@ -996,4 +1029,14 @@ class MusicApp:
 # -------------------------------
 
 if __name__ == "__main__":
+    if os.name == 'nt':
+        try:
+            from ctypes import windll
+            windll.shcore.SetProcessDpiAwareness(1)
+        except:
+            pass
+
+    ctk.set_widget_scaling(1.0)
+    ctk.set_window_scaling(1.0)
+
     MusicApp().run()

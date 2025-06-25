@@ -42,7 +42,8 @@
     <translation key="select_language">اختار اللغة:</translation>
     <translation key="language_saved">تم حفظ اللغة</translation>
     <translation key="save_button_text">حفظ</translation>
-    <translation key="enable_smooth_start">بداية سلسة</translation>
+    <translation key="smooth_start">بداية تدريجية</translation>
+    <translation key="smooth_start_info">تسارع تدريجي</translation>
     
     <!-- ================= -->
     <!-- معلومات الإصدار -->

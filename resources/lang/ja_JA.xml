@@ -42,7 +42,8 @@
     <translation key="select_language">言語を選択：</translation>
     <translation key="language_saved">言語が保存されました</translation>
     <translation key="save_button_text">保存</translation>
-    <translation key="enable_smooth_start">スムーズスタート</translation>
+    <translation key="smooth_start">スムーズスタート</translation>
+    <translation key="smooth_start_info">徐々な加速</translation>
     
     <!-- ================= -->
     <!-- バージョン情報 -->
