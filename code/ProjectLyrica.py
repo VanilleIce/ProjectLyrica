@@ -825,7 +825,7 @@ class MusicApp:
         self.ramping_btn.pack(pady=10)
         self.play_btn.pack(pady=10)
         
-        if not self.ramping_enabled and self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY:
+        if not self.smooth_ramping_enabled and self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY:
             self.ramping_frame.pack(pady=5, before=self.play_btn)
         
         self._adjust_window_size()
@@ -838,7 +838,7 @@ class MusicApp:
         else:
             base_height = DEFAULT_WINDOW_SIZE[1]
         
-        if not self.ramping_enabled and self.ramping_info_display_count < 6:
+        if not self.smooth_ramping_enabled and self.ramping_info_display_count < 6:
             base_height += RAMPING_INFO_HEIGHT
         
         self.root.geometry(f"{FULL_SIZE[0]}x{base_height}")
