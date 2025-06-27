@@ -42,8 +42,8 @@
     <translation key="select_language">选择语言：</translation>
     <translation key="language_saved">语言已保存</translation>
     <translation key="save_button_text">保存</translation>
-    <translation key="smooth_start">平滑启动</translation>
-    <translation key="smooth_start_info">渐进加速</translation>
+    <translation key="smooth_ramping">平滑过渡</translation>
+    <translation key="smooth_ramping_info">在歌曲开头和结尾平滑调整速度，实现更自然的过渡。</translation>
     
     <!-- ================= -->
     <!-- 版本信息 -->

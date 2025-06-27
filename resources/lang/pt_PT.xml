@@ -42,8 +42,8 @@
     <translation key="select_language">Selecione o idioma:</translation>
     <translation key="language_saved">Idioma salvo com sucesso</translation>
     <translation key="save_button_text">Salvar</translation>
-    <translation key="smooth_start">Início suave</translation>
-    <translation key="smooth_start_info">Aceleração gradual</translation>
+    <translation key="smooth_ramping">Transições Suaves</translation>
+    <translation key="smooth_ramping_info">Ajusta suavemente a velocidade no início e no final da música para transições mais naturais.</translation>
     
     <!-- ================= -->
     <!-- INFORMAÇÃO DA VERSÃO -->

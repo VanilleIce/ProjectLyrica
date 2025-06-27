@@ -42,8 +42,8 @@
     <translation key="select_language">Pilih bahasa:</translation>
     <translation key="language_saved">Bahasa telah disimpan</translation>
     <translation key="save_button_text">Simpan</translation>
-    <translation key="smooth_start">Mulai Bertahap</translation>
-    <translation key="smooth_start_info">Akselerasi bertahap</translation>
+    <translation key="smooth_ramping">Transisi Halus</translation>
+    <translation key="smooth_ramping_info">Menyesuaikan kecepatan secara halus di awal dan akhir lagu untuk transisi yang lebih alami.</translation>
     
     <!-- ================= -->
     <!-- INFORMASI VERSI -->

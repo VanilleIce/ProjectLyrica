@@ -42,8 +42,8 @@
     <translation key="select_language">Select Language:</translation>
     <translation key="language_saved">Language saved</translation>
     <translation key="save_button_text">Save</translation>
-    <translation key="smooth_start">Smooth Start</translation>
-    <translation key="smooth_start_info">Note acceleration</translation>
+    <translation key="smooth_ramping">Smooth Transitions</translation>
+    <translation key="smooth_ramping_info">Smoothly adjusts speed at the beginning and end of the song for more natural transitions.</translation>
     
     <!-- ================= -->
     <!-- VERSION INFORMATION -->

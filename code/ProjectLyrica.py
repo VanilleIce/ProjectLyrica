@@ -24,7 +24,7 @@ EXPANDED_SIZE = (400, 460)
 FULL_SIZE = (400, 560)
 RAMPING_INFO_HEIGHT = 50
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.3.5"
+VERSION = "2.3.6"
 
 # -------------------------------
 # Language Manager
@@ -119,7 +119,8 @@ class ConfigManager:
         "timing_config": {
             "initial_delay": 1.4,
             "pause_resume_delay": 1.2,
-            "ramp_steps": 20
+            "ramp_steps_begin": 20,
+            "ramp_steps_end": 20
         },
         "pause_key": "#",
         "theme": "dark",
@@ -139,13 +140,20 @@ class ConfigManager:
                 user_config = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             user_config = {}
+
+        config = cls.DEFAULT.copy()
         
-        cls._config = cls.DEFAULT.copy()
         for key, value in user_config.items():
-            if key in ["timing_config", "key_mapping"] and isinstance(value, dict):
-                cls._config[key].update(value)
-            else:
-                cls._config[key] = value
+            if key == "key_mapping" and isinstance(value, dict):
+                config[key] = value
+            elif key == "timing_config" and isinstance(value, dict):
+                for sub_key, sub_value in value.items():
+                    if sub_key in config[key]:
+                        config[key][sub_key] = sub_value
+            elif key in config:
+                config[key] = value
+        
+        cls._config = config
         return cls._config
 
     @classmethod
@@ -275,13 +283,16 @@ class MusicPlayer:
         
         self.keypress_enabled = False
         self.speed_enabled = False
-        self.enable_ramping = config.get("enable_ramping", True)
-
+        
         timing = config["timing_config"]
         self.initial_delay = timing["initial_delay"]
         self.pause_resume_delay = timing["pause_resume_delay"]
-        self.ramp_steps = timing["ramp_steps"]
-        self.is_ramping = False
+        self.ramp_steps_begin = timing["ramp_steps_begin"]
+        self.ramp_steps_end = timing["ramp_steps_end"]
+        
+        self.enable_ramping = config.get("enable_ramping", False)
+        self.is_ramping_begin = False
+        self.is_ramping_end = False
         self.ramp_counter = 0
         
         self.start_time = 0
@@ -371,8 +382,12 @@ class MusicPlayer:
         self.scheduler.reset()
         self.stop_event.clear()
         
+        self.is_ramping_begin = False
+        self.is_ramping_end = False
+        self.ramp_counter = 0
+        
         if self.enable_ramping:
-            self.is_ramping = True
+            self.is_ramping_begin = True
             self.ramp_counter = 0
         
         self.pause_count = 0
@@ -399,14 +414,26 @@ class MusicPlayer:
                 if self.stop_event.is_set():
                     logger.info("Playback stopped by user")
                     break
-                    
-                if self.enable_ramping and self.is_ramping:
-                    ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps)
-                    speed = max(500, self.current_speed * min(1.0, ramp_factor))
-                    self.ramp_counter += 1
-                    if self.ramp_counter >= self.ramp_steps:
-                        self.is_ramping = False
-                        logger.debug("Ramping completed")
+
+                if self.enable_ramping:
+                    if self.is_ramping_begin:
+                        ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
+                        speed = max(500, self.current_speed * min(1.0, ramp_factor))
+                        self.ramp_counter += 1
+                        if self.ramp_counter >= self.ramp_steps_begin:
+                            self.is_ramping_begin = False
+                            logger.debug("Beginning ramping completed")
+
+                    elif i >= len(notes) - self.ramp_steps_end:
+                        progress = (len(notes) - i) / self.ramp_steps_end
+                        ramp_factor = max(0.5, progress)
+                        speed = max(500, self.current_speed * ramp_factor)
+                        if not self.is_ramping_end:
+                            self.is_ramping_end = True
+                            logger.debug("End ramping started")
+
+                    else:
+                        speed = self.current_speed
                 else:
                     speed = self.current_speed
 
@@ -438,10 +465,11 @@ class MusicPlayer:
                             self.total_pause_time += pause_duration
                             
                             logger.info(f"Playback resumed after {pause_duration:.2f}s pause")
-                            
+
                             if self.enable_ramping:
-                                self.is_ramping = True
+                                self.is_ramping_begin = True
                                 self.ramp_counter = 0
+                                self.is_ramping_end = False
                             
                             time.sleep(self.pause_resume_delay)
                             start = time.perf_counter()
@@ -566,7 +594,8 @@ class MusicApp:
         self.duration_presets = config["key_press_durations"]
         self.speed_presets = config["speed_presets"]
         self.pause_key = config.get("pause_key")
-        self.ramping_enabled = config.get("enable_ramping")
+        
+        self.smooth_ramping_enabled = config.get("enable_ramping", False)
         self.ramping_info_display_count = config.get("ramping_info_display_count")
 
     def _setup_key_listener(self):
@@ -693,8 +722,8 @@ class MusicApp:
         )
 
         self.ramping_btn = self._create_button(
-            f"{LanguageManager.get('smooth_start')}: {LanguageManager.get('enabled' if self.ramping_enabled else 'disabled')}", 
-            self._toggle_ramping
+            f"{LanguageManager.get('smooth_ramping')}: {LanguageManager.get('enabled' if self.smooth_ramping_enabled else 'disabled')}", 
+            self._toggle_smooth_ramping
         )
         
         self.play_btn = self._create_button(
@@ -749,7 +778,7 @@ class MusicApp:
         self.ramping_frame = ctk.CTkFrame(self.root)
         self.ramping_label = ctk.CTkLabel(
             self.ramping_frame,
-            text=LanguageManager.get('smooth_start_info'),
+            text=LanguageManager.get('smooth_ramping_info'),
             font=ctk.CTkFont(family="Segoe UI", size=11),
             wraplength=350,
             justify="left"
@@ -814,28 +843,29 @@ class MusicApp:
         
         self.root.geometry(f"{FULL_SIZE[0]}x{base_height}")
 
-    def _toggle_ramping(self):
-        self.ramping_enabled = not self.ramping_enabled
-        self.player.enable_ramping = self.ramping_enabled
+    def _toggle_smooth_ramping(self):
+        self.smooth_ramping_enabled = not self.smooth_ramping_enabled
         
-        status = "enabled" if self.ramping_enabled else "disabled"
+        status = "enabled" if self.smooth_ramping_enabled else "disabled"
         self.ramping_btn.configure(
-            text=f"{LanguageManager.get('smooth_start')}: {LanguageManager.get(status)}"
+            text=f"{LanguageManager.get('smooth_ramping')}: {LanguageManager.get(status)}"
         )
-        
-        if self.ramping_enabled:
+
+        self.player.enable_ramping = self.smooth_ramping_enabled
+
+        ConfigManager.save({
+            "enable_ramping": self.smooth_ramping_enabled,
+            "ramping_info_display_count": self.ramping_info_display_count
+        })
+
+        if self.smooth_ramping_enabled:
             self.ramping_frame.pack_forget()
         elif self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY:
             self.ramping_frame.pack(pady=5, before=self.play_btn)
             self.ramping_info_display_count += 1
 
-        ConfigManager.save({
-            "enable_ramping": self.ramping_enabled,
-            "ramping_info_display_count": self.ramping_info_display_count
-        })
-        
         self._adjust_window_size()
-        logger.info(f"Ramping {'aktiv' if self.ramping_enabled else 'deaktiv'}")
+        logger.info(f"Smooth ramping {'enabled' if self.smooth_ramping_enabled else 'disabled'}")
 
     def _toggle_theme(self):
         current = ctk.get_appearance_mode().lower()

@@ -42,8 +42,8 @@
     <translation key="select_language">Wybierz język:</translation>
     <translation key="language_saved">Język zapisany pomyślnie</translation>
     <translation key="save_button_text">Zapisz</translation>
-    <translation key="smooth_start">Płynny start</translation>
-    <translation key="smooth_start_info">Płynne przyspieszenie</translation>
+    <translation key="smooth_ramping">Płynne przejścia</translation>
+    <translation key="smooth_ramping_info">Płynna regulacja prędkości na początku i końcu utworu dla bardziej naturalnych przejść.</translation>
     
     <!-- ================= -->
     <!-- INFORMACJE O WERSJI -->
