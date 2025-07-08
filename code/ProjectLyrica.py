@@ -19,12 +19,12 @@ logger = logging.getLogger("ProjectLyrica")
 # -------------------------------
 
 SETTINGS_FILE = 'settings.json'
-DEFAULT_WINDOW_SIZE = (400, 365)
-EXPANDED_SIZE = (400, 460)
-FULL_SIZE = (400, 560)
-RAMPING_INFO_HEIGHT = 50
+DEFAULT_WINDOW_SIZE = (400, 355)
+EXPANDED_SIZE = (400, 455)
+FULL_SIZE = (400, 535)
+RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.3.6"
+VERSION = "2.3.7"
 
 # -------------------------------
 # Language Manager
@@ -283,6 +283,7 @@ class MusicPlayer:
         
         self.keypress_enabled = False
         self.speed_enabled = False
+        self.pause_enabled = False
         
         timing = config["timing_config"]
         self.initial_delay = timing["initial_delay"]
@@ -379,6 +380,7 @@ class MusicPlayer:
         self.scheduler.restart()
         
         self.playback_active = True
+        self.pause_enabled = True
         self.scheduler.reset()
         self.stop_event.clear()
         
@@ -497,6 +499,7 @@ class MusicPlayer:
         finally:
             self._release_all()
             self.playback_active = False
+            self.pause_enabled = False
 
     def _release_all(self):
         self.scheduler.reset()
@@ -512,6 +515,7 @@ class MusicPlayer:
             
         self.stop_event.set()
         self.pause_flag.clear()
+        self.pause_enabled = False
         self._release_all()
         self.playback_active = False
 
@@ -596,7 +600,8 @@ class MusicApp:
         self.pause_key = config.get("pause_key")
         
         self.smooth_ramping_enabled = config.get("enable_ramping", False)
-        self.ramping_info_display_count = config.get("ramping_info_display_count")
+        self.ramping_info_display_count = min(config.get("ramping_info_display_count", 0), MAX_RAMPING_INFO_DISPLAY)
+        self.show_ramping_info = self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY
 
     def _setup_key_listener(self):
         self.key_listener = Listener(on_press=self._handle_keypress)
@@ -825,7 +830,7 @@ class MusicApp:
         self.ramping_btn.pack(pady=10)
         self.play_btn.pack(pady=10)
         
-        if not self.smooth_ramping_enabled and self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY:
+        if not self.smooth_ramping_enabled and self.show_ramping_info:
             self.ramping_frame.pack(pady=5, before=self.play_btn)
         
         self._adjust_window_size()
@@ -838,14 +843,14 @@ class MusicApp:
         else:
             base_height = DEFAULT_WINDOW_SIZE[1]
         
-        if not self.smooth_ramping_enabled and self.ramping_info_display_count < 6:
+        if not self.smooth_ramping_enabled and self.show_ramping_info:
             base_height += RAMPING_INFO_HEIGHT
         
         self.root.geometry(f"{FULL_SIZE[0]}x{base_height}")
 
     def _toggle_smooth_ramping(self):
         self.smooth_ramping_enabled = not self.smooth_ramping_enabled
-        
+                
         status = "enabled" if self.smooth_ramping_enabled else "disabled"
         self.ramping_btn.configure(
             text=f"{LanguageManager.get('smooth_ramping')}: {LanguageManager.get(status)}"
@@ -853,16 +858,18 @@ class MusicApp:
 
         self.player.enable_ramping = self.smooth_ramping_enabled
 
-        ConfigManager.save({
-            "enable_ramping": self.smooth_ramping_enabled,
-            "ramping_info_display_count": self.ramping_info_display_count
-        })
-
         if self.smooth_ramping_enabled:
             self.ramping_frame.pack_forget()
-        elif self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY:
-            self.ramping_frame.pack(pady=5, before=self.play_btn)
-            self.ramping_info_display_count += 1
+            if self.show_ramping_info:
+                self.ramping_info_display_count += 1
+                self.show_ramping_info = self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY
+                ConfigManager.save({
+                    "enable_ramping": self.smooth_ramping_enabled,
+                    "ramping_info_display_count": self.ramping_info_display_count
+                })
+        else:
+            if self.show_ramping_info:
+                self.ramping_frame.pack(pady=5, before=self.play_btn)
 
         self._adjust_window_size()
         logger.info(f"Smooth ramping {'enabled' if self.smooth_ramping_enabled else 'disabled'}")
@@ -978,7 +985,7 @@ class MusicApp:
             ))
 
     def _handle_keypress(self, key):
-        if hasattr(key, 'char') and key.char == self.pause_key:
+        if hasattr(key, 'char') and key.char == self.pause_key and self.player.pause_enabled:
             logger.debug(f"Pause key pressed: {key}")
             if self.player.pause_flag.is_set():
                 self.player.pause_flag.clear()
