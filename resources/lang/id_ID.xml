@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">Pemeriksaan gagal</translation>
     <translation key="no_connection_text">Tidak ada koneksi ke server</translation>
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Pemilihan Sky.exe</translation>
+    <translation key="select_sky_exe_instruction">Silakan pilih Sky.exe:</translation>
+    <translation key="select_sky_exe">Pilih Sky.exe</translation>
+    <translation key="exe_path_required">Anda harus memilih Sky.exe untuk melanjutkan</translation>
+    <translation key="exe_path_required_exit">Aplikasi akan ditutup karena Sky.exe diperlukan</translation>
+    <translation key="must_select_sky">Silakan pilih file Sky.exe</translation>
+    <translation key="exe_path_invalid">File yang dipilih tidak ada</translation>
     
 </translations>

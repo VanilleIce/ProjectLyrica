@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">Controle mislukt</translation>
     <translation key="no_connection_text">Geen verbinding met server</translation>
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Sky.exe selectie</translation>
+    <translation key="select_sky_exe_instruction">Selecteer de Sky.exe:</translation>
+    <translation key="select_sky_exe">Sky.exe selecteren</translation>
+    <translation key="exe_path_required">Je moet de Sky.exe selecteren om door te gaan</translation>
+    <translation key="exe_path_required_exit">De applicatie wordt afgesloten omdat Sky.exe vereist is</translation>
+    <translation key="must_select_sky">Selecteer het Sky.exe-bestand</translation>
+    <translation key="exe_path_invalid">Het geselecteerde bestand bestaat niet</translation>
     
 </translations>

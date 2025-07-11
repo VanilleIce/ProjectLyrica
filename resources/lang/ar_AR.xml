@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">فشل في التحقق</translation>
     <translation key="no_connection_text">لا يوجد اتصال بالخادم</translation>
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">اختيار Sky.exe</translation>
+    <translation key="select_sky_exe_instruction">الرجاء اختيار Sky.exe:</translation>
+    <translation key="select_sky_exe">اختيار Sky.exe</translation>
+    <translation key="exe_path_required">يجب عليك اختيار Sky.exe للمتابعة</translation>
+    <translation key="exe_path_required_exit">سيتم إغلاق التطبيق لأن Sky.exe مطلوب</translation>
+    <translation key="must_select_sky">الرجاء اختيار ملف Sky.exe</translation>
+    <translation key="exe_path_invalid">الملف المحدد غير موجود</translation>
     
 </translations>

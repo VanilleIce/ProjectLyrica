@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">チェックに失敗しました</translation>
     <translation key="no_connection_text">サーバーに接続できません</translation>
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Sky.exe 選択</translation>
+    <translation key="select_sky_exe_instruction">Sky.exeを選択してください:</translation>
+    <translation key="select_sky_exe">Sky.exeを選択</translation>
+    <translation key="exe_path_required">続行するにはSky.exeを選択する必要があります</translation>
+    <translation key="exe_path_required_exit">Sky.exeが必要なため、アプリケーションを終了します</translation>
+    <translation key="must_select_sky">Sky.exeファイルを選択してください</translation>
+    <translation key="exe_path_invalid">選択したファイルが存在しません</translation>
     
 </translations>

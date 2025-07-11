@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">Tsy nahomby ny fanamarinana</translation>
     <translation key="no_connection_text">Tsy misy fifandraisana amin'ny mpizara</translation>
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Fisafidianana Sky.exe</translation>
+    <translation key="select_sky_exe_instruction">Mifidiana ny Sky.exe:</translation>
+    <translation key="select_sky_exe">Misafidy Sky.exe</translation>
+    <translation key="exe_path_required">Tsy maintsy mifidy ny Sky.exe ianao mba hanohy</translation>
+    <translation key="exe_path_required_exit">Hanakatona ny fampiharana satria ilaina ny Sky.exe</translation>
+    <translation key="must_select_sky">Mifidiana ny rakitra Sky.exe</translation>
+    <translation key="exe_path_invalid">Tsy misy ny rakitra voafidy</translation>
     
 </translations>

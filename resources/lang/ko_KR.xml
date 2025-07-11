@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">확인 실패</translation>
     <translation key="no_connection_text">서버에 연결할 수 없음</translation>
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Sky.exe 선택</translation>
+    <translation key="select_sky_exe_instruction">Sky.exe를 선택하세요:</translation>
+    <translation key="select_sky_exe">Sky.exe 선택</translation>
+    <translation key="exe_path_required">계속하려면 Sky.exe를 선택해야 합니다</translation>
+    <translation key="exe_path_required_exit">Sky.exe가 필요하여 애플리케이션이 종료됩니다</translation>
+    <translation key="must_select_sky">Sky.exe 파일을 선택해 주세요</translation>
+    <translation key="exe_path_invalid">선택한 파일이 존재하지 않습니다</translation>
     
 </translations>
