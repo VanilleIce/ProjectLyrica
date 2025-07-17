@@ -571,7 +571,7 @@ class MusicApp:
             cleaned_info = [line.encode('ascii', 'replace').decode('ascii') for line in info]
             logger.info("Application Config (ASCII-safe):\n\t" + "\n\t".join(cleaned_info))
         
-        logger.info("Konfiguration wurde vollständig geloggt")
+        logger.info("Full configuration logged")
 
     def _init_gui(self):
         try:
