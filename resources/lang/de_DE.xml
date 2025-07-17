@@ -53,4 +53,15 @@
     <translation key="update_error_text">Prüfung fehlgeschlagen</translation>
     <translation key="no_connection_text">Keine Verbindung zum Server</translation>
 
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Sky.exe Auswahl</translation>
+    <translation key="select_sky_exe_instruction">Bitte wählen Sie die Sky.exe aus:</translation>
+    <translation key="select_sky_exe">Sky.exe auswählen</translation>
+    <translation key="exe_path_required">Sie müssen die Sky.exe auswählen, um fortzufahren</translation>
+    <translation key="exe_path_required_exit">Die Anwendung wird beendet, da die Sky.exe benötigt wird</translation>
+    <translation key="must_select_sky">Bitte wählen Sie die Sky.exe-Datei aus</translation>
+    <translation key="exe_path_invalid">Die ausgewählte Datei existiert nicht</translation>
+
 </translations>

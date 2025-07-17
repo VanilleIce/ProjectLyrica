@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">Tjek mislykkedes</translation>
     <translation key="no_connection_text">Ingen forbindelse til server</translation>
-    
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Sky.exe valg</translation>
+    <translation key="select_sky_exe_instruction">Vælg venligst Sky.exe:</translation>
+    <translation key="select_sky_exe">Vælg Sky.exe</translation>
+    <translation key="exe_path_required">Du skal vælge Sky.exe for at fortsætte</translation>
+    <translation key="exe_path_required_exit">Applikationen afsluttes, da Sky.exe er påkrævet</translation>
+    <translation key="must_select_sky">Vælg venligst Sky.exe-filen</translation>
+    <translation key="exe_path_invalid">Den valgte fil eksisterer ikke</translation>
+
 </translations>

@@ -1,7 +1,7 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import json, time, os, sys, winsound, heapq, ctypes, webbrowser, logging
+import json, time, os, sys, winsound, heapq, ctypes, webbrowser, logging, psutil
 import pygetwindow as gw
 import customtkinter as ctk
 from pathlib import Path
@@ -9,196 +9,25 @@ from threading import Event, Thread, Lock
 from pynput.keyboard import Controller, Listener, Key
 from tkinter import filedialog, messagebox
 import xml.etree.ElementTree as ET
+
 from update_checker import check_update
 from logging_setup import setup_logging
+from config_manager import ConfigManager
+from language_manager import LanguageManager, KeyboardLayoutManager
+from sky_checker import SkyChecker
 
-logger = logging.getLogger("ProjectLyrica")
+logger = logging.getLogger("ProjectLyrica.ProjectLyrica")
 
 # -------------------------------
-# Constante
+# Constants
 # -------------------------------
 
-SETTINGS_FILE = 'settings.json'
 DEFAULT_WINDOW_SIZE = (400, 355)
 EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.3.7"
-
-# -------------------------------
-# Language Manager
-# -------------------------------
-
-class LanguageManager:
-    _translations = {}
-    _current_lang = None
-    _languages = []
-
-    @classmethod
-    def init(cls):
-        config = ConfigManager.get_config()
-        cls._current_lang = config.get("selected_language")
-        cls._languages = cls._load_languages()
-
-    @staticmethod
-    def _load_languages():
-        lang_file = Path('resources/config/lang.xml')
-        try:
-            tree = ET.parse(lang_file)
-            return [
-                (lang.get('code'), lang.text, lang.get('key_layout'))
-                for lang in tree.findall('language')
-                if lang.get('code') and lang.text
-            ]
-        except Exception as e:
-            logger.error(f"Language load error: {e}")
-            messagebox.showerror("Error", f"Language error: {e}")
-            return []
-
-    @classmethod
-    def _get_translations(cls, lang_code):
-        if lang_code in cls._translations:
-            return cls._translations[lang_code]
-        
-        lang_file = Path(f'resources/lang/{lang_code}.xml')
-        try:
-            tree = ET.parse(lang_file)
-            translations = {t.get('key'): t.text for t in tree.findall('translation')}
-            cls._translations[lang_code] = translations
-            return translations
-        except FileNotFoundError:
-            return cls._get_translations('en_US') if lang_code != 'en_US' else {}
-        except Exception as e:
-            logger.error(f"Translation error: {e}")
-            return {}
-
-    @classmethod
-    def get(cls, key):
-        lang = cls._current_lang or 'en_US'
-        trans = cls._get_translations(lang).get(key)
-        return trans or cls._get_translations('en_US').get(key) or f"[{key}]"
-
-    @classmethod
-    def set_language(cls, lang_code):
-        config = ConfigManager.get_config()
-        try:
-            layout = next((lyt for code, _, lyt in cls._languages if code == lang_code), "QWERTY")
-        except StopIteration:
-            layout = "QWERTY"
-            logger.warning(f"Layout not found for language: {lang_code}, using default")
-        
-        try:
-            key_map = KeyboardLayoutManager.load(layout)
-        except Exception as e:
-            logger.error(f"Layout error: {e}")
-            key_map = config.get("key_mapping", KeyboardLayoutManager.load("QWERTY"))
-        
-        ConfigManager.save({
-            "selected_language": lang_code,
-            "keyboard_layout": layout,
-            "key_mapping": key_map
-        })
-        cls._current_lang = lang_code
-
-    @classmethod
-    def get_languages(cls):
-        return cls._languages
-
-# -------------------------------
-# Config Manager
-# -------------------------------
-
-class ConfigManager:
-    DEFAULT = {
-        "key_press_durations": [0.2, 0.248, 0.3, 0.5, 1.0],
-        "speed_presets": [600, 800, 1000, 1200],
-        "selected_language": None,
-        "keyboard_layout": None,
-        "key_mapping": {},
-        "timing_config": {
-            "initial_delay": 1.4,
-            "pause_resume_delay": 1.2,
-            "ramp_steps_begin": 20,
-            "ramp_steps_end": 20
-        },
-        "pause_key": "#",
-        "theme": "dark",
-        "enable_ramping": False,
-        "ramping_info_display_count": 0
-    }
-
-    _config = None
-
-    @classmethod
-    def get_config(cls):
-        if cls._config:
-            return cls._config
-            
-        try:
-            with open(SETTINGS_FILE, 'r', encoding="utf-8") as f:
-                user_config = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            user_config = {}
-
-        config = cls.DEFAULT.copy()
-        
-        for key, value in user_config.items():
-            if key == "key_mapping" and isinstance(value, dict):
-                config[key] = value
-            elif key == "timing_config" and isinstance(value, dict):
-                for sub_key, sub_value in value.items():
-                    if sub_key in config[key]:
-                        config[key][sub_key] = sub_value
-            elif key in config:
-                config[key] = value
-        
-        cls._config = config
-        return cls._config
-
-    @classmethod
-    def save(cls, updates):
-        config = cls.get_config()
-        for key, value in updates.items():
-            if key in ["timing_config", "key_mapping"] and isinstance(value, dict):
-                config[key].update(value)
-            else:
-                config[key] = value
-        
-        with open(SETTINGS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(config, f, indent=3, ensure_ascii=False)
-
-    @classmethod
-    def get_value(cls, key, default=None):
-        keys = key.split('.')
-        value = cls.get_config()
-        for k in keys:
-            value = value.get(k, {})
-        return value or default or cls.DEFAULT.get(key)
-
-# -------------------------------
-# Keyboard Layout Manager
-# -------------------------------
-
-class KeyboardLayoutManager:
-    @staticmethod
-    def load(name):
-        file_path = Path(f'resources/layouts/{name.lower()}.xml')
-        try:
-            tree = ET.parse(file_path)
-            root = tree.getroot()
-            
-            layout = {}
-            for key in root.findall('key'):
-                key_id = key.get('id')
-                if key_id:
-                    key_text = key.text.strip() if key.text else ""
-                    layout[key_id] = key_text
-            return layout
-        except Exception as e:
-            logger.error(f"Layout load error: {e}")
-            logger.error(f"Failed to load layout from: {file_path.resolve()}")
-            raise RuntimeError(f"Could not load keyboard layout: {name}") from e
+VERSION = "2.4.0"
 
 # -------------------------------
 # Note Scheduler
@@ -238,28 +67,39 @@ class NoteScheduler:
             self.active = True
 
     def _run(self):
-        while not self.stop_event.is_set():
-            with self.lock:
-                now = time.time()
-                release_keys = []
-                while self.queue and self.queue[0][0] <= now:
-                    _, key = heapq.heappop(self.queue)
-                    release_keys.append(key)
-            
-            for key in release_keys:
+        try:
+            while not self.stop_event.is_set():
                 try:
-                    self.callback(key)
-                except Exception as e:
-                    logger.error(f"Key release failed: {e}")
-
-            with self.lock:
-                if self.queue:
-                    next_time = self.queue[0][0]
-                    sleep_time = max(0, min(0.05, next_time - time.time()))
-                else:
-                    sleep_time = 0.05
+                    with self.lock:
+                        now = time.time()
+                        release_keys = []
+                        while self.queue and self.queue[0][0] <= now:
+                            try:
+                                _, key = heapq.heappop(self.queue)
+                                release_keys.append(key)
+                            except Exception as e:
+                                logger.error(f"Queue pop failed: {e}")
+                                break
                     
-            time.sleep(sleep_time)
+                    for key in release_keys:
+                        try:
+                            self.callback(key)
+                        except Exception as e:
+                            logger.error(f"Key release failed: {e}")
+
+                    with self.lock:
+                        if self.queue:
+                            next_time = self.queue[0][0]
+                            sleep_time = max(0, min(0.05, next_time - time.time()))
+                        else:
+                            sleep_time = 0.05
+                            
+                    time.sleep(sleep_time)
+                except Exception as e:
+                    logger.error(f"Scheduler iteration failed: {e}")
+                    time.sleep(0.1)
+        except Exception as e:
+            logger.critical(f"Scheduler thread crashed: {e}", exc_info=True)
 
 # -------------------------------
 # Music Player
@@ -267,40 +107,45 @@ class NoteScheduler:
 
 class MusicPlayer:
     def __init__(self):
-        self.logger = logging.getLogger("ProjectLyrica.MusicPlayer")
-        config = ConfigManager.get_config()
-        self.keyboard = Controller()
-        self.pause_flag = Event()
-        self.stop_event = Event()
-        self.song_cache = {}
-        self.status_lock = Lock()
-        
-        self.key_map = self._create_key_map(config["key_mapping"])
-        self.press_duration = 0.1
-        self.current_speed = 1000
-        self.playback_active = False
-        self.scheduler = NoteScheduler(self.keyboard.release)
-        
-        self.keypress_enabled = False
-        self.speed_enabled = False
-        self.pause_enabled = False
-        
-        timing = config["timing_config"]
-        self.initial_delay = timing["initial_delay"]
-        self.pause_resume_delay = timing["pause_resume_delay"]
-        self.ramp_steps_begin = timing["ramp_steps_begin"]
-        self.ramp_steps_end = timing["ramp_steps_end"]
-        
-        self.enable_ramping = config.get("enable_ramping", False)
-        self.is_ramping_begin = False
-        self.is_ramping_end = False
-        self.ramp_counter = 0
-        
-        self.start_time = 0
-        self.note_count = 0
-        self.pause_count = 0
-        self.pause_start = 0
-        self.total_pause_time = 0
+        try:
+            self.logger = logging.getLogger("ProjectLyrica.MusicPlayer")
+            config = ConfigManager.get_config()
+
+            self.keyboard = Controller()
+            self.pause_flag = Event()
+            self.stop_event = Event()
+            self.song_cache = {}
+            self.status_lock = Lock()
+            
+            self.key_map = self._create_key_map(config["key_mapping"])
+            self.press_duration = 0.1
+            self.current_speed = 1000
+            self.playback_active = False
+            self.scheduler = NoteScheduler(self.keyboard.release)
+            
+            self.keypress_enabled = False
+            self.speed_enabled = False
+            self.pause_enabled = False
+            
+            timing = config["timing_config"]
+            self.initial_delay = timing["initial_delay"]
+            self.pause_resume_delay = timing["pause_resume_delay"]
+            self.ramp_steps_begin = timing["ramp_steps_begin"]
+            self.ramp_steps_end = timing["ramp_steps_end"]
+            
+            self.enable_ramping = config.get("enable_ramping", False)
+            self.is_ramping_begin = False
+            self.is_ramping_end = False
+            self.ramp_counter = 0
+            
+            self.start_time = 0
+            self.note_count = 0
+            self.pause_count = 0
+            self.pause_start = 0
+            self.total_pause_time = 0
+        except Exception as e:
+            logger.critical(f"MusicPlayer initialization failed: {e}", exc_info=True)
+            raise
 
     def _create_key_map(self, mapping):
         key_map = {}
@@ -316,22 +161,52 @@ class MusicPlayer:
         return key_map
 
     def _find_sky_window(self):
-        for title in ["Sky", "Sky: Children of the Light"]:
-            windows = gw.getWindowsWithTitle(title)
-            if windows: 
-                return windows[0]
-        return None
+        try:
+            exe_path = ConfigManager.get_value("sky_exe_path", "")
+            if not exe_path:
+                logger.error("No Sky.exe path in settings.json!")
+                return None
+
+            target_exe_name = Path(exe_path).name.lower()
+
+            for proc in psutil.process_iter(['name', 'exe']):
+                try:
+                    if proc.info['name'].lower() == target_exe_name or \
+                       (proc.info['exe'] and Path(proc.info['exe']).name.lower() == target_exe_name):
+                        windows = gw.getWindowsWithTitle("Sky")
+                        if windows:
+                            return windows[0]
+                        else:
+                            logger.warning("Sky.exe is running but no window found!")
+                            return None
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+
+            logger.warning(f"{target_exe_name} not found in process list!")
+            return None
+
+        except Exception as e:
+            logger.error(f"Process search failed: {e}")
+            return None
 
     def _focus_window(self, window):
         try:
+            if not isinstance(window, gw.Window):
+                logger.error("Invalid window object provided")
+                return False
+                
             if window.isMinimized: 
                 window.restore()
             if not window.isActive:
                 for _ in range(3):
-                    window.activate()
-                    time.sleep(0.1)
-                    if window.isActive:
-                        break
+                    try:
+                        window.activate()
+                        time.sleep(0.1)
+                        if window.isActive:
+                            break
+                    except Exception as e:
+                        logger.warning(f"Window activation attempt failed: {e}")
+                        continue
             return window.isActive
         except Exception as e:
             logger.error(f"Window focus error: {e}")
@@ -368,138 +243,150 @@ class MusicPlayer:
                 
             self.song_cache[path] = song_data
             return song_data
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON format in {path}: {e}")
+            raise ValueError(LanguageManager.get('invalid_song_format'))
         except Exception as e:
             logger.error(f"Song parse error [{path}]: {e}", exc_info=True)
             raise
 
     def play(self, song_data):
-        self.logger.info("Starting song playback")
-        if self.playback_active:
-            self.stop()
-        
-        self.scheduler.restart()
-        
-        self.playback_active = True
-        self.pause_enabled = True
-        self.scheduler.reset()
-        self.stop_event.clear()
-        
-        self.is_ramping_begin = False
-        self.is_ramping_end = False
-        self.ramp_counter = 0
-        
-        if self.enable_ramping:
-            self.is_ramping_begin = True
-            self.ramp_counter = 0
-        
-        self.pause_count = 0
-        self.total_pause_time = 0
-        
-        notes = song_data.get("songNotes", [])
-        self.note_count = len(notes)
-        
-        if not notes:
-            logger.error("No notes found in song data")
-            messagebox.showerror(LanguageManager.get("error_title"), LanguageManager.get("missing_song_notes"))
-            return
-
-        song_title = song_data.get("songTitle", "Unknown")
-        logger.info(f"Playing song: '{song_title}' with {self.note_count} notes at speed {self.current_speed}")
-        
-        time.sleep(self.initial_delay)
-        
-        self.start_time = time.time()
-        last_time = 0
-        
         try:
-            for i, note in enumerate(notes):
-                if self.stop_event.is_set():
-                    logger.info("Playback stopped by user")
-                    break
+            self.logger.info("Starting song playback")
+            if self.playback_active:
+                self.stop()
+        
+            self.scheduler.restart()
+            self.playback_active = True
+            self.pause_enabled = True
+            self.scheduler.reset()
+            self.stop_event.clear()
 
-                if self.enable_ramping:
-                    if self.is_ramping_begin:
-                        ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
-                        speed = max(500, self.current_speed * min(1.0, ramp_factor))
-                        self.ramp_counter += 1
-                        if self.ramp_counter >= self.ramp_steps_begin:
-                            self.is_ramping_begin = False
-                            logger.debug("Beginning ramping completed")
+            notes = song_data.get("songNotes", [])
+            if not notes:
+                logger.error("No notes found in song data")
+                messagebox.showerror(LanguageManager.get("error_title"), LanguageManager.get("missing_song_notes"))
+                return
+        
+            self.is_ramping_begin = False
+            self.is_ramping_end = False
+            self.ramp_counter = 0
+            
+            if self.enable_ramping:
+                self.is_ramping_begin = True
+                self.ramp_counter = 0
+            
+            self.pause_count = 0
+            self.total_pause_time = 0
+            
+            notes = song_data.get("songNotes", [])
+            self.note_count = len(notes)
+            
+            if not notes:
+                logger.error("No notes found in song data")
+                messagebox.showerror(LanguageManager.get("error_title"), LanguageManager.get("missing_song_notes"))
+                return
 
-                    elif i >= len(notes) - self.ramp_steps_end:
-                        progress = (len(notes) - i) / self.ramp_steps_end
-                        ramp_factor = max(0.5, progress)
-                        speed = max(500, self.current_speed * ramp_factor)
-                        if not self.is_ramping_end:
-                            self.is_ramping_end = True
-                            logger.debug("End ramping started")
+            song_title = song_data.get("songTitle", "Unknown")
+            logger.info(f"Playing song: '{song_title}' with {self.note_count} notes at speed {self.current_speed}")
+            
+            time.sleep(self.initial_delay)
+            
+            self.start_time = time.time()
+            last_time = 0
+            
+            try:
+                for i, note in enumerate(notes):
+                    if self.stop_event.is_set():
+                        logger.info("Playback stopped by user")
+                        break
 
+                    if self.enable_ramping:
+                        if self.is_ramping_begin:
+                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
+                            speed = max(500, self.current_speed * min(1.0, ramp_factor))
+                            self.ramp_counter += 1
+                            if self.ramp_counter >= self.ramp_steps_begin:
+                                self.is_ramping_begin = False
+                                logger.debug("Beginning ramping completed")
+
+                        elif i >= len(notes) - self.ramp_steps_end:
+                            progress = (len(notes) - i) / self.ramp_steps_end
+                            ramp_factor = max(0.5, progress)
+                            speed = max(500, self.current_speed * ramp_factor)
+                            if not self.is_ramping_end:
+                                self.is_ramping_end = True
+                                logger.debug("End ramping started")
+
+                        else:
+                            speed = self.current_speed
                     else:
                         speed = self.current_speed
-                else:
-                    speed = self.current_speed
 
-                if speed <= 0:
-                    logger.warning(f"Invalid speed {speed}, resetting to 1000")
-                    speed = 1000
+                    if speed <= 0:
+                        logger.warning(f"Invalid speed {speed}, resetting to 1000")
+                        speed = 1000
 
-                if last_time > 0:
-                    interval = (note['time'] - last_time) / 1000 * (1000 / speed)
-                    start = time.perf_counter()
-                    
-                    while (time.perf_counter() - start) < interval:
-                        if self.stop_event.is_set():
-                            break
-                        if self.pause_flag.is_set():
-                            with self.status_lock:
-                                self.pause_count += 1
-                            self.pause_start = time.time()
-                            self._release_all()
-                            logger.info("Playback paused")
-                            
-                            while self.pause_flag.is_set() and not self.stop_event.is_set():
-                                time.sleep(0.1)
-                            
+                    if last_time > 0:
+                        interval = (note['time'] - last_time) / 1000 * (1000 / speed)
+                        start = time.perf_counter()
+                        
+                        while (time.perf_counter() - start) < interval:
                             if self.stop_event.is_set():
                                 break
-                            
-                            pause_duration = time.time() - self.pause_start
-                            self.total_pause_time += pause_duration
-                            
-                            logger.info(f"Playback resumed after {pause_duration:.2f}s pause")
+                            if self.pause_flag.is_set():
+                                with self.status_lock:
+                                    self.pause_count += 1
+                                self.pause_start = time.time()
+                                self._release_all()
+                                logger.info("Playback paused")
+                                
+                                while self.pause_flag.is_set() and not self.stop_event.is_set():
+                                    time.sleep(0.1)
+                                
+                                if self.stop_event.is_set():
+                                    break
+                                
+                                pause_duration = time.time() - self.pause_start
+                                self.total_pause_time += pause_duration
+                                
+                                logger.info(f"Playback resumed after {pause_duration:.2f}s pause")
 
-                            if self.enable_ramping:
-                                self.is_ramping_begin = True
-                                self.ramp_counter = 0
-                                self.is_ramping_end = False
-                            
-                            time.sleep(self.pause_resume_delay)
-                            start = time.perf_counter()
-                        time.sleep(0.001)
-                
-                if self.stop_event.is_set():
-                    break
+                                if self.enable_ramping:
+                                    self.is_ramping_begin = True
+                                    self.ramp_counter = 0
+                                    self.is_ramping_end = False
+                                
+                                time.sleep(self.pause_resume_delay)
+                                start = time.perf_counter()
+                            time.sleep(0.001)
+                    
+                    if self.stop_event.is_set():
+                        break
 
-                key = self.key_map.get(note['key_lower'])
-                if key:
-                    try:
-                        self.keyboard.press(key)
-                        self.scheduler.add(key, self.press_duration)
-                        logger.debug(f"Pressed key: {key} for note {i+1}/{self.note_count}")
-                    except Exception as e:
-                        logger.error(f"Key press error: {e}")
-                
-                last_time = note['time']
+                    key = self.key_map.get(note['key_lower'])
+                    if key:
+                        try:
+                            self.keyboard.press(key)
+                            self.scheduler.add(key, self.press_duration)
+                            logger.debug(f"Pressed key: {key} for note {i+1}/{self.note_count}")
+                        except Exception as e:
+                            logger.error(f"Key press error: {e}")
+                    
+                    last_time = note['time']
 
-                if i == len(notes) - 1:
-                    time.sleep(self.press_duration)
-                
+                    if i == len(notes) - 1:
+                        time.sleep(self.press_duration)      
+            except Exception as e:
+                logger.error(f"Unexpected playback error: {e}", exc_info=True)
+            finally:
+                self._release_all()
+                self.playback_active = False
+                self.pause_enabled = False
         except Exception as e:
-            logger.error(f"Unexpected playback error: {e}", exc_info=True)
-        finally:
+            logger.critical(f"Playback initialization failed: {e}", exc_info=True)
             self._release_all()
-            self.playback_active = False
-            self.pause_enabled = False
+            raise
 
     def _release_all(self):
         self.scheduler.reset()
@@ -575,6 +462,10 @@ class MusicApp:
         setup_logging(VERSION)
         self._init_language()
         self._check_running()
+
+        if ConfigManager.get_value("sky_exe_path") is None:
+            SkyChecker.show_initial_settings()
+
         self._init_player()
         self._init_gui()
         self._setup_key_listener()
@@ -599,57 +490,69 @@ class MusicApp:
         self.speed_presets = config["speed_presets"]
         self.pause_key = config.get("pause_key")
         
+        self.player.keypress_enabled = False
+        self.player.speed_enabled = False
+        self.player.pause_enabled = False
+        
         self.smooth_ramping_enabled = config.get("enable_ramping", False)
         self.ramping_info_display_count = min(config.get("ramping_info_display_count", 0), MAX_RAMPING_INFO_DISPLAY)
         self.show_ramping_info = self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY
 
     def _setup_key_listener(self):
-        self.key_listener = Listener(on_press=self._handle_keypress)
-        self.key_listener.start()
+        try:
+            self.key_listener = Listener(on_press=self._handle_keypress)
+            self.key_listener.start()
+        except Exception as e:
+            logger.error(f"Failed to start key listener: {e}")
+            messagebox.showerror("Error", "Failed to initialize keyboard listener")
 
     def _log_system_info(self):
         config = ConfigManager.get_config()
         lang_code = LanguageManager._current_lang
-        layout = next((lyt for code, _, lyt in LanguageManager.get_languages() if code == lang_code))
+        layout = next((lyt for code, _, lyt in LanguageManager.get_languages() if code == lang_code), "QWERTY")
         
         is_custom = False
         key_map_details = []
-        default_key_map = {}
         
         try:
-            default_key_map = KeyboardLayoutManager.load(layout)
+            default_key_map = KeyboardLayoutManager.load_defaults_from_xml(layout)
+            current_key_map = config.get("key_mapping", {})
             
-            is_custom = config["key_mapping"] != default_key_map
-        except Exception as e:
-            logger.error(f"Layout load error in logging: {e}")
-            is_custom = True
-        
-        for key, value in config["key_mapping"].items():
-            if key in default_key_map:
-                default_value = default_key_map[key]
-                if value != default_value:
-                    key_map_details.append(f"  {key}: {value} (modified from '{default_value}')")
+            is_custom = current_key_map != default_key_map
+            
+            all_keys = set(default_key_map.keys()).union(set(current_key_map.keys()))
+            for key in sorted(all_keys):
+                current_val = current_key_map.get(key, "MISSING")
+                default_val = default_key_map.get(key, "N/A")
+                
+                if current_val == "MISSING":
+                    key_map_details.append(f"  {key}: MISSING (default: '{default_val}')")
+                elif key not in default_key_map:
+                    key_map_details.append(f"  {key}: {current_val} (custom key)")
+                elif current_val == default_val:
+                    key_map_details.append(f"  {key}: {current_val} (default)")
                 else:
-                    key_map_details.append(f"  {key}: {value} (default)")
-            else:
-                key_map_details.append(f"  {key}: {value} (custom key)")
-        
-        missing_keys = [k for k in default_key_map if k not in config["key_mapping"]]
-        for key in missing_keys:
-            key_map_details.append(f"  {key}: MISSING (default: '{default_key_map[key]}')")
-        
+                    key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
+                    
+        except Exception as e:
+            logger.error(f"Error when analyzing the button assignment: {e}")
+            is_custom = True
+            key_map_details.append("  [Error: Could not load key mapping]")
+
+        layout_display = "Custom" if is_custom else layout
+
         timing = config.get("timing_config", {})
-        
         info = [
             "== Player Config ==",
             f"Language: {lang_code}",
-            f"Keyboard Layout: {layout} ({'Custom' if is_custom else 'Standard'})",
+            f"Keyboard Layout: {layout_display}",
             f"Theme: {config.get('theme')}",
             "",
             "== Timing Config ==",
             f"Initial Delay: {timing.get('initial_delay')}s",
             f"Pause/Resume Delay: {timing.get('pause_resume_delay')}s",
-            f"Ramp Steps: {timing.get('ramp_steps')}",
+            f"Ramp Steps Begin: {timing.get('ramp_steps_begin')}",
+            f"Ramp Steps End: {timing.get('ramp_steps_end')}",
             "",
             "== Player Settings ==",
             f"Pause Key: '{config.get('pause_key')}'",
@@ -658,46 +561,44 @@ class MusicApp:
             f"Enable Ramping: {config.get('enable_ramping')}",
             f"Ramping Info Display Count: {config.get('ramping_info_display_count')}",
             "",
-            "== Key Mapping =="
+            "== Key Mapping ==",
+            *key_map_details
         ]
-        
-        info.extend(key_map_details)
-        
+
         try:
-            log_message = "Application Config:\n\t" + "\n\t".join(info)
-            logger.info(log_message)
+            logger.info("Application Config:\n\t" + "\n\t".join(info))
         except UnicodeEncodeError:
-            cleaned_info = []
-            for line in info:
-                try:
-                    line.encode('utf-8')
-                    cleaned_info.append(line)
-                except UnicodeEncodeError:
-                    cleaned_line = line.encode('ascii', 'replace').decode('ascii')
-                    cleaned_info.append(cleaned_line)
-            
-            logger.info("Application Config:\n\t" + "\n\t".join(cleaned_info))
+            cleaned_info = [line.encode('ascii', 'replace').decode('ascii') for line in info]
+            logger.info("Application Config (ASCII-safe):\n\t" + "\n\t".join(cleaned_info))
         
-        logger.info("Full configuration logged")
+        logger.info("Konfiguration wurde vollständig geloggt")
 
     def _init_gui(self):
-        self.root = ctk.CTk()
-        self.root.title(LanguageManager.get("project_title"))
-        self.root.iconbitmap("resources/icons/icon.ico")
-        self.root.protocol('WM_DELETE_WINDOW', self._shutdown)
-        
-        theme = ConfigManager.get_value("theme", "dark")
-        ctk.set_appearance_mode(theme)
-        self.theme_icon = "🌞" if theme == "light" else "🌙"
-        
-        self.update_status, self.latest_version, self.update_url = self._check_updates()
-        self._create_gui_components()
-        self._setup_gui_layout()
+        try:
+            self.root = ctk.CTk()
+            self.root.title(LanguageManager.get("project_title"))
+            self.root.iconbitmap("resources/icons/icon.ico")
+            self.root.protocol('WM_DELETE_WINDOW', self._shutdown)
+            
+            theme = ConfigManager.get_value("theme", "dark")
+            ctk.set_appearance_mode(theme)
+            self.theme_icon = "🌞" if theme == "light" else "🌙"
+            
+            self.update_status, self.latest_version, self.update_url = self._check_updates()
+            self._create_gui_components()
+            self._setup_gui_layout()
+            
+        except Exception as e:
+            logger.critical(f"GUI initialization failed: {e}", exc_info=True)
+            if hasattr(self, 'root'):
+                self.root.destroy()
+            raise
 
     def _check_updates(self):
         try:
             return check_update(VERSION, "VanilleIce/ProjectLyrica")
-        except:
+        except Exception as e:
+            logger.error(f"Update check failed: {e}")
             return ("error", "", "")
 
     def _create_gui_components(self):
@@ -836,17 +737,24 @@ class MusicApp:
         self._adjust_window_size()
 
     def _adjust_window_size(self):
-        if self.player.keypress_enabled and self.player.speed_enabled:
-            base_height = FULL_SIZE[1]
-        elif self.player.keypress_enabled or self.player.speed_enabled:
-            base_height = EXPANDED_SIZE[1]
-        else:
-            base_height = DEFAULT_WINDOW_SIZE[1]
-        
-        if not self.smooth_ramping_enabled and self.show_ramping_info:
-            base_height += RAMPING_INFO_HEIGHT
-        
-        self.root.geometry(f"{FULL_SIZE[0]}x{base_height}")
+        try:
+            keypress_enabled = getattr(self.player, 'keypress_enabled', False)
+            speed_enabled = getattr(self.player, 'speed_enabled', False)
+            
+            if keypress_enabled and speed_enabled:
+                base_height = FULL_SIZE[1]
+            elif keypress_enabled or speed_enabled:
+                base_height = EXPANDED_SIZE[1]
+            else:
+                base_height = DEFAULT_WINDOW_SIZE[1]
+            
+            if not self.smooth_ramping_enabled and self.show_ramping_info:
+                base_height += RAMPING_INFO_HEIGHT
+            
+            self.root.geometry(f"{FULL_SIZE[0]}x{base_height}")
+        except Exception as e:
+            logger.error(f"Window size adjustment failed: {e}")
+            self.root.geometry(f"{DEFAULT_WINDOW_SIZE[0]}x{DEFAULT_WINDOW_SIZE[1]}")
 
     def _toggle_smooth_ramping(self):
         self.smooth_ramping_enabled = not self.smooth_ramping_enabled
@@ -875,11 +783,14 @@ class MusicApp:
         logger.info(f"Smooth ramping {'enabled' if self.smooth_ramping_enabled else 'disabled'}")
 
     def _toggle_theme(self):
-        current = ctk.get_appearance_mode().lower()
-        new_theme = "light" if current == "dark" else "dark"
-        ctk.set_appearance_mode(new_theme)
-        self.theme_btn.configure(text="🌞" if new_theme == "light" else "🌙")
-        ConfigManager.save({"theme": new_theme})
+        try:
+            current = ctk.get_appearance_mode().lower()
+            new_theme = "light" if current == "dark" else "dark"
+            ctk.set_appearance_mode(new_theme)
+            self.theme_btn.configure(text="🌞" if new_theme == "light" else "🌙")
+            ConfigManager.save({"theme": new_theme})
+        except Exception as e:
+            logger.error(f"Theme toggle failed: {e}")
 
     def _open_releases(self, event):
         try:
@@ -891,23 +802,39 @@ class MusicApp:
             messagebox.showerror("Error", f"Browser error: {e}")
 
     def _select_file(self):
-        logger.info("Opening file selection dialog")
-        songs_dir = Path("resources/Songs")
-        file = filedialog.askopenfilename(
-            initialdir=songs_dir if songs_dir.exists() else Path.cwd(),
-            filetypes=[(LanguageManager.get("supported_formats"), "*.json *.txt *.skysheet")]
-        )
-        if file:
-            self.selected_file = file
-            name = Path(file).name
-            display = name if len(name) <= 30 else f"{name[:25]}..."
-            self.file_btn.configure(text=display)
-            
+        try:
+            logger.info("Opening file selection dialog")
+            songs_dir = Path("resources/Songs")
             try:
-                relative_path = Path(file).relative_to(Path.cwd())
-                logger.info(f"Selected song: {relative_path}")
-            except ValueError:
-                logger.info(f"Selected song: {file}")
+                if not songs_dir.exists():
+                    logger.warning("Songs directory not found, falling back to CWD")
+                    songs_dir = Path.cwd()
+            except Exception as e:
+                logger.error(f"Directory check failed: {e}")
+                songs_dir = Path.cwd()
+
+            file = filedialog.askopenfilename(
+                initialdir=songs_dir,
+                filetypes=[(LanguageManager.get("supported_formats"), "*.json *.txt *.skysheet")]
+            )
+            if file:
+                self.selected_file = file
+                try:
+                    name = Path(file).name
+                    display = name if len(name) <= 30 else f"{name[:25]}..."
+                    self.file_btn.configure(text=display)
+                except Exception as e:
+                    logger.error(f"Filename processing failed: {e}")
+                    self.file_btn.configure(text="Selected file")
+
+                try:
+                    relative_path = Path(file).relative_to(Path.cwd())
+                    logger.info(f"Selected song: {relative_path}")
+                except ValueError:
+                    logger.info(f"Selected song: {file}")
+        except Exception as e:
+            logger.error(f"File selection failed: {e}")
+            messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
 
     def _play_song(self):
         if not self.selected_file:
@@ -949,10 +876,12 @@ class MusicApp:
                         break
                     else:
                         logger.warning(f"Failed to focus Sky window on attempt {attempt}/{focus_attempts}")
+                        window = self.player._find_sky_window()
                 else:
                     logger.warning(f"No Sky window found on attempt {attempt}/{focus_attempts}")
             except Exception as e:
                 logger.error(f"Window focus error on attempt {attempt}/{focus_attempts}: {e}")
+                time.sleep(0.5)
             
             time.sleep(0.2)
         
@@ -977,7 +906,10 @@ class MusicApp:
             logger.critical(f"Playback thread crashed: {e}", exc_info=True)
             self.root.after(0, lambda: messagebox.showerror("Critical Error", f"Playback failed: {str(e)}"))
         finally:
-            winsound.Beep(1000, 500)
+            try:
+                winsound.Beep(1000, 500)
+            except Exception as e:
+                logger.warning(f"Could not play completion beep: {e}")
             logger.info("Playback thread completed")
             self.root.after(0, lambda: self.play_btn.configure(
                 text=LanguageManager.get("play_button_text"),
@@ -985,95 +917,138 @@ class MusicApp:
             ))
 
     def _handle_keypress(self, key):
-        if hasattr(key, 'char') and key.char == self.pause_key and self.player.pause_enabled:
-            logger.debug(f"Pause key pressed: {key}")
-            if self.player.pause_flag.is_set():
-                self.player.pause_flag.clear()
-                if window := self.player._find_sky_window():
-                    self.player._focus_window(window)
-            else:
-                self.player.pause_flag.set()
+        try:
+            if hasattr(key, 'char') and key.char == self.pause_key and self.player.pause_enabled:
+                logger.debug(f"Pause key pressed: {key}")
+                if self.player.pause_flag.is_set():
+                    self.player.pause_flag.clear()
+                    if window := self.player._find_sky_window():
+                        self.player._focus_window(window)
+                else:
+                    self.player.pause_flag.set()
+        except Exception as e:
+            logger.error(f"Keypress handling failed: {e}")
 
     def _set_duration(self, event):
-        duration = round(self.duration_slider.get(), 3)
-        self.player.press_duration = duration
-        self.duration_label.configure(text=f"{LanguageManager.get('duration')} {duration} s")
+        try:
+            duration = round(self.duration_slider.get(), 3)
+            self.player.press_duration = duration
+            self.duration_label.configure(text=f"{LanguageManager.get('duration')} {duration} s")
+        except Exception as e:
+            logger.error(f"Duration setting failed: {e}")
 
     def _apply_preset(self, duration):
-        self.player.press_duration = duration
-        self.duration_slider.set(duration)
-        self.duration_label.configure(text=f"{LanguageManager.get('duration')} {duration} s")
+        try:
+            self.player.press_duration = duration
+            self.duration_slider.set(duration)
+            self.duration_label.configure(text=f"{LanguageManager.get('duration')} {duration} s")
+        except Exception as e:
+            logger.error(f"Preset application failed: {e}")
 
     def _set_speed(self, speed):
-        if speed <= 0:
-            messagebox.showerror("Error", LanguageManager.get("invalid_speed"))
-            return
-            
-        self.player.set_speed(speed)
-        self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {speed}")
+        try:
+            if speed <= 0:
+                messagebox.showerror("Error", LanguageManager.get("invalid_speed"))
+                return
+                
+            self.player.set_speed(speed)
+            self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {speed}")
+        except Exception as e:
+            logger.error(f"Speed setting failed: {e}")
 
     def _toggle_keypress(self):
-        self.player.keypress_enabled = not self.player.keypress_enabled
-        status = "enabled" if self.player.keypress_enabled else "disabled"
-        self.keypress_btn.configure(text=f"{LanguageManager.get('key_press')}: {LanguageManager.get(status)}")
-        
-        if self.player.keypress_enabled:
-            self.duration_frame.pack(pady=5, before=self.speed_btn)
-            self.duration_slider.pack(pady=5)
-            self.duration_label.pack()
-            self.preset_frame.pack(pady=5)
-        else:
-            self.duration_frame.pack_forget()
-            self.player.press_duration = 0.1
+        try:
+            self.player.keypress_enabled = not self.player.keypress_enabled
+            status = "enabled" if self.player.keypress_enabled else "disabled"
+            self.keypress_btn.configure(text=f"{LanguageManager.get('key_press')}: {LanguageManager.get(status)}")
             
-        self._adjust_window_size()
+            if self.player.keypress_enabled:
+                self.duration_frame.pack(pady=5, before=self.speed_btn)
+                self.duration_slider.pack(pady=5)
+                self.duration_label.pack()
+                self.preset_frame.pack(pady=5)
+            else:
+                self.duration_frame.pack_forget()
+                self.player.press_duration = 0.1
+                
+            self._adjust_window_size()
+        except Exception as e:
+            logger.error(f"Keypress toggle failed: {e}")
 
     def _toggle_speed(self):
-        self.player.speed_enabled = not self.player.speed_enabled
-        status = "enabled" if self.player.speed_enabled else "disabled"
-        self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get(status)}")
-        
-        if self.player.speed_enabled:
-            self.speed_frame.pack(pady=5, before=self.ramping_btn)
-            self.speed_preset_frame.pack(pady=(0, 8))
-            self.speed_label.pack(pady=(0, 8))
-        else:
-            self.speed_frame.pack_forget()
-            self.player.current_speed = 1000
+        try:
+            self.player.speed_enabled = not self.player.speed_enabled
+            status = "enabled" if self.player.speed_enabled else "disabled"
+            self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get(status)}")
+            
+            if self.player.speed_enabled:
+                self.speed_frame.pack(pady=5, before=self.ramping_btn)
+                self.speed_preset_frame.pack(pady=(0, 8))
+                self.speed_label.pack(pady=(0, 8))
+            else:
+                self.speed_frame.pack_forget()
+                self.player.current_speed = 1000
 
-        self._adjust_window_size()
+            self._adjust_window_size()
+        except Exception as e:
+            logger.error(f"Speed toggle failed: {e}")
 
     def _shutdown(self):
         logger.info("Application shutdown initiated")
         try:
-            if self.player.playback_active:
-                self.player.stop()
+            if hasattr(self, 'player') and self.player.playback_active:
+                try:
+                    self.player.stop()
+                except Exception as e:
+                    logger.error(f"Player stop failed during shutdown: {e}")
+
             if hasattr(self, 'key_listener'):
-                self.key_listener.stop()
-        except Exception as e:
-            logger.error(f"Shutdown error: {e}")
-        finally:
+                try:
+                    if self.key_listener.is_alive():
+                        self.key_listener.stop()
+                        time.sleep(0.1)
+                except Exception as e:
+                    logger.error(f"Key listener stop failed: {e}")
+
             if hasattr(self, '_mutex'):
-                ctypes.windll.kernel32.CloseHandle(self._mutex)
-            self.root.destroy()
+                try:
+                    ctypes.windll.kernel32.CloseHandle(self._mutex)
+                except Exception as e:
+                    logger.error(f"Mutex close failed: {e}")
+
+        except Exception as e:
+            logger.critical(f"Shutdown error: {e}", exc_info=True)
+        finally:
+            try:
+                self.root.destroy()
+            except Exception as e:
+                logger.error(f"Root window destruction failed: {e}")
             logger.info("Application closed")
 
     def run(self):
-        self.root.mainloop()
+        try:
+            self.root.mainloop()
+        except Exception as e:
+            logger.critical(f"Main loop crashed: {e}", exc_info=True)
+            raise
 
 # -------------------------------
 # App Starter
 # -------------------------------
 
 if __name__ == "__main__":
-    if os.name == 'nt':
-        try:
-            from ctypes import windll
-            windll.shcore.SetProcessDpiAwareness(1)
-        except:
-            pass
+    try:
+        if os.name == 'nt':
+            try:
+                from ctypes import windll
+                windll.shcore.SetProcessDpiAwareness(1)
+            except Exception as e:
+                logger.warning(f"DPI awareness setting failed: {e}")
 
-    ctk.set_widget_scaling(1.0)
-    ctk.set_window_scaling(1.0)
+        ctk.set_widget_scaling(1.0)
+        ctk.set_window_scaling(1.0)
 
-    MusicApp().run()
+        MusicApp().run()
+    except Exception as e:
+        logger.critical(f"Application crashed: {e}", exc_info=True)
+        messagebox.showerror("Critical Error", f"The application encountered a critical error and will close: {str(e)}")

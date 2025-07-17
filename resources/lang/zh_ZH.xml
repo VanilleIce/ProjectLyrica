@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">检查失败</translation>
     <translation key="no_connection_text">无法连接到服务器</translation>
-    
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">选择 Sky.exe</translation>
+    <translation key="select_sky_exe_instruction">请选择 Sky.exe:</translation>
+    <translation key="select_sky_exe">选择 Sky.exe</translation>
+    <translation key="exe_path_required">您必须选择 Sky.exe 才能继续</translation>
+    <translation key="exe_path_required_exit">应用程序将退出，因为需要 Sky.exe</translation>
+    <translation key="must_select_sky">请选择 Sky.exe 文件</translation>
+    <translation key="exe_path_invalid">所选文件不存在</translation>
+
 </translations>

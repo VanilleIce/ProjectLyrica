@@ -52,5 +52,16 @@
     <translation key="current_version_text">v {}</translation>
     <translation key="update_error_text">Sprawdzenie nie powiodło się</translation>
     <translation key="no_connection_text">Brak połączenia z serwerem</translation>
-    
+
+    <!-- ================= -->
+    <!-- SkyChecker -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Wybór Sky.exe</translation>
+    <translation key="select_sky_exe_instruction">Proszę wybrać plik Sky.exe:</translation>
+    <translation key="select_sky_exe">Wybierz Sky.exe</translation>
+    <translation key="exe_path_required">Aby kontynuować, należy wybrać plik Sky.exe</translation>
+    <translation key="exe_path_required_exit">Aplikacja zostanie zamknięta, ponieważ wymagany jest plik Sky.exe</translation>
+    <translation key="must_select_sky">Proszę wybrać plik Sky.exe</translation>
+    <translation key="exe_path_invalid">Wybrany plik nie istnieje</translation>
+
 </translations>
