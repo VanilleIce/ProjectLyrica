@@ -27,7 +27,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.4.0"
+VERSION = "2.4.1"
 
 # -------------------------------
 # Note Scheduler
@@ -70,30 +70,23 @@ class NoteScheduler:
         try:
             while not self.stop_event.is_set():
                 try:
+                    now = time.time()
+                    release_keys = []
+                    
                     with self.lock:
-                        now = time.time()
-                        release_keys = []
                         while self.queue and self.queue[0][0] <= now:
-                            try:
-                                _, key = heapq.heappop(self.queue)
-                                release_keys.append(key)
-                            except Exception as e:
-                                logger.error(f"Queue pop failed: {e}")
-                                break
+                            _, key = heapq.heappop(self.queue)
+                            release_keys.append(key)
                     
                     for key in release_keys:
-                        try:
-                            self.callback(key)
-                        except Exception as e:
-                            logger.error(f"Key release failed: {e}")
-
+                        self.callback(key)
+                    
                     with self.lock:
+                        sleep_time = 0.1
                         if self.queue:
                             next_time = self.queue[0][0]
-                            sleep_time = max(0, min(0.05, next_time - time.time()))
-                        else:
-                            sleep_time = 0.05
-                            
+                            sleep_time = max(0.01, min(0.1, next_time - now))
+                    
                     time.sleep(sleep_time)
                 except Exception as e:
                     logger.error(f"Scheduler iteration failed: {e}")
@@ -132,6 +125,7 @@ class MusicPlayer:
             self.pause_resume_delay = timing["pause_resume_delay"]
             self.ramp_steps_begin = timing["ramp_steps_begin"]
             self.ramp_steps_end = timing["ramp_steps_end"]
+            self.ramp_steps_after_pause = timing["ramp_steps_after_pause"]
             
             self.enable_ramping = config.get("enable_ramping", False)
             self.is_ramping_begin = False
@@ -267,19 +261,18 @@ class MusicPlayer:
                 logger.error("No notes found in song data")
                 messagebox.showerror(LanguageManager.get("error_title"), LanguageManager.get("missing_song_notes"))
                 return
-        
+
             self.is_ramping_begin = False
             self.is_ramping_end = False
+            self.is_ramping_after_pause = False
             self.ramp_counter = 0
-            
+
             if self.enable_ramping:
                 self.is_ramping_begin = True
                 self.ramp_counter = 0
             
             self.pause_count = 0
             self.total_pause_time = 0
-            
-            notes = song_data.get("songNotes", [])
             self.note_count = len(notes)
             
             if not notes:
@@ -289,11 +282,14 @@ class MusicPlayer:
 
             song_title = song_data.get("songTitle", "Unknown")
             logger.info(f"Playing song: '{song_title}' with {self.note_count} notes at speed {self.current_speed}")
-            
+
+            from time import perf_counter as precision_timer
+
             time.sleep(self.initial_delay)
             
-            self.start_time = time.time()
+            self.start_time = precision_timer()
             last_time = 0
+            last_note_time = 0
             
             try:
                 for i, note in enumerate(notes):
@@ -301,65 +297,93 @@ class MusicPlayer:
                         logger.info("Playback stopped by user")
                         break
 
+                    current_speed = self.current_speed
                     if self.enable_ramping:
-                        if self.is_ramping_begin:
-                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
-                            speed = max(500, self.current_speed * min(1.0, ramp_factor))
+                        if self.is_ramping_after_pause:
+                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_after_pause)
+                            current_speed = max(500, self.current_speed * min(1.0, ramp_factor))
                             self.ramp_counter += 1
+
+                            if self.ramp_counter >= self.ramp_steps_after_pause:
+                                self.is_ramping_after_pause = False
+                                logger.debug(f"Post-pause ramping completed after {self.ramp_steps_after_pause} notes")
+                                
+                        elif self.is_ramping_begin:
+                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
+                            current_speed = max(500, self.current_speed * min(1.0, ramp_factor))
+                            self.ramp_counter += 1
+                            
                             if self.ramp_counter >= self.ramp_steps_begin:
                                 self.is_ramping_begin = False
-                                logger.debug("Beginning ramping completed")
-
+                                logger.debug(f"Beginning ramping completed after {self.ramp_steps_begin} notes")
+                                
                         elif i >= len(notes) - self.ramp_steps_end:
                             progress = (len(notes) - i) / self.ramp_steps_end
                             ramp_factor = max(0.5, progress)
-                            speed = max(500, self.current_speed * ramp_factor)
+                            current_speed = max(500, self.current_speed * ramp_factor)
+                            
                             if not self.is_ramping_end:
                                 self.is_ramping_end = True
-                                logger.debug("End ramping started")
+                                logger.debug(f"End ramping started for {self.ramp_steps_end} notes")
 
-                        else:
-                            speed = self.current_speed
-                    else:
-                        speed = self.current_speed
+                    if current_speed <= 0:
+                        logger.warning(f"Invalid speed {current_speed}, resetting to 1000")
+                        current_speed = 1000
 
-                    if speed <= 0:
-                        logger.warning(f"Invalid speed {speed}, resetting to 1000")
-                        speed = 1000
+                    current_time = precision_timer()
+                    if last_note_time > 0:
+                        elapsed_since_last = current_time - last_note_time
 
-                    if last_time > 0:
-                        interval = (note['time'] - last_time) / 1000 * (1000 / speed)
-                        start = time.perf_counter()
-                        
-                        while (time.perf_counter() - start) < interval:
+                        required_interval = (note['time'] - last_time) / 1000 * (1000 / current_speed)
+
+                        remaining_wait = max(0, required_interval - elapsed_since_last)
+
+                        wait_start = precision_timer()
+                        while (precision_timer() - wait_start) < remaining_wait:
                             if self.stop_event.is_set():
                                 break
+
                             if self.pause_flag.is_set():
                                 with self.status_lock:
                                     self.pause_count += 1
-                                self.pause_start = time.time()
+                                self.pause_start = precision_timer()
                                 self._release_all()
                                 logger.info("Playback paused")
-                                
+
                                 while self.pause_flag.is_set() and not self.stop_event.is_set():
-                                    time.sleep(0.1)
+                                    time.sleep(0.05)
                                 
                                 if self.stop_event.is_set():
                                     break
-                                
-                                pause_duration = time.time() - self.pause_start
+
+                                pause_duration = precision_timer() - self.pause_start
                                 self.total_pause_time += pause_duration
-                                
                                 logger.info(f"Playback resumed after {pause_duration:.2f}s pause")
 
+                                if self.pause_resume_delay > 0:
+                                    logger.debug(f"Applying pause-resume delay: {self.pause_resume_delay}s")
+                                    delay_start = precision_timer()
+                                    while (precision_timer() - delay_start) < self.pause_resume_delay:
+                                        if self.stop_event.is_set():
+                                            break
+                                        time.sleep(0.01)
+                                    
+                                    if self.stop_event.is_set():
+                                        break
+
                                 if self.enable_ramping:
-                                    self.is_ramping_begin = True
+                                    self.is_ramping_after_pause = True
                                     self.ramp_counter = 0
-                                    self.is_ramping_end = False
-                                
-                                time.sleep(self.pause_resume_delay)
-                                start = time.perf_counter()
-                            time.sleep(0.001)
+                                    logger.debug(f"Starting post-pause ramping for {self.ramp_steps_after_pause} notes")
+
+                                current_time = precision_timer()
+                                last_note_time = current_time
+                                last_time = note['time']
+                                break
+
+                            time_left = remaining_wait - (precision_timer() - wait_start)
+                            if time_left > 0.005:
+                                time.sleep(min(time_left * 0.5, 0.01))
                     
                     if self.stop_event.is_set():
                         break
@@ -372,11 +396,13 @@ class MusicPlayer:
                             logger.debug(f"Pressed key: {key} for note {i+1}/{self.note_count}")
                         except Exception as e:
                             logger.error(f"Key press error: {e}")
-                    
+
                     last_time = note['time']
+                    last_note_time = precision_timer()
 
                     if i == len(notes) - 1:
-                        time.sleep(self.press_duration)      
+                        time.sleep(self.press_duration)
+                        
             except Exception as e:
                 logger.error(f"Unexpected playback error: {e}", exc_info=True)
             finally:
@@ -509,37 +535,37 @@ class MusicApp:
     def _log_system_info(self):
         config = ConfigManager.get_config()
         lang_code = LanguageManager._current_lang
-        layout = next((lyt for code, _, lyt in LanguageManager.get_languages() if code == lang_code), "QWERTY")
-        
-        is_custom = False
-        key_map_details = []
         
         try:
-            default_key_map = KeyboardLayoutManager.load_defaults_from_xml(layout)
+            languages = LanguageManager.get_languages()
+            layout = next((lyt for code, _, lyt in languages if code == lang_code), "QWERTY")
+
+            default_key_map = KeyboardLayoutManager.load_layout_silently(layout)
             current_key_map = config.get("key_mapping", {})
             
             is_custom = current_key_map != default_key_map
+
+            key_map_details = []
+            relevant_keys = set(default_key_map.keys()).intersection(set(current_key_map.keys()))
             
-            all_keys = set(default_key_map.keys()).union(set(current_key_map.keys()))
-            for key in sorted(all_keys):
-                current_val = current_key_map.get(key, "MISSING")
-                default_val = default_key_map.get(key, "N/A")
+            for key in sorted(relevant_keys):
+                current_val = current_key_map[key]
+                default_val = default_key_map[key]
                 
-                if current_val == "MISSING":
-                    key_map_details.append(f"  {key}: MISSING (default: '{default_val}')")
-                elif key not in default_key_map:
-                    key_map_details.append(f"  {key}: {current_val} (custom key)")
-                elif current_val == default_val:
+                if current_val == default_val:
                     key_map_details.append(f"  {key}: {current_val} (default)")
                 else:
                     key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
-                    
-        except Exception as e:
-            logger.error(f"Error when analyzing the button assignment: {e}")
-            is_custom = True
-            key_map_details.append("  [Error: Could not load key mapping]")
 
-        layout_display = "Custom" if is_custom else layout
+            if is_custom:
+                layout_display = f"Custom ({layout})"
+            else:
+                layout_display = layout
+                
+        except Exception as e:
+            logger.error(f"Key mapping analysis error: {e}")
+            key_map_details = ["  [Error: Could not analyze key mapping]"]
+            layout_display = "Error"
 
         timing = config.get("timing_config", {})
         info = [
@@ -553,6 +579,7 @@ class MusicApp:
             f"Pause/Resume Delay: {timing.get('pause_resume_delay')}s",
             f"Ramp Steps Begin: {timing.get('ramp_steps_begin')}",
             f"Ramp Steps End: {timing.get('ramp_steps_end')}",
+            f"Ramp Steps Pause: {timing.get('ramp_steps_after_pause')}",
             "",
             "== Player Settings ==",
             f"Pause Key: '{config.get('pause_key')}'",
