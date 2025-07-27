@@ -199,6 +199,8 @@ class LanguageManager:
 
 class KeyboardLayoutManager:
     """Handles loading and managing keyboard layouts."""
+
+    _layout_cache = {}
     
     @staticmethod
     def load(name):
@@ -207,20 +209,23 @@ class KeyboardLayoutManager:
             name = LanguageManager._default_layout
             
         try:
-            return KeyboardLayoutManager.load_defaults_from_xml(name)
+            return KeyboardLayoutManager.load_layout_silently(name)
             
         except Exception as e:
             logger.error(f"Failed to load layout {name}: {e}\n{traceback.format_exc()}")
             raise RuntimeError(f"Could not load keyboard layout: {name}") from e
 
     @staticmethod
-    def load_defaults_from_xml(layout_name):
-        """Loads key mapping from XML and logs the success with custom/standard labeling."""
+    def load_layout_silently(layout_name):
+        """Loads layout without log messages"""
+        if layout_name in KeyboardLayoutManager._layout_cache:
+            return KeyboardLayoutManager._layout_cache[layout_name]
+            
         file_path = Path(f'resources/layouts/{layout_name.lower()}.xml')
         try:
             if not file_path.exists():
-                raise FileNotFoundError(f"Layout-Datei nicht gefunden: {file_path}")
-
+                return {}
+                
             tree = ET.parse(file_path)
             xml_mapping = {}
             
@@ -229,10 +234,9 @@ class KeyboardLayoutManager:
                 key_text = key.text.strip() if key.text else ""
                 if key_id:
                     xml_mapping[key_id] = key_text
-
-            logger.info(f"Successfully loaded {len(xml_mapping)} key mappings")
+                    
+            KeyboardLayoutManager._layout_cache[layout_name] = xml_mapping
             return xml_mapping
             
-        except Exception as e:
-            logger.error(f"Failed to load keyboard layout: {str(e)}")
-            raise
+        except Exception:
+            return {}
