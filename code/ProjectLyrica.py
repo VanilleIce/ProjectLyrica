@@ -27,7 +27,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.4.1"
+VERSION = "2.4.2"
 
 # -------------------------------
 # Note Scheduler
@@ -54,7 +54,7 @@ class NoteScheduler:
     def stop(self):
         if self.active:
             self.stop_event.set()
-            self.thread.join(timeout=0.5)
+            self.thread.join(timeout=0.01)
             if self.thread.is_alive():
                 logger.warning("Scheduler thread did not terminate gracefully")
             self.active = False
@@ -344,6 +344,13 @@ class MusicPlayer:
                                 break
 
                             if self.pause_flag.is_set():
+                                ramping_state = {
+                                    'begin': self.is_ramping_begin,
+                                    'end': self.is_ramping_end,
+                                    'after_pause': self.is_ramping_after_pause,
+                                    'counter': self.ramp_counter
+                                }
+                                
                                 with self.status_lock:
                                     self.pause_count += 1
                                 self.pause_start = precision_timer()
@@ -371,10 +378,24 @@ class MusicPlayer:
                                     if self.stop_event.is_set():
                                         break
 
+                                self.is_ramping_begin = ramping_state['begin']
+                                self.is_ramping_end = ramping_state['end']
+                                self.is_ramping_after_pause = ramping_state['after_pause']
+                                self.ramp_counter = ramping_state['counter']
+
                                 if self.enable_ramping:
-                                    self.is_ramping_after_pause = True
-                                    self.ramp_counter = 0
-                                    logger.debug(f"Starting post-pause ramping for {self.ramp_steps_after_pause} notes")
+                                    any_ramp_active = (
+                                        ramping_state['begin'] or 
+                                        ramping_state['end'] or 
+                                        ramping_state['after_pause']
+                                    )
+                                    
+                                    if not any_ramp_active:
+                                        self.is_ramping_after_pause = True
+                                        self.ramp_counter = 0
+                                        logger.debug(f"Starting post-pause ramping for {self.ramp_steps_after_pause} notes")
+                                    else:
+                                        logger.debug("Resuming existing ramping after pause")
 
                                 current_time = precision_timer()
                                 last_note_time = current_time

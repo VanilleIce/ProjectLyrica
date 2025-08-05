@@ -164,11 +164,11 @@ class LanguageManager:
             else:
                 logger.warning(f"Layout not found for {lang_code}, using default")
             try:
-                key_map = KeyboardLayoutManager.load_defaults_from_xml(layout)
+                key_map = KeyboardLayoutManager.load_layout_silently(layout)
                 logger.info(f"Loaded {len(key_map)} keys from {layout} layout")
             except Exception as e:
                 logger.error(f"Failed to load layout {layout}: {e}")
-                key_map = KeyboardLayoutManager.load_defaults_from_xml(cls._default_layout)
+                key_map = KeyboardLayoutManager.load_layout_silently(cls._default_layout)
 
             config_update = {
                 "selected_language": lang_code,
