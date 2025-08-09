@@ -72,7 +72,7 @@ def setup_logging(version):
         except Exception as e:
             logging.error(f"Failed to setup console logging: {e}")
 
-        setup_logger = logging.getLogger("ProjectLyrica.setup")
+        setup_logger = logging.getLogger("ProjectLyrica.Logger")
 
         sys_info = [
             f"Project Lyrica v{version}",
