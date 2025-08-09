@@ -1,12 +1,11 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import json, time, os, sys, winsound, heapq, ctypes, webbrowser, logging, psutil
-import pygetwindow as gw
+import json, time, os, sys, winsound, ctypes, webbrowser, logging
 import customtkinter as ctk
 from pathlib import Path
-from threading import Event, Thread, Lock
-from pynput.keyboard import Controller, Listener, Key
+from threading import Event, Thread
+from pynput.keyboard import Listener, Key
 from tkinter import filedialog, messagebox
 import xml.etree.ElementTree as ET
 
@@ -14,7 +13,9 @@ from update_checker import check_update
 from logging_setup import setup_logging
 from config_manager import ConfigManager
 from language_manager import LanguageManager, KeyboardLayoutManager
+from language_window import LanguageWindow
 from sky_checker import SkyChecker
+from music_player import MusicPlayer
 
 logger = logging.getLogger("ProjectLyrica.ProjectLyrica")
 
@@ -27,478 +28,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.4.2"
-
-# -------------------------------
-# Note Scheduler
-# -------------------------------
-
-class NoteScheduler:
-    def __init__(self, release_callback):
-        self.queue = []
-        self.callback = release_callback
-        self.lock = Lock()
-        self.stop_event = Event()
-        self.thread = Thread(target=self._run, daemon=True)
-        self.thread.start()
-        self.active = True
-
-    def add(self, key, delay):
-        with self.lock:
-            heapq.heappush(self.queue, (time.time() + delay, key))
-
-    def reset(self):
-        with self.lock:
-            self.queue = []
-
-    def stop(self):
-        if self.active:
-            self.stop_event.set()
-            self.thread.join(timeout=0.01)
-            if self.thread.is_alive():
-                logger.warning("Scheduler thread did not terminate gracefully")
-            self.active = False
-
-    def restart(self):
-        if not self.active:
-            self.stop_event.clear()
-            self.thread = Thread(target=self._run, daemon=True)
-            self.thread.start()
-            self.active = True
-
-    def _run(self):
-        try:
-            while not self.stop_event.is_set():
-                try:
-                    now = time.time()
-                    release_keys = []
-                    
-                    with self.lock:
-                        while self.queue and self.queue[0][0] <= now:
-                            _, key = heapq.heappop(self.queue)
-                            release_keys.append(key)
-                    
-                    for key in release_keys:
-                        self.callback(key)
-                    
-                    with self.lock:
-                        sleep_time = 0.1
-                        if self.queue:
-                            next_time = self.queue[0][0]
-                            sleep_time = max(0.01, min(0.1, next_time - now))
-                    
-                    time.sleep(sleep_time)
-                except Exception as e:
-                    logger.error(f"Scheduler iteration failed: {e}")
-                    time.sleep(0.1)
-        except Exception as e:
-            logger.critical(f"Scheduler thread crashed: {e}", exc_info=True)
-
-# -------------------------------
-# Music Player
-# -------------------------------
-
-class MusicPlayer:
-    def __init__(self):
-        try:
-            self.logger = logging.getLogger("ProjectLyrica.MusicPlayer")
-            config = ConfigManager.get_config()
-
-            self.keyboard = Controller()
-            self.pause_flag = Event()
-            self.stop_event = Event()
-            self.song_cache = {}
-            self.status_lock = Lock()
-            
-            self.key_map = self._create_key_map(config["key_mapping"])
-            self.press_duration = 0.1
-            self.current_speed = 1000
-            self.playback_active = False
-            self.scheduler = NoteScheduler(self.keyboard.release)
-            
-            self.keypress_enabled = False
-            self.speed_enabled = False
-            self.pause_enabled = False
-            
-            timing = config["timing_config"]
-            self.initial_delay = timing["initial_delay"]
-            self.pause_resume_delay = timing["pause_resume_delay"]
-            self.ramp_steps_begin = timing["ramp_steps_begin"]
-            self.ramp_steps_end = timing["ramp_steps_end"]
-            self.ramp_steps_after_pause = timing["ramp_steps_after_pause"]
-            
-            self.enable_ramping = config.get("enable_ramping", False)
-            self.is_ramping_begin = False
-            self.is_ramping_end = False
-            self.ramp_counter = 0
-            
-            self.start_time = 0
-            self.note_count = 0
-            self.pause_count = 0
-            self.pause_start = 0
-            self.total_pause_time = 0
-        except Exception as e:
-            logger.critical(f"MusicPlayer initialization failed: {e}", exc_info=True)
-            raise
-
-    def _create_key_map(self, mapping):
-        key_map = {}
-        for prefix in ['', '1', '2', '3']:
-            for key, value in mapping.items():
-                try:
-                    if isinstance(value, str) and '\\u' in value:
-                        value = bytes(value, 'latin1').decode('unicode_escape')
-                    key_map[f"{prefix}{key}".lower()] = value
-                except Exception as e:
-                    logger.error(f"Key mapping error for {key}: {value} - {e}")
-                    key_map[f"{prefix}{key}".lower()] = value
-        return key_map
-
-    def _find_sky_window(self):
-        try:
-            exe_path = ConfigManager.get_value("sky_exe_path", "")
-            if not exe_path:
-                logger.error("No Sky.exe path in settings.json!")
-                return None
-
-            target_exe_name = Path(exe_path).name.lower()
-
-            for proc in psutil.process_iter(['name', 'exe']):
-                try:
-                    if proc.info['name'].lower() == target_exe_name or \
-                       (proc.info['exe'] and Path(proc.info['exe']).name.lower() == target_exe_name):
-                        windows = gw.getWindowsWithTitle("Sky")
-                        if windows:
-                            return windows[0]
-                        else:
-                            logger.warning("Sky.exe is running but no window found!")
-                            return None
-                except (psutil.NoSuchProcess, psutil.AccessDenied):
-                    continue
-
-            logger.warning(f"{target_exe_name} not found in process list!")
-            return None
-
-        except Exception as e:
-            logger.error(f"Process search failed: {e}")
-            return None
-
-    def _focus_window(self, window):
-        try:
-            if not isinstance(window, gw.Window):
-                logger.error("Invalid window object provided")
-                return False
-                
-            if window.isMinimized: 
-                window.restore()
-            if not window.isActive:
-                for _ in range(3):
-                    try:
-                        window.activate()
-                        time.sleep(0.1)
-                        if window.isActive:
-                            break
-                    except Exception as e:
-                        logger.warning(f"Window activation attempt failed: {e}")
-                        continue
-            return window.isActive
-        except Exception as e:
-            logger.error(f"Window focus error: {e}")
-            return False
-
-    def parse_song(self, path):
-        self.logger.debug(f"Parsing song: {path}")
-        if path in self.song_cache:
-            return self.song_cache[path]
-        
-        file = Path(path)
-        try:
-            data = json.loads(file.read_text(encoding='utf-8'))
-            song_data = data[0] if isinstance(data, list) and len(data) == 1 else data
-            
-            if "songNotes" not in song_data:
-                if "notes" in song_data:
-                    song_data["songNotes"] = song_data["notes"]
-                elif "Notes" in song_data:
-                    song_data["songNotes"] = song_data["Notes"]
-                else:
-                    raise ValueError(LanguageManager.get('missing_song_notes'))
-                    
-            title_keys = ["songName", "name", "title", "song_title", "songName"]
-            song_title = "Unknown"
-            for key in title_keys:
-                if key in song_data:
-                    song_title = song_data[key]
-                    break
-            song_data["songTitle"] = song_title
-            
-            for note in song_data["songNotes"]:
-                note['key_lower'] = note.get('key', '').lower()
-                
-            self.song_cache[path] = song_data
-            return song_data
-        except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON format in {path}: {e}")
-            raise ValueError(LanguageManager.get('invalid_song_format'))
-        except Exception as e:
-            logger.error(f"Song parse error [{path}]: {e}", exc_info=True)
-            raise
-
-    def play(self, song_data):
-        try:
-            self.logger.info("Starting song playback")
-            if self.playback_active:
-                self.stop()
-        
-            self.scheduler.restart()
-            self.playback_active = True
-            self.pause_enabled = True
-            self.scheduler.reset()
-            self.stop_event.clear()
-
-            notes = song_data.get("songNotes", [])
-            if not notes:
-                logger.error("No notes found in song data")
-                messagebox.showerror(LanguageManager.get("error_title"), LanguageManager.get("missing_song_notes"))
-                return
-
-            self.is_ramping_begin = False
-            self.is_ramping_end = False
-            self.is_ramping_after_pause = False
-            self.ramp_counter = 0
-
-            if self.enable_ramping:
-                self.is_ramping_begin = True
-                self.ramp_counter = 0
-            
-            self.pause_count = 0
-            self.total_pause_time = 0
-            self.note_count = len(notes)
-            
-            if not notes:
-                logger.error("No notes found in song data")
-                messagebox.showerror(LanguageManager.get("error_title"), LanguageManager.get("missing_song_notes"))
-                return
-
-            song_title = song_data.get("songTitle", "Unknown")
-            logger.info(f"Playing song: '{song_title}' with {self.note_count} notes at speed {self.current_speed}")
-
-            from time import perf_counter as precision_timer
-
-            time.sleep(self.initial_delay)
-            
-            self.start_time = precision_timer()
-            last_time = 0
-            last_note_time = 0
-            
-            try:
-                for i, note in enumerate(notes):
-                    if self.stop_event.is_set():
-                        logger.info("Playback stopped by user")
-                        break
-
-                    current_speed = self.current_speed
-                    if self.enable_ramping:
-                        if self.is_ramping_after_pause:
-                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_after_pause)
-                            current_speed = max(500, self.current_speed * min(1.0, ramp_factor))
-                            self.ramp_counter += 1
-
-                            if self.ramp_counter >= self.ramp_steps_after_pause:
-                                self.is_ramping_after_pause = False
-                                logger.debug(f"Post-pause ramping completed after {self.ramp_steps_after_pause} notes")
-                                
-                        elif self.is_ramping_begin:
-                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
-                            current_speed = max(500, self.current_speed * min(1.0, ramp_factor))
-                            self.ramp_counter += 1
-                            
-                            if self.ramp_counter >= self.ramp_steps_begin:
-                                self.is_ramping_begin = False
-                                logger.debug(f"Beginning ramping completed after {self.ramp_steps_begin} notes")
-                                
-                        elif i >= len(notes) - self.ramp_steps_end:
-                            progress = (len(notes) - i) / self.ramp_steps_end
-                            ramp_factor = max(0.5, progress)
-                            current_speed = max(500, self.current_speed * ramp_factor)
-                            
-                            if not self.is_ramping_end:
-                                self.is_ramping_end = True
-                                logger.debug(f"End ramping started for {self.ramp_steps_end} notes")
-
-                    if current_speed <= 0:
-                        logger.warning(f"Invalid speed {current_speed}, resetting to 1000")
-                        current_speed = 1000
-
-                    current_time = precision_timer()
-                    if last_note_time > 0:
-                        elapsed_since_last = current_time - last_note_time
-
-                        required_interval = (note['time'] - last_time) / 1000 * (1000 / current_speed)
-
-                        remaining_wait = max(0, required_interval - elapsed_since_last)
-
-                        wait_start = precision_timer()
-                        while (precision_timer() - wait_start) < remaining_wait:
-                            if self.stop_event.is_set():
-                                break
-
-                            if self.pause_flag.is_set():
-                                ramping_state = {
-                                    'begin': self.is_ramping_begin,
-                                    'end': self.is_ramping_end,
-                                    'after_pause': self.is_ramping_after_pause,
-                                    'counter': self.ramp_counter
-                                }
-                                
-                                with self.status_lock:
-                                    self.pause_count += 1
-                                self.pause_start = precision_timer()
-                                self._release_all()
-                                logger.info("Playback paused")
-
-                                while self.pause_flag.is_set() and not self.stop_event.is_set():
-                                    time.sleep(0.05)
-                                
-                                if self.stop_event.is_set():
-                                    break
-
-                                pause_duration = precision_timer() - self.pause_start
-                                self.total_pause_time += pause_duration
-                                logger.info(f"Playback resumed after {pause_duration:.2f}s pause")
-
-                                if self.pause_resume_delay > 0:
-                                    logger.debug(f"Applying pause-resume delay: {self.pause_resume_delay}s")
-                                    delay_start = precision_timer()
-                                    while (precision_timer() - delay_start) < self.pause_resume_delay:
-                                        if self.stop_event.is_set():
-                                            break
-                                        time.sleep(0.01)
-                                    
-                                    if self.stop_event.is_set():
-                                        break
-
-                                self.is_ramping_begin = ramping_state['begin']
-                                self.is_ramping_end = ramping_state['end']
-                                self.is_ramping_after_pause = ramping_state['after_pause']
-                                self.ramp_counter = ramping_state['counter']
-
-                                if self.enable_ramping:
-                                    any_ramp_active = (
-                                        ramping_state['begin'] or 
-                                        ramping_state['end'] or 
-                                        ramping_state['after_pause']
-                                    )
-                                    
-                                    if not any_ramp_active:
-                                        self.is_ramping_after_pause = True
-                                        self.ramp_counter = 0
-                                        logger.debug(f"Starting post-pause ramping for {self.ramp_steps_after_pause} notes")
-                                    else:
-                                        logger.debug("Resuming existing ramping after pause")
-
-                                current_time = precision_timer()
-                                last_note_time = current_time
-                                last_time = note['time']
-                                break
-
-                            time_left = remaining_wait - (precision_timer() - wait_start)
-                            if time_left > 0.005:
-                                time.sleep(min(time_left * 0.5, 0.01))
-                    
-                    if self.stop_event.is_set():
-                        break
-
-                    key = self.key_map.get(note['key_lower'])
-                    if key:
-                        try:
-                            self.keyboard.press(key)
-                            self.scheduler.add(key, self.press_duration)
-                            logger.debug(f"Pressed key: {key} for note {i+1}/{self.note_count}")
-                        except Exception as e:
-                            logger.error(f"Key press error: {e}")
-
-                    last_time = note['time']
-                    last_note_time = precision_timer()
-
-                    if i == len(notes) - 1:
-                        time.sleep(self.press_duration)
-                        
-            except Exception as e:
-                logger.error(f"Unexpected playback error: {e}", exc_info=True)
-            finally:
-                self._release_all()
-                self.playback_active = False
-                self.pause_enabled = False
-        except Exception as e:
-            logger.critical(f"Playback initialization failed: {e}", exc_info=True)
-            self._release_all()
-            raise
-
-    def _release_all(self):
-        self.scheduler.reset()
-        for key in set(self.key_map.values()):
-            try: 
-                self.keyboard.release(key)
-            except Exception as e: 
-                logger.error(f"Key release error: {e}")
-
-    def stop(self):
-        if not self.playback_active:
-            return
-            
-        self.stop_event.set()
-        self.pause_flag.clear()
-        self.pause_enabled = False
-        self._release_all()
-        self.playback_active = False
-
-    def set_speed(self, speed):
-        if speed <= 0:
-            logger.warning(f"Invalid speed {speed}, resetting to 1000")
-            self.current_speed = 1000
-        else:
-            self.current_speed = speed
-
-# -------------------------------
-# Language Window
-# -------------------------------
-
-class LanguageWindow:
-    _open = False
-
-    @classmethod
-    def show(cls):
-        if cls._open: 
-            return
-            
-        cls._open = True
-        root = ctk.CTk()
-        root.title(LanguageManager.get('language_window_title'))
-        root.geometry("400x200")
-        root.iconbitmap("resources/icons/icon.ico")
-        
-        languages = LanguageManager.get_languages()
-        lang_dict = {name: code for code, name, _ in languages}
-        default_name = next((n for c, n, _ in languages if c == LanguageManager._current_lang), 
-                            languages[0][1] if languages else "English")
-        
-        ctk.CTkLabel(root, text=LanguageManager.get('select_language'), font=("Arial", 14)).pack(pady=10)
-        
-        combo = ctk.CTkComboBox(root, values=list(lang_dict.keys()), state="readonly")
-        combo.set(default_name)
-        combo.pack(pady=10)
-        
-        def save():
-            selected_name = combo.get()
-            if code := lang_dict.get(selected_name):
-                LanguageManager.set_language(code)
-                messagebox.showinfo("Info", LanguageManager.get('language_saved'))
-            root.destroy()
-            
-        ctk.CTkButton(root, text=LanguageManager.get('save_button_text'), command=save).pack(pady=20)
-        root.mainloop()
-        cls._open = False
+VERSION = "2.4.3"
 
 # -------------------------------
 # Music App
@@ -516,7 +46,8 @@ class MusicApp:
         self._init_player()
         self._init_gui()
         self._setup_key_listener()
-        self._log_system_info()
+
+        ConfigManager.log_system_info(VERSION)
 
     def _init_language(self):
         LanguageManager.init()
@@ -552,74 +83,6 @@ class MusicApp:
         except Exception as e:
             logger.error(f"Failed to start key listener: {e}")
             messagebox.showerror("Error", "Failed to initialize keyboard listener")
-
-    def _log_system_info(self):
-        config = ConfigManager.get_config()
-        lang_code = LanguageManager._current_lang
-        
-        try:
-            languages = LanguageManager.get_languages()
-            layout = next((lyt for code, _, lyt in languages if code == lang_code), "QWERTY")
-
-            default_key_map = KeyboardLayoutManager.load_layout_silently(layout)
-            current_key_map = config.get("key_mapping", {})
-            
-            is_custom = current_key_map != default_key_map
-
-            key_map_details = []
-            relevant_keys = set(default_key_map.keys()).intersection(set(current_key_map.keys()))
-            
-            for key in sorted(relevant_keys):
-                current_val = current_key_map[key]
-                default_val = default_key_map[key]
-                
-                if current_val == default_val:
-                    key_map_details.append(f"  {key}: {current_val} (default)")
-                else:
-                    key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
-
-            if is_custom:
-                layout_display = f"Custom ({layout})"
-            else:
-                layout_display = layout
-                
-        except Exception as e:
-            logger.error(f"Key mapping analysis error: {e}")
-            key_map_details = ["  [Error: Could not analyze key mapping]"]
-            layout_display = "Error"
-
-        timing = config.get("timing_config", {})
-        info = [
-            "== Player Config ==",
-            f"Language: {lang_code}",
-            f"Keyboard Layout: {layout_display}",
-            f"Theme: {config.get('theme')}",
-            "",
-            "== Timing Config ==",
-            f"Initial Delay: {timing.get('initial_delay')}s",
-            f"Pause/Resume Delay: {timing.get('pause_resume_delay')}s",
-            f"Ramp Steps Begin: {timing.get('ramp_steps_begin')}",
-            f"Ramp Steps End: {timing.get('ramp_steps_end')}",
-            f"Ramp Steps Pause: {timing.get('ramp_steps_after_pause')}",
-            "",
-            "== Player Settings ==",
-            f"Pause Key: '{config.get('pause_key')}'",
-            f"Speed Presets: {config.get('speed_presets')}",
-            f"Press Duration Presets: {config.get('key_press_durations')}",
-            f"Enable Ramping: {config.get('enable_ramping')}",
-            f"Ramping Info Display Count: {config.get('ramping_info_display_count')}",
-            "",
-            "== Key Mapping ==",
-            *key_map_details
-        ]
-
-        try:
-            logger.info("Application Config:\n\t" + "\n\t".join(info))
-        except UnicodeEncodeError:
-            cleaned_info = [line.encode('ascii', 'replace').decode('ascii') for line in info]
-            logger.info("Application Config (ASCII-safe):\n\t" + "\n\t".join(cleaned_info))
-        
-        logger.info("Full configuration logged")
 
     def _init_gui(self):
         try:
@@ -903,13 +366,13 @@ class MusicApp:
         
         try:
             relative_path = Path(self.selected_file).relative_to(Path.cwd())
-            logger.info(f"Playing song from: {relative_path}")
+            logger.info(f"Playing song: {relative_path}")
         except ValueError:
-            logger.info(f"Playing song from: {self.selected_file}")
+            logger.info(f"Playing song: {self.selected_file}")
         
         logger.info("Attempting to focus Sky window")
         window_focused = False
-        focus_attempts = 3
+        focus_attempts = 2
         
         focus_start_time = time.time()
         
@@ -950,9 +413,12 @@ class MusicApp:
         try:
             logger.info("Starting actual playback")
             self.player.play(song_data)
-        except Exception as e:
-            logger.critical(f"Playback thread crashed: {e}", exc_info=True)
-            self.root.after(0, lambda: messagebox.showerror("Critical Error", f"Playback failed: {str(e)}"))
+        except Exception as play_error:
+            logger.critical(f"Playback thread crashed: {play_error}", exc_info=True)
+            self.root.after(0, lambda e=play_error: messagebox.showerror(
+                "Critical Error", 
+                f"Playback failed: {str(e)}"
+            ))
         finally:
             try:
                 winsound.Beep(1000, 500)
@@ -965,17 +431,51 @@ class MusicApp:
             ))
 
     def _handle_keypress(self, key):
+        """Handle pause key events with comprehensive state logging"""
         try:
-            if hasattr(key, 'char') and key.char == self.pause_key and self.player.pause_enabled:
-                logger.debug(f"Pause key pressed: {key}")
-                if self.player.pause_flag.is_set():
-                    self.player.pause_flag.clear()
-                    if window := self.player._find_sky_window():
-                        self.player._focus_window(window)
-                else:
-                    self.player.pause_flag.set()
+            if not hasattr(key, 'char') or key.char != self.pause_key:
+                return
+
+            state_info = {
+                'playback_active': self.player.playback_active,
+                'pause_enabled': self.player.pause_enabled,
+                'currently_paused': self.player.pause_flag.is_set(),
+                'song_loaded': bool(self.selected_file)
+            }
+            
+            logger.debug(
+                "Pause key pressed - State: " +
+                f"Playback: {'ACTIVE' if state_info['playback_active'] else 'INACTIVE'}, " +
+                f"Pause: {'ENABLED' if state_info['pause_enabled'] else 'DISABLED'}, " +
+                f"Status: {'PAUSED' if state_info['currently_paused'] else 'PLAYING'}, " +
+                f"Song: {'LOADED' if state_info['song_loaded'] else 'NOT LOADED'}"
+            )
+
+            if not state_info['song_loaded']:
+                logger.debug("Pause Ignored - no song loaded")
+                return
+                
+            if not state_info['playback_active']:
+                logger.debug("Pause Ignored - playback not active")
+                return
+                
+            if not state_info['pause_enabled']:
+                logger.debug("Pause Ignored - pause disabled")
+                return
+
+            if state_info['currently_paused']:
+                self.player.pause_flag.clear()
+                
+                if window := self.player._find_sky_window():
+                    if self.player._focus_window(window):
+                        logger.debug("Successfully focused game window")
+                    else:
+                        logger.debug("Failed to focus game window")
+            else:
+                self.player.pause_flag.set()
+                
         except Exception as e:
-            logger.error(f"Keypress handling failed: {e}")
+            logger.error(f"Critical error in pause handler: {str(e)}", exc_info=True)
 
     def _set_duration(self, event):
         try:

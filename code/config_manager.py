@@ -172,3 +172,75 @@ class ConfigManager:
         except Exception as e:
             logger.error(f"Failed to reset config: {e}")
             return False
+
+    @classmethod
+    def log_system_info(cls, version: str):
+        """Log detailed system and configuration information."""
+        config = cls.get_config()
+        lang_code = config.get("selected_language", "en_US")
+        
+        try:
+            from language_manager import LanguageManager, KeyboardLayoutManager
+            
+            languages = LanguageManager.get_languages()
+            layout = next((lyt for code, _, lyt in languages if code == lang_code), "QWERTY")
+
+            default_key_map = KeyboardLayoutManager.load_layout_silently(layout)
+            current_key_map = config.get("key_mapping", {})
+            
+            is_custom = current_key_map != default_key_map
+
+            key_map_details = []
+            relevant_keys = set(default_key_map.keys()).intersection(set(current_key_map.keys()))
+            
+            for key in sorted(relevant_keys):
+                current_val = current_key_map[key]
+                default_val = default_key_map[key]
+                
+                if current_val == default_val:
+                    key_map_details.append(f"  {key}: {current_val} (default)")
+                else:
+                    key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
+
+            if is_custom:
+                layout_display = f"Custom ({layout})"
+            else:
+                layout_display = layout
+                
+        except Exception as e:
+            logger.error(f"Key mapping analysis error: {e}")
+            key_map_details = ["  [Error: Could not analyze key mapping]"]
+            layout_display = "Error"
+
+        timing = config.get("timing_config", {})
+        info = [
+            "== Player Config ==",
+            f"Language: {lang_code}",
+            f"Keyboard Layout: {layout_display}",
+            f"Theme: {config.get('theme')}",
+            "",
+            "== Timing Config ==",
+            f"Initial Delay: {timing.get('initial_delay')}s",
+            f"Pause/Resume Delay: {timing.get('pause_resume_delay')}s",
+            f"Ramp Steps Begin: {timing.get('ramp_steps_begin')}",
+            f"Ramp Steps End: {timing.get('ramp_steps_end')}",
+            f"Ramp Steps Pause: {timing.get('ramp_steps_after_pause')}",
+            "",
+            "== Player Settings ==",
+            f"Pause Key: '{config.get('pause_key')}'",
+            f"Speed Presets: {config.get('speed_presets')}",
+            f"Press Duration Presets: {config.get('key_press_durations')}",
+            f"Enable Ramping: {config.get('enable_ramping')}",
+            f"Ramping Info Display Count: {config.get('ramping_info_display_count')}",
+            "",
+            "== Key Mapping ==",
+            *key_map_details
+        ]
+
+        try:
+            logger.info("Application Config:\n\t" + "\n\t".join(info))
+        except UnicodeEncodeError:
+            cleaned_info = [line.encode('ascii', 'replace').decode('ascii') for line in info]
+            logger.info("Application Config (ASCII-safe):\n\t" + "\n\t".join(cleaned_info))
+        
+        logger.info("Full configuration logged")
