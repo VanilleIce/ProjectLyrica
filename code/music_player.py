@@ -84,15 +84,13 @@ class MusicPlayer:
         
         file = Path(path)
         try:
-            # Read file as bytes
-            bytes_data = file.read_bytes()
-            
-            # Handle UTF-16 encoding (with or without BOM)
             try:
-                content = bytes_data.decode('utf-16')
+                content = file.read_text(encoding='utf-16')
             except UnicodeDecodeError:
-                # Fallback to UTF-8 if UTF-16 fails
-                content = bytes_data.decode('utf-8')
+                content = file.read_text(encoding='utf-8')
+            
+            if content.startswith('\ufeff'):
+                content = content[1:]
             
             # Parse JSON content
             data = json.loads(content)
