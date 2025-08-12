@@ -84,50 +84,47 @@ class MusicPlayer:
         
         file = Path(path)
         try:
+            # Read file as bytes
             bytes_data = file.read_bytes()
-            encodings = ['utf-8', 'utf-16-le']
-            data = None
             
-            for encoding in encodings:
-                try:
-                    data = json.loads(bytes_data.decode(encoding))
-                    break
-                except (UnicodeDecodeError, json.JSONDecodeError):
-                    continue
+            # Handle UTF-16 encoding (with or without BOM)
+            try:
+                content = bytes_data.decode('utf-16')
+            except UnicodeDecodeError:
+                # Fallback to UTF-8 if UTF-16 fails
+                content = bytes_data.decode('utf-8')
             
-            if data is None:
-                raise ValueError(LanguageManager.get('invalid_song_format'))
+            # Parse JSON content
+            data = json.loads(content)
             
-            song_data = data[0] if isinstance(data, list) and len(data) == 1 else data
+            # Handle single-item array format
+            song_data = data[0] if isinstance(data, list) and data else data
             
-            if "songNotes" not in song_data:
-                if "notes" in song_data:
-                    song_data["songNotes"] = song_data["notes"]
-                elif "Notes" in song_data:
-                    song_data["songNotes"] = song_data["Notes"]
-                else:
-                    raise ValueError(LanguageManager.get('missing_song_notes'))
-                    
-            title_keys = ["name"]
-            song_title = "Unknown"
-            for key in title_keys:
-                if key in song_data:
-                    song_title = song_data[key]
-                    break
-            song_data["songTitle"] = song_title
+            # Extract notes
+            if "songNotes" in song_data:
+                pass
+            elif "notes" in song_data:
+                song_data["songNotes"] = song_data["notes"]
+            elif "Notes" in song_data:
+                song_data["songNotes"] = song_data["Notes"]
+            else:
+                raise ValueError(LanguageManager.get('missing_song_notes'))
             
+            # Get title
+            song_data["songTitle"] = song_data.get("name", song_data.get("title", "Unknown"))
+            
+            # Prepare notes
             for note in song_data["songNotes"]:
                 note['key_lower'] = note.get('key', '').lower()
-                
+            
+            # Cache and return
             self.song_cache[path] = song_data
             return song_data
             
-        except json.JSONDecodeError as e:
-            self.logger.error(f"Invalid JSON format in {path}: {e}")
-            raise ValueError(LanguageManager.get('invalid_song_format'))
         except Exception as e:
             self.logger.error(f"Song parse error [{path}]: {e}", exc_info=True)
-            raise
+            error_msg = LanguageManager.get('invalid_song_format')
+            raise ValueError(f"{error_msg}: {str(e)}")
 
     def play(self, song_data):
         try:

@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Skyが起動している必要があります！</translation>
     <translation key="missing_song_notes">曲データが欠けています (songNotes)</translation>
     <translation key="invalid_speed">無効な速度です！0より大きい必要があります。</translation>
+    <translation key="invalid_song_format">無効な曲形式</translation>
 
     <!-- ================= -->
     <!-- 音楽プレーヤー機能 -->

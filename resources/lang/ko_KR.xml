@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky가 실행 중이어야 합니다!</translation>
     <translation key="missing_song_notes">노래 데이터 누락 (songNotes)</translation>
     <translation key="invalid_speed">유효하지 않은 속도! 0보다 커야 합니다.</translation>
+    <translation key="invalid_song_format">무효한 노래 형식</translation>
 
     <!-- ================= -->
     <!-- 음악 플레이어 기능 -->

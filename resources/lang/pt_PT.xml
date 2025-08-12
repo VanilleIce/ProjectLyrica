@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky deve estar em execução!</translation>
     <translation key="missing_song_notes">Dados da música ausentes (songNotes)</translation>
     <translation key="invalid_speed">Velocidade inválida! Deve ser maior que 0.</translation>
+    <translation key="invalid_song_format">Formato de música inválido</translation>
 
     <!-- ================= -->
     <!-- FUNÇÕES DO REPRODUTOR DE MÚSICA -->

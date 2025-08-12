@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky harus berjalan!</translation>
     <translation key="missing_song_notes">Data lagu hilang (songNotes)</translation>
     <translation key="invalid_speed">Kecepatan tidak valid! Harus lebih besar dari 0.</translation>
+    <translation key="invalid_song_format">Format lagu tidak valid</translation>
 
     <!-- ================= -->
     <!-- FUNGSI PEMUTAR MUSIK -->

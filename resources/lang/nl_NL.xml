@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky moet actief zijn!</translation>
     <translation key="missing_song_notes">Songdata ontbreekt (songNotes)</translation>
     <translation key="invalid_speed">Ongeldige snelheid! Moet groter zijn dan 0.</translation>
+    <translation key="invalid_song_format">Ongeldig songformaat</translation>
 
     <!-- ================= -->
     <!-- MUZIEKSPELERFUNCTIES -->

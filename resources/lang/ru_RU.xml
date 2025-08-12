@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky должен быть запущен!</translation>
     <translation key="missing_song_notes">Отсутствуют данные песни (songNotes)</translation>
     <translation key="invalid_speed">Недопустимая скорость! Должна быть больше 0.</translation>
+    <translation key="invalid_song_format">Недопустимый формат песни</translation>
 
     <!-- ================= -->
     <!-- ФУНКЦИИ МУЗЫКАЛЬНОГО ПЛЕЕРА -->

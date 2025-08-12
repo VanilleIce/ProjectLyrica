@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky must be running!</translation>
     <translation key="missing_song_notes">Missing song data (songNotes)</translation>
     <translation key="invalid_speed">Invalid speed! Must be greater than 0.</translation>
+    <translation key="invalid_song_format">Invalid song format</translation>
 
     <!-- ================= -->
     <!-- MUSIC PLAYER FUNCTIONS -->

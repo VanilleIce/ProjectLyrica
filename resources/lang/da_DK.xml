@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky skal køre!</translation>
     <translation key="missing_song_notes">Sangdata mangler (songNotes)</translation>
     <translation key="invalid_speed">Ugyldig hastighed! Skal være større end 0.</translation>
+    <translation key="invalid_song_format">Ugyldigt sangformat</translation>
 
     <!-- ================= -->
     <!-- MUSIKAFSPILLERFUNKTIONER -->

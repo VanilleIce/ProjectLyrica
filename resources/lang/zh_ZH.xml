@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky 必须正在运行！</translation>
     <translation key="missing_song_notes">缺少歌曲数据 (songNotes)</translation>
     <translation key="invalid_speed">无效的速度！必须大于0。</translation>
+    <translation key="invalid_song_format">无效的歌曲格式</translation>
 
     <!-- ================= -->
     <!-- 音乐播放器功能 -->

@@ -23,6 +23,7 @@
     <translation key="sky_not_running">Sky doit être en cours d'exécution !</translation>
     <translation key="missing_song_notes">Données de chanson manquantes (songNotes)</translation>
     <translation key="invalid_speed">Vitesse invalide ! Doit être supérieure à 0.</translation>
+    <translation key="invalid_song_format">Format de chanson non valide</translation>
 
     <!-- ================= -->
     <!-- FONCTIONS DU LECTEUR DE MUSIQUE -->
