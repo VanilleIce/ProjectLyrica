@@ -92,13 +92,10 @@ class MusicPlayer:
             if content.startswith('\ufeff'):
                 content = content[1:]
             
-            # Parse JSON content
             data = json.loads(content)
             
-            # Handle single-item array format
             song_data = data[0] if isinstance(data, list) and data else data
             
-            # Extract notes
             if "songNotes" in song_data:
                 pass
             elif "notes" in song_data:
@@ -108,14 +105,11 @@ class MusicPlayer:
             else:
                 raise ValueError(LanguageManager.get('missing_song_notes'))
             
-            # Get title
             song_data["songTitle"] = song_data.get("name", song_data.get("title", "Unknown"))
             
-            # Prepare notes
             for note in song_data["songNotes"]:
                 note['key_lower'] = note.get('key', '').lower()
             
-            # Cache and return
             self.song_cache[path] = song_data
             return song_data
             
@@ -177,33 +171,36 @@ class MusicPlayer:
                         break
 
                     current_speed = self.current_speed
+                    ramp_factor = 1.0
+                    
                     if self.enable_ramping:
-                        if self.is_ramping_after_pause:
-                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_after_pause)
-                            current_speed = max(500, self.current_speed * min(1.0, ramp_factor))
-                            self.ramp_counter += 1
-
-                            if self.ramp_counter >= self.ramp_steps_after_pause:
-                                self.is_ramping_after_pause = False
-                                logger.debug(f"Post-pause ramping completed after {self.ramp_steps_after_pause} notes")
-                                
-                        elif self.is_ramping_begin:
+                        if self.is_ramping_begin:
                             ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
-                            current_speed = max(500, self.current_speed * min(1.0, ramp_factor))
                             self.ramp_counter += 1
-                            
                             if self.ramp_counter >= self.ramp_steps_begin:
                                 self.is_ramping_begin = False
                                 logger.debug(f"Beginning ramping completed after {self.ramp_steps_begin} notes")
-                                
+                        
+                        elif self.is_ramping_after_pause:
+                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_after_pause)
+                            self.ramp_counter += 1
+                            if self.ramp_counter >= self.ramp_steps_after_pause:
+                                self.is_ramping_after_pause = False
+                                logger.debug(f"Post-pause ramping completed after {self.ramp_steps_after_pause} notes")
+                        
                         elif i >= len(notes) - self.ramp_steps_end:
-                            progress = (len(notes) - i) / self.ramp_steps_end
-                            ramp_factor = max(0.5, progress)
-                            current_speed = max(500, self.current_speed * ramp_factor)
-                            
                             if not self.is_ramping_end:
                                 self.is_ramping_end = True
                                 logger.debug(f"End ramping started for {self.ramp_steps_end} notes")
+                            
+                            progress = (len(notes) - i) / self.ramp_steps_end
+                            ramp_factor = max(0.5, progress)
+                        
+                        current_speed = self.current_speed * ramp_factor
+
+                        if current_speed < 10:
+                            logger.warning(f"Clamping extremely low speed: {current_speed}")
+                            current_speed = 10
 
                     if current_speed <= 0:
                         logger.warning(f"Invalid speed {current_speed}, resetting to 1000")
