@@ -5,6 +5,7 @@ import logging
 import customtkinter as ctk
 from tkinter import messagebox
 from language_manager import LanguageManager
+from resource_loader import resource_path
 
 logger = logging.getLogger("ProjectLyrica.LanguageWindow")
 
@@ -23,7 +24,7 @@ class LanguageWindow:
             root = ctk.CTk()
             root.title(LanguageManager.get('language_window_title'))
             root.geometry("400x200")
-            root.iconbitmap("resources/icons/icon.ico")
+            root.iconbitmap(resource_path("resources/icons/icon.ico"))
             
             languages = LanguageManager.get_languages()
             if not languages:

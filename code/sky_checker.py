@@ -6,6 +6,7 @@ from tkinter import messagebox, filedialog
 from pathlib import Path
 from config_manager import ConfigManager
 from language_manager import LanguageManager
+from resource_loader import resource_path
 import logging
 import sys
 import os
@@ -27,10 +28,7 @@ class SkyChecker:
             root = ctk.CTk()
             root.title(LanguageManager.get('window_settings_title'))
             root.geometry("600x150")
-            try:
-                root.iconbitmap("resources/icons/icon.ico")
-            except Exception as e:
-                logger.warning(f"Could not load icon: {e}")
+            root.iconbitmap(resource_path("resources/icons/icon.ico"))
 
             saved = False
             example_path = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Sky Children of the Light\\Sky.exe"
