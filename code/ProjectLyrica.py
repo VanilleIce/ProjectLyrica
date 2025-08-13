@@ -16,6 +16,7 @@ from language_manager import LanguageManager, KeyboardLayoutManager
 from language_window import LanguageWindow
 from sky_checker import SkyChecker
 from music_player import MusicPlayer
+from resource_loader import resource_path
 
 logger = logging.getLogger("ProjectLyrica.ProjectLyrica")
 
@@ -28,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.4.4"
+VERSION = "2.4.5"
 
 # -------------------------------
 # Music App
@@ -88,7 +89,7 @@ class MusicApp:
         try:
             self.root = ctk.CTk()
             self.root.title(LanguageManager.get("project_title"))
-            self.root.iconbitmap("resources/icons/icon.ico")
+            self.root.iconbitmap(resource_path("resources/icons/icon.ico"))
             self.root.protocol('WM_DELETE_WINDOW', self._shutdown)
             
             theme = ConfigManager.get_value("theme", "dark")

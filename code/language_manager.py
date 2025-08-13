@@ -8,6 +8,8 @@ import logging
 from tkinter import messagebox
 import traceback
 
+from resource_loader import resource_path
+
 logger = logging.getLogger("ProjectLyrica.LanguageManager")
 
 class LanguageManager:
@@ -35,7 +37,7 @@ class LanguageManager:
     @classmethod
     def _load_languages(cls):
         """Load available languages from configuration file."""
-        lang_file = Path('resources/config/lang.xml')
+        lang_file = Path(resource_path('resources/config/lang.xml'))
         try:
             if not lang_file.exists():
                 raise FileNotFoundError(f"Language config file not found: {lang_file}")
@@ -85,7 +87,7 @@ class LanguageManager:
         if lang_code in cls._translations:
             return cls._translations[lang_code]
         
-        lang_file = Path(f'resources/lang/{lang_code}.xml')
+        lang_file = Path(resource_path(f'resources/lang/{lang_code}.xml'))
         try:
             if not lang_file.exists():
                 raise FileNotFoundError(f"Translation file not found: {lang_file}")
@@ -221,7 +223,7 @@ class KeyboardLayoutManager:
         if layout_name in KeyboardLayoutManager._layout_cache:
             return KeyboardLayoutManager._layout_cache[layout_name]
             
-        file_path = Path(f'resources/layouts/{layout_name.lower()}.xml')
+        file_path = Path(resource_path(f'resources/layouts/{layout_name.lower()}.xml'))
         try:
             if not file_path.exists():
                 return {}
