@@ -409,7 +409,7 @@ class MusicApp:
             if self.update_status == "update" and self.update_url:
                 webbrowser.open(self.update_url)
             else:
-                webbrowser.open("https://github.com/VanilleIce/ProjectLyrica")
+                webbrowser.open("https://github.com/VanilleIce/ProjectLyrica/releases/latest")
         except Exception as e:
             messagebox.showerror("Error", f"Browser error: {e}")
 
