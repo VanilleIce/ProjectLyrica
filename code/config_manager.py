@@ -146,45 +146,67 @@ class ConfigManager:
         """Upgrade existing config to latest version and migrate old values"""
         upgraded = False
 
-        if "sky_exe_path" in config and "game_settings" in config:
+        if "sky_exe_path" in config:
+            if "game_settings" not in config:
+                config["game_settings"] = {}
             if config["game_settings"].get("sky_exe_path") is None:
                 config["game_settings"]["sky_exe_path"] = config["sky_exe_path"]
                 upgraded = True
         
-        if "pause_key" in config and "ui_settings" in config:
+        if "pause_key" in config:
+            if "ui_settings" not in config:
+                config["ui_settings"] = {}
             if config["ui_settings"].get("pause_key") is None:
                 config["ui_settings"]["pause_key"] = config["pause_key"]
                 upgraded = True
 
-        if "key_press_durations" in config and "playback_settings" in config:
+        if "key_press_durations" in config:
+            if "playback_settings" not in config:
+                config["playback_settings"] = {}
             if not config["playback_settings"].get("key_press_durations"):
                 config["playback_settings"]["key_press_durations"] = config["key_press_durations"]
                 upgraded = True
         
-        if "speed_presets" in config and "playback_settings" in config:
+        if "speed_presets" in config:
+            if "playback_settings" not in config:
+                config["playback_settings"] = {}
             if not config["playback_settings"].get("speed_presets"):
                 config["playback_settings"]["speed_presets"] = config["speed_presets"]
                 upgraded = True
         
-        if "enable_ramping" in config and "playback_settings" in config:
+        if "enable_ramping" in config:
+            if "playback_settings" not in config:
+                config["playback_settings"] = {}
             if config["playback_settings"].get("enable_ramping") is None:
                 config["playback_settings"]["enable_ramping"] = config["enable_ramping"]
                 upgraded = True
 
-        if "selected_language" in config and "ui_settings" in config:
+        if "selected_language" in config:
+            if "ui_settings" not in config:
+                config["ui_settings"] = {}
             if config["ui_settings"].get("selected_language") is None:
                 config["ui_settings"]["selected_language"] = config["selected_language"]
                 upgraded = True
         
-        if "keyboard_layout" in config and "ui_settings" in config:
+        if "keyboard_layout" in config:
+            if "ui_settings" not in config:
+                config["ui_settings"] = {}
             if config["ui_settings"].get("keyboard_layout") is None:
                 config["ui_settings"]["keyboard_layout"] = config["keyboard_layout"]
                 upgraded = True
         
-        if "theme" in config and "ui_settings" in config:
+        if "theme" in config:
+            if "ui_settings" not in config:
+                config["ui_settings"] = {}
             if config["ui_settings"].get("theme") is None:
                 config["ui_settings"]["theme"] = config["theme"]
                 upgraded = True
+
+        if "ramping_info_display_count" in config and isinstance(config["ramping_info_display_count"], int):
+            old_value = config["ramping_info_display_count"]
+            config["ramping_info_display_count"] = {"value": old_value}
+            logger.info(f"Migrated ramping_info_display_count from {old_value} to new structure")
+            upgraded = True
 
         if "timing_config" in config and "timing_settings" not in config:
             old_timing = config["timing_config"]
@@ -246,12 +268,12 @@ class ConfigManager:
 
         for section, default_values in new_structure.items():
             if section not in config:
-                config[section] = default_values
+                config[section] = default_values.copy() if isinstance(default_values, dict) else default_values
                 upgraded = True
-            elif isinstance(default_values, dict):
+            elif isinstance(default_values, dict) and isinstance(config[section], dict):
                 for key, default_value in default_values.items():
                     if key not in config[section]:
-                        config[section][key] = default_value
+                        config[section][key] = default_value.copy() if isinstance(default_value, dict) else default_value
                         upgraded = True
 
         old_keys_to_remove = [
