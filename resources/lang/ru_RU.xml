@@ -45,6 +45,10 @@
     <translation key="save_button_text">Сохранить</translation>
     <translation key="smooth_ramping">Плавные Переходы</translation>
     <translation key="smooth_ramping_info">Плавно регулирует скорость в начале и конце песни для более естественных переходов.</translation>
+    <translation key="playing_button_text">Играет...</translation>
+    <translation key="paused_button_text">Приостановлено</translation>
+    <translation key="restart_button_text">Перезапустить?</translation>
+    <translation key="pause_key_hint">или используйте [pause_key]</translation>
     
     <!-- ================= -->
     <!-- ИНФОРМАЦИЯ О ВЕРСИИ -->

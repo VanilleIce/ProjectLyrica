@@ -54,15 +54,30 @@ class MusicPlayer:
 
     def _initialize_timing(self, config):
         """Initialize timing parameters from config"""
-        timing = config["timing_config"]
-        self.press_duration = 0.1
-        self.current_speed = 1000
-        self.initial_delay = timing["initial_delay"]
-        self.pause_resume_delay = timing["pause_resume_delay"]
-        self.ramp_steps_begin = timing["ramp_steps_begin"]
-        self.ramp_steps_end = timing["ramp_steps_end"]
-        self.ramp_steps_after_pause = timing["ramp_steps_after_pause"]
-        self.enable_ramping = config.get("enable_ramping", False)
+        try:
+            timing = config.get("timing_settings", {})
+            delays = timing.get("delays", {})
+            ramping = timing.get("ramping", {})
+
+            self.initial_delay = delays.get("initial_delay", 0.8)
+            self.pause_resume_delay = delays.get("pause_resume_delay", 1.0)
+
+            self.ramp_begin_config = ramping.get("begin", {})
+            self.ramp_end_config = ramping.get("end", {})
+            self.ramp_after_pause_config = ramping.get("after_pause", {})
+
+            playback = config.get("playback_settings", {})
+            self.enable_ramping = playback.get("enable_ramping", False)
+
+            self.current_speed = 1000
+            self.press_duration = 0.1
+            
+            logger.info(f"Timing initialized: delays=({self.initial_delay}s, {self.pause_resume_delay}s), "
+                    f"ramping_enabled={self.enable_ramping}")
+                    
+        except Exception as e:
+            logger.error(f"Error initializing timing: {e}")
+            raise
 
     def _initialize_playback_state(self):
         """Initialize playback state variables"""
@@ -118,9 +133,17 @@ class MusicPlayer:
             error_msg = LanguageManager.get('invalid_song_format')
             raise ValueError(f"{error_msg}: {str(e)}")
 
+    def clear_cache(self):
+        self.logger.info(f"Clearing song cache with {len(self.song_cache)} entries")
+        self.song_cache.clear()
+
     def play(self, song_data):
         try:
             self.logger.info("Starting song playback")
+            self.logger.info(f"Timing config at playback start: delay={self.initial_delay}s, "
+                            f"pause_delay={self.pause_resume_delay}s, "
+                            f"ramping_enabled={self.enable_ramping}")
+            
             if self.playback_active:
                 self.stop()
         
@@ -144,6 +167,11 @@ class MusicPlayer:
             if self.enable_ramping:
                 self.is_ramping_begin = True
                 self.ramp_counter = 0
+                begin_config = self.ramp_begin_config
+                self.logger.info(f"Ramping ENABLED - begin: {begin_config.get('steps', 20)} notes "
+                               f"({begin_config.get('start_percentage', 50)}% → {begin_config.get('end_percentage', 100)}%)")
+            else:
+                self.logger.info("Ramping DISABLED")
             
             self.pause_count = 0
             self.total_pause_time = 0
@@ -154,6 +182,7 @@ class MusicPlayer:
 
             from time import perf_counter as precision_timer
 
+            logger.info(f"Applying initial delay: {self.initial_delay}s")
             time.sleep(self.initial_delay)
             
             self.start_time = precision_timer()
@@ -175,36 +204,51 @@ class MusicPlayer:
                     
                     if self.enable_ramping:
                         if self.is_ramping_begin:
-                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_begin)
+                            begin_config = self.ramp_begin_config
+                            steps = begin_config.get('steps', 20)
+                            start_pct = begin_config.get('start_percentage', 50)
+                            end_pct = begin_config.get('end_percentage', 100)
+                            
+                            ramp_factor = (start_pct + (end_pct - start_pct) * (self.ramp_counter / steps)) / 100.0
                             self.ramp_counter += 1
-                            if self.ramp_counter >= self.ramp_steps_begin:
+                            if self.ramp_counter >= steps:
                                 self.is_ramping_begin = False
-                                logger.debug(f"Beginning ramping completed after {self.ramp_steps_begin} notes")
+                                logger.info(f"Beginning ramping COMPLETED after {steps} notes")
                         
                         elif self.is_ramping_after_pause:
-                            ramp_factor = 0.5 + 0.5 * (self.ramp_counter / self.ramp_steps_after_pause)
+                            after_pause_config = self.ramp_after_pause_config
+                            steps = after_pause_config.get('steps', 12)
+                            start_pct = after_pause_config.get('start_percentage', 50)
+                            end_pct = after_pause_config.get('end_percentage', 100)
+                            
+                            ramp_factor = (start_pct + (end_pct - start_pct) * (self.ramp_counter / steps)) / 100.0
                             self.ramp_counter += 1
-                            if self.ramp_counter >= self.ramp_steps_after_pause:
+                            if self.ramp_counter >= steps:
                                 self.is_ramping_after_pause = False
-                                logger.debug(f"Post-pause ramping completed after {self.ramp_steps_after_pause} notes")
+                                logger.info(f"Post-pause ramping COMPLETED after {steps} notes")
                         
-                        elif i >= len(notes) - self.ramp_steps_end:
+                        elif i >= len(notes) - self.ramp_end_config.get('steps', 16):
                             if not self.is_ramping_end:
                                 self.is_ramping_end = True
-                                logger.debug(f"End ramping started for {self.ramp_steps_end} notes")
+                                logger.info(f"End ramping STARTED for last {self.ramp_end_config.get('steps', 16)} notes")
                             
-                            progress = (len(notes) - i) / self.ramp_steps_end
-                            ramp_factor = max(0.5, progress)
+                            end_config = self.ramp_end_config
+                            steps = end_config.get('steps', 16)
+                            start_pct = end_config.get('start_percentage', 100)
+                            end_pct = end_config.get('end_percentage', 50)
+                            
+                            progress = (len(notes) - i) / steps
+                            ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
                         
                         current_speed = self.current_speed * ramp_factor
 
-                        if current_speed < 10:
+                        if current_speed < 100:
                             logger.warning(f"Clamping extremely low speed: {current_speed}")
-                            current_speed = 10
+                            current_speed = 100
 
-                    if current_speed <= 0:
-                        logger.warning(f"Invalid speed {current_speed}, resetting to 1000")
-                        current_speed = 1000
+                    if current_speed > 1500:
+                        logger.warning(f"Clamping extremely high speed: {current_speed}")
+                        current_speed = 1500
 
                     current_time = precision_timer()
                     if last_note_time > 0:
@@ -240,7 +284,7 @@ class MusicPlayer:
                                 self.total_pause_time += pause_duration
 
                                 if self.pause_resume_delay > 0:
-                                    logger.debug(f"Applying pause-resume delay: {self.pause_resume_delay}s")
+                                    logger.info(f"Applying pause-resume delay: {self.pause_resume_delay}s")
                                     delay_start = precision_timer()
                                     while (precision_timer() - delay_start) < self.pause_resume_delay:
                                         if self.stop_event.is_set():
@@ -265,9 +309,12 @@ class MusicPlayer:
                                     if not any_ramp_active:
                                         self.is_ramping_after_pause = True
                                         self.ramp_counter = 0
-                                        logger.debug(f"Starting post-pause ramping for {self.ramp_steps_after_pause} notes")
+                                        logger.info(f"Starting post-pause ramping for {self.ramp_after_pause_config.get('steps', 12)} notes")
                                     else:
-                                        logger.debug("Resuming existing ramping after pause")
+                                        logger.info(f"Resuming existing ramping after pause: "
+                                                   f"begin={ramping_state['begin']}, "
+                                                   f"end={ramping_state['end']}, "
+                                                   f"after_pause={ramping_state['after_pause']}")
 
                                 current_time = precision_timer()
                                 last_note_time = current_time
@@ -304,9 +351,13 @@ class MusicPlayer:
                 self._release_all()
                 self.playback_active = False
                 self.pause_enabled = False
+                logger.info(f"Playback finished - Total notes: {len(notes)}, "
+                           f"Pauses: {self.pause_count}, "
+                           f"Total pause time: {self.total_pause_time:.2f}s")
         except Exception as e:
             logger.critical(f"Playback initialization failed: {e}", exc_info=True)
             self._release_all()
+            self.playback_active = False
             raise
 
     def stop(self):
@@ -318,6 +369,7 @@ class MusicPlayer:
         self.pause_enabled = False
         self._release_all()
         self.playback_active = False
+        self.logger.info("Playback stopped by user")
 
     def set_speed(self, speed):
         if speed <= 0:
@@ -337,7 +389,7 @@ class MusicPlayer:
 
     def _find_sky_window(self):
         try:
-            exe_path = ConfigManager.get_value("sky_exe_path", "")
+            exe_path = ConfigManager.get_value("game_settings.sky_exe_path", "")
             if not exe_path:
                 logger.error("No Sky.exe path in settings.json!")
                 return None

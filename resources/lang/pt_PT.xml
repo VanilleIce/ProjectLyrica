@@ -45,6 +45,10 @@
     <translation key="save_button_text">Salvar</translation>
     <translation key="smooth_ramping">Transições Suaves</translation>
     <translation key="smooth_ramping_info">Ajusta suavemente a velocidade no início e no final da música para transições mais naturais.</translation>
+    <translation key="playing_button_text">Tocando...</translation>
+    <translation key="paused_button_text">Em pausa</translation>
+    <translation key="restart_button_text">Reiniciar?</translation>
+    <translation key="pause_key_hint">ou use [pause_key]</translation>
     
     <!-- ================= -->
     <!-- INFORMAÇÃO DA VERSÃO -->

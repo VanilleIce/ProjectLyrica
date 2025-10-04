@@ -45,6 +45,10 @@
     <translation key="save_button_text">저장</translation>
     <translation key="smooth_ramping">부드러운 전환</translation>
     <translation key="smooth_ramping_info">노래의 시작과 끝에서 속도를 부드럽게 조절하여 더 자연스러운 전환을 제공합니다.</translation>
+    <translation key="playing_button_text">재생 중...</translation>
+    <translation key="paused_button_text">일시 중지됨</translation>
+    <translation key="restart_button_text">다시 시작하시겠습니까?</translation>
+    <translation key="pause_key_hint">또는 [pause_key]를 사용하세요</translation>
     
     <!-- ================= -->
     <!-- 버전 정보 -->

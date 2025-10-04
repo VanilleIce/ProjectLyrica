@@ -45,6 +45,10 @@
     <translation key="save_button_text">Save</translation>
     <translation key="smooth_ramping">Smooth Transitions</translation>
     <translation key="smooth_ramping_info">Smoothly adjusts speed at the beginning and end of the song for more natural transitions.</translation>
+    <translation key="playing_button_text">Playing...</translation>
+    <translation key="paused_button_text">Paused</translation>
+    <translation key="restart_button_text">Restart?</translation>
+    <translation key="pause_key_hint">or use [pause_key]</translation>
     
     <!-- ================= -->
     <!-- VERSION INFORMATION -->
