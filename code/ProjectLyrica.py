@@ -556,7 +556,8 @@ class MusicApp:
                 speed = MAX_SPEED
                 
             self.player.set_speed(speed)
-            self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {speed}")
+            display_speed = int(speed) if speed.is_integer() else speed
+            self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {display_speed}")
             
         except Exception as e:
             logger.error(f"Speed setting failed: {e}")
