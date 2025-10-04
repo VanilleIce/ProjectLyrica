@@ -26,13 +26,23 @@ class LanguageManager:
         """Initialize language manager with config settings."""
         try:
             config = ConfigManager.get_config()
-            cls._current_lang = config.get("selected_language", cls._default_lang)
+            
+            ui_settings = config.get("ui_settings", {})
+            cls._current_lang = ui_settings.get("selected_language")
+                
             cls._languages = cls._load_languages()
-            cls._get_translations(cls._default_lang)
+            
+            if cls._current_lang:
+                cls._get_translations(cls._current_lang)
+            else:
+                cls._current_lang = cls._default_lang
+                cls._get_translations(cls._default_lang)
+            
         except Exception as e:
             logger.critical(f"LanguageManager init failed: {e}\n{traceback.format_exc()}")
             cls._current_lang = cls._default_lang
             cls._languages = []
+            cls._get_translations(cls._default_lang)
 
     @classmethod
     def _load_languages(cls):
@@ -131,17 +141,18 @@ class LanguageManager:
             return ""
             
         lang = cls._current_lang or cls._default_lang
+        
         try:
             trans = cls._get_translations(lang).get(key)
             if trans is not None:
                 return trans
-                
+
             if lang != cls._default_lang:
                 trans = cls._get_translations(cls._default_lang).get(key)
                 if trans is not None:
                     return trans
                     
-            logger.warning(f"Translation key not found: {key}")
+            logger.warning(f"Translation key not found: {key} in language {lang}")
             return f"[{key}]"
             
         except Exception as e:
@@ -173,8 +184,10 @@ class LanguageManager:
                 key_map = KeyboardLayoutManager.load_layout_silently(cls._default_layout)
 
             config_update = {
-                "selected_language": lang_code,
-                "keyboard_layout": layout,
+                "ui_settings": {
+                    "selected_language": lang_code,
+                    "keyboard_layout": layout
+                },
                 "key_mapping": key_map
             }
 

@@ -45,6 +45,7 @@
     <translation key="save_button_text">Enregistrer</translation>
     <translation key="smooth_ramping">Transitions Douces</translation>
     <translation key="smooth_ramping_info">Ajuste en douceur la vitesse au début et à la fin de la chanson pour des transitions plus naturelles.</translation>
+    <translation key="playing_button_text">Joue...</translation>
     
     <!-- ================= -->
     <!-- INFORMATION SUR LA VERSION -->

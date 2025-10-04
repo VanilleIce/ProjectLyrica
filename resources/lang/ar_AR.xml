@@ -45,6 +45,7 @@
     <translation key="save_button_text">حفظ</translation>
     <translation key="smooth_ramping">الانتقالات السلسة</translation>
     <translation key="smooth_ramping_info">يضبط السرعة بسلاسة في بداية ونهاية الأغنية لانتقالات أكثر طبيعية.</translation>
+    <translation key="playing_button_text">يعمل...</translation>
     
     <!-- ================= -->
     <!-- معلومات الإصدار -->

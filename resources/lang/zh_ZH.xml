@@ -45,6 +45,7 @@
     <translation key="save_button_text">保存</translation>
     <translation key="smooth_ramping">平滑过渡</translation>
     <translation key="smooth_ramping_info">在歌曲开头和结尾平滑调整速度，实现更自然的过渡。</translation>
+    <translation key="playing_button_text">正在播放...</translation>
     
     <!-- ================= -->
     <!-- 版本信息 -->

@@ -45,6 +45,7 @@
     <translation key="save_button_text">Simpan</translation>
     <translation key="smooth_ramping">Transisi Halus</translation>
     <translation key="smooth_ramping_info">Menyesuaikan kecepatan secara halus di awal dan akhir lagu untuk transisi yang lebih alami.</translation>
+    <translation key="playing_button_text">Memainkan...</translation>
     
     <!-- ================= -->
     <!-- INFORMASI VERSI -->

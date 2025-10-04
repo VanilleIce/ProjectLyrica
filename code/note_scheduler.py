@@ -82,14 +82,14 @@ class NoteScheduler:
             while not self.stop_event.is_set():
                 try:
                     now = time.time()
-                    release_keys = []
+                    keys_to_process = []
                     
                     with self.lock:
                         while self.queue and self.queue[0][0] <= now:
                             _, key = heapq.heappop(self.queue)
-                            release_keys.append(key)
+                            keys_to_process.append(key)
                     
-                    for key in release_keys:
+                    for key in keys_to_process:
                         try:
                             self.callback(key)
                             self._processed_count += 1

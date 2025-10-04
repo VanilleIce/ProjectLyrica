@@ -45,6 +45,7 @@
     <translation key="save_button_text">Gem</translation>
     <translation key="smooth_ramping">Glatte Overgange</translation>
     <translation key="smooth_ramping_info">Justerer hastigheden blødt i begyndelsen og slutningen af sangen for mere naturlige overgange.</translation>
+    <translation key="playing_button_text">Spiller...</translation>
     
     <!-- ================= -->
     <!-- VERSIONOPLYSNINGER -->

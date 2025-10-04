@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.4.5"
+VERSION = "2.5.0"
 
 # -------------------------------
 # Music App
@@ -41,7 +41,7 @@ class MusicApp:
         self._init_language()
         self._check_running()
 
-        if ConfigManager.get_value("sky_exe_path") is None:
+        if ConfigManager.get_value("game_settings.sky_exe_path") is None:
             SkyChecker.show_initial_settings()
 
         self._init_player()
@@ -52,7 +52,9 @@ class MusicApp:
 
     def _init_language(self):
         LanguageManager.init()
-        if not LanguageManager._current_lang:
+        ui_language = ConfigManager.get_value("ui_settings.selected_language")
+        
+        if not ui_language:
             LanguageWindow.show()
 
     def _check_running(self):
@@ -65,16 +67,21 @@ class MusicApp:
         config = ConfigManager.get_config()
         self.player = MusicPlayer()
         self.selected_file = None
-        self.duration_presets = config["key_press_durations"]
-        self.speed_presets = config["speed_presets"]
-        self.pause_key = config.get("pause_key")
+
+        playback_settings = config.get("playback_settings", {})
+        ui_settings = config.get("ui_settings", {})
+        
+        self.duration_presets = playback_settings.get("key_press_durations")
+        self.speed_presets = playback_settings.get("speed_presets")
+        self.pause_key = ui_settings.get("pause_key")
         
         self.player.keypress_enabled = False
         self.player.speed_enabled = False
         self.player.pause_enabled = False
         
-        self.smooth_ramping_enabled = config.get("enable_ramping", False)
-        self.ramping_info_display_count = min(config.get("ramping_info_display_count", 0), MAX_RAMPING_INFO_DISPLAY)
+        self.smooth_ramping_enabled = playback_settings.get("enable_ramping")
+        ramping_count_config = config.get("ramping_info_display_count", {})
+        self.ramping_info_display_count = min(ramping_count_config.get("value", 0), MAX_RAMPING_INFO_DISPLAY)
         self.show_ramping_info = self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY
 
     def _setup_key_listener(self):
@@ -92,7 +99,7 @@ class MusicApp:
             self.root.iconbitmap(resource_path("resources/icons/icon.ico"))
             self.root.protocol('WM_DELETE_WINDOW', self._shutdown)
             
-            theme = ConfigManager.get_value("theme", "dark")
+            theme = ConfigManager.get_value("ui_settings.theme")
             ctk.set_appearance_mode(theme)
             self.theme_icon = "🌞" if theme == "light" else "🌙"
             
@@ -164,12 +171,13 @@ class MusicApp:
         )
         
         self.preset_frame = ctk.CTkFrame(self.duration_frame)
-        for preset in self.duration_presets:
-            btn = ctk.CTkButton(
-                self.preset_frame, text=f"{preset} s", width=50,
-                command=lambda p=preset: self._apply_preset(p)
-            )
-            btn.pack(side="left", padx=2)
+        if hasattr(self, 'duration_presets') and self.duration_presets:
+            for preset in self.duration_presets:
+                btn = ctk.CTkButton(
+                    self.preset_frame, text=f"{preset} s", width=50,
+                    command=lambda p=preset: self._apply_preset(p)
+                )
+                btn.pack(side="left", padx=2)
         
         self.speed_frame = ctk.CTkFrame(self.root)
         self.speed_label = ctk.CTkLabel(
@@ -179,19 +187,20 @@ class MusicApp:
         )
         
         self.speed_preset_frame = ctk.CTkFrame(self.speed_frame)
-        for speed in self.speed_presets:
-            if speed <= 0:
-                continue
-                
-            btn = ctk.CTkButton(
-                self.speed_preset_frame, 
-                text=str(speed), 
-                width=40,
-                height=25,
-                font=("Arial", 12),
-                command=lambda s=speed: self._set_speed(s)
-            )
-            btn.pack(side="left", padx=2)
+        if hasattr(self, 'speed_presets') and self.speed_presets:
+            for speed in self.speed_presets:
+                if speed <= 0:
+                    continue
+                    
+                btn = ctk.CTkButton(
+                    self.speed_preset_frame, 
+                    text=str(speed), 
+                    width=40,
+                    height=25,
+                    font=("Arial", 12),
+                    command=lambda s=speed: self._set_speed(s)
+                )
+                btn.pack(side="left", padx=2)
         
         self.ramping_frame = ctk.CTkFrame(self.root)
         self.ramping_label = ctk.CTkLabel(
@@ -283,13 +292,18 @@ class MusicApp:
             if self.show_ramping_info:
                 self.ramping_info_display_count += 1
                 self.show_ramping_info = self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY
-                ConfigManager.save({
-                    "enable_ramping": self.smooth_ramping_enabled,
-                    "ramping_info_display_count": self.ramping_info_display_count
-                })
         else:
             if self.show_ramping_info:
                 self.ramping_frame.pack(pady=5, before=self.play_btn)
+
+        ConfigManager.save({
+            "playback_settings": {
+                "enable_ramping": self.smooth_ramping_enabled
+            },
+            "ramping_info_display_count": {
+                "value": self.ramping_info_display_count
+            }
+        })
 
         self._adjust_window_size()
         logger.info(f"Smooth ramping {'enabled' if self.smooth_ramping_enabled else 'disabled'}")
@@ -300,7 +314,11 @@ class MusicApp:
             new_theme = "light" if current == "dark" else "dark"
             ctk.set_appearance_mode(new_theme)
             self.theme_btn.configure(text="🌞" if new_theme == "light" else "🌙")
-            ConfigManager.save({"theme": new_theme})
+            ConfigManager.save({
+                "ui_settings": {
+                    "theme": new_theme
+                }
+            })
         except Exception as e:
             logger.error(f"Theme toggle failed: {e}")
 
@@ -338,6 +356,11 @@ class MusicApp:
                 except Exception as e:
                     logger.error(f"Filename processing failed: {e}")
                     self.file_btn.configure(text="Selected file")
+                
+                self.play_btn.configure(
+                    text=LanguageManager.get("play_button_text"),
+                    state="normal"
+                )
 
                 try:
                     relative_path = Path(file).relative_to(Path.cwd())
@@ -363,6 +386,11 @@ class MusicApp:
             messagebox.showerror("Error", f"{LanguageManager.get('play_error_message')}: {e}")
 
     def _play_thread(self, song_data):
+        self.root.after(0, lambda: self.play_btn.configure(
+            text=LanguageManager.get("playing_button_text"),
+            state="disabled"
+        ))
+        
         logger.info("Starting playback thread")
         
         try:
@@ -400,6 +428,10 @@ class MusicApp:
         if not window_focused:
             logger.error(f"Failed to focus Sky window after {focus_attempts} attempts")
             self.root.after(0, lambda: messagebox.showerror("Error", LanguageManager.get("sky_not_running")))
+            self.root.after(0, lambda: self.play_btn.configure(
+                text=LanguageManager.get("play_button_text"),
+                state="normal"
+            ))
             return
         
         elapsed_time = time.time() - focus_start_time
@@ -496,14 +528,39 @@ class MusicApp:
 
     def _set_speed(self, speed):
         try:
+            MIN_SPEED = 100
+            MAX_SPEED = 1500
+            
+            try:
+                speed = float(speed)
+            except (ValueError, TypeError):
+                messagebox.showerror("Error", "Speed must be a valid number")
+                return
+                
             if speed <= 0:
                 messagebox.showerror("Error", LanguageManager.get("invalid_speed"))
                 return
                 
+            if speed < MIN_SPEED:
+                messagebox.showwarning(
+                    "Warning", 
+                    f"Speed too slow. Minimum speed is {MIN_SPEED}. Setting to {MIN_SPEED}."
+                )
+                speed = MIN_SPEED
+                
+            if speed > MAX_SPEED:
+                messagebox.showwarning(
+                    "Warning", 
+                    f"Speed too fast. Maximum speed is {MAX_SPEED}. Setting to {MAX_SPEED}."
+                )
+                speed = MAX_SPEED
+                
             self.player.set_speed(speed)
             self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {speed}")
+            
         except Exception as e:
             logger.error(f"Speed setting failed: {e}")
+            messagebox.showerror("Error", f"Failed to set speed: {e}")
 
     def _toggle_keypress(self):
         try:
@@ -550,6 +607,12 @@ class MusicApp:
                     self.player.stop()
                 except Exception as e:
                     logger.error(f"Player stop failed during shutdown: {e}")
+            
+            if hasattr(self, 'player'):
+                try:
+                    self.player.clear_cache()
+                except Exception as e:
+                    logger.error(f"Cache cleanup failed: {e}")
 
             if hasattr(self, 'key_listener'):
                 try:

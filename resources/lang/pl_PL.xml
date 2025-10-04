@@ -45,6 +45,7 @@
     <translation key="save_button_text">Zapisz</translation>
     <translation key="smooth_ramping">Płynne przejścia</translation>
     <translation key="smooth_ramping_info">Płynna regulacja prędkości na początku i końcu utworu dla bardziej naturalnych przejść.</translation>
+    <translation key="playing_button_text">Gra...</translation>
     
     <!-- ================= -->
     <!-- INFORMACJE O WERSJI -->

@@ -45,6 +45,7 @@
     <translation key="save_button_text">Speichern</translation>
     <translation key="smooth_ramping">Sanfte Übergänge</translation>
     <translation key="smooth_ramping_info">Sanfte Geschwindigkeitsänderung am Anfang und Ende des Liedes für natürlichere Übergänge.</translation>
+    <translation key="playing_button_text">Spielt...</translation>
     
     <!-- ================= -->
     <!-- VERSIONSINFORMATION -->

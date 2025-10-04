@@ -45,6 +45,7 @@
     <translation key="save_button_text">Salva</translation>
     <translation key="smooth_ramping">Transizioni Dolci</translation>
     <translation key="smooth_ramping_info">Regola dolcemente la velocità all'inizio e alla fine della canzone per transizioni più naturali.</translation>
+    <translation key="playing_button_text">Suonando...</translation>
     
     <!-- ================= -->
     <!-- INFORMAZIONI SULLA VERSIONE -->

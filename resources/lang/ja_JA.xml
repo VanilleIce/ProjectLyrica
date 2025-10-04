@@ -45,6 +45,7 @@
     <translation key="save_button_text">保存</translation>
     <translation key="smooth_ramping">スムーズな移行</translation>
     <translation key="smooth_ramping_info">曲の始めと終わりで速度をスムーズに調整し、より自然な移行を実現します。</translation>
+    <translation key="playing_button_text">再生中...</translation>
     
     <!-- ================= -->
     <!-- バージョン情報 -->

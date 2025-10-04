@@ -17,7 +17,7 @@ class SkyChecker:
     @staticmethod
     def show_initial_settings():
         try:
-            current_path = ConfigManager.get_value("sky_exe_path", "")
+            current_path = ConfigManager.get_value("game_settings.sky_exe_path", "")
             if current_path and os.path.exists(current_path) and current_path.endswith("Sky.exe"):
                 return
         except Exception as e:
@@ -128,7 +128,12 @@ class SkyChecker:
                         )
                         return
                     
-                    ConfigManager.save({"sky_exe_path": exe_path})
+                    ConfigManager.save({
+                        "game_settings": {
+                            "sky_exe_path": exe_path
+                        }
+                    })
+                    
                     saved = True
                     root.destroy()
                 except Exception as e:
