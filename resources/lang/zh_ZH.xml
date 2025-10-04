@@ -46,6 +46,9 @@
     <translation key="smooth_ramping">平滑过渡</translation>
     <translation key="smooth_ramping_info">在歌曲开头和结尾平滑调整速度，实现更自然的过渡。</translation>
     <translation key="playing_button_text">正在播放...</translation>
+    <translation key="paused_button_text">暂停</translation>
+    <translation key="restart_button_text">重新开始？</translation>
+    <translation key="pause_key_hint">或使用 [pause_key]</translation>
     
     <!-- ================= -->
     <!-- 版本信息 -->

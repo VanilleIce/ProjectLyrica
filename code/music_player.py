@@ -357,6 +357,7 @@ class MusicPlayer:
         except Exception as e:
             logger.critical(f"Playback initialization failed: {e}", exc_info=True)
             self._release_all()
+            self.playback_active = False
             raise
 
     def stop(self):
@@ -368,6 +369,7 @@ class MusicPlayer:
         self.pause_enabled = False
         self._release_all()
         self.playback_active = False
+        self.logger.info("Playback stopped by user")
 
     def set_speed(self, speed):
         if speed <= 0:

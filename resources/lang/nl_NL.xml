@@ -46,6 +46,9 @@
     <translation key="smooth_ramping">Zachte Overgangen</translation>
     <translation key="smooth_ramping_info">Past de snelheid aan het begin en einde van het lied soepel aan voor natuurlijkere overgangen.</translation>
     <translation key="playing_button_text">Speelt...</translation>
+    <translation key="paused_button_text">Pauzeer</translation>
+    <translation key="restart_button_text">Opnieuw starten?</translation>
+    <translation key="pause_key_hint">of gebruik [pause_key]</translation>
     
     <!-- ================= -->
     <!-- VERSIE-INFORMATIE -->

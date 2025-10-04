@@ -46,6 +46,9 @@
     <translation key="smooth_ramping">Fandefasana malefaka</translation>
     <translation key="smooth_ramping_info">Manitsy ny hafainganana amim-pitandremana eo am-piandohana sy eo amin'ny faran'ny hira mba hahatonga ny fandefasana ho voajanahary kokoa.</translation>
     <translation key="playing_button_text">Milalao...</translation>
+    <translation key="paused_button_text">Naato</translation>
+    <translation key="restart_button_text">Avereno indray?</translation>
+    <translation key="pause_key_hint">na ampiasao [pause_key]</translation>
     
     <!-- ================= -->
     <!-- FAMPANDRAISANA NY VERSIONS -->

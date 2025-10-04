@@ -46,6 +46,9 @@
     <translation key="smooth_ramping">Transiciones Suaves</translation>
     <translation key="smooth_ramping_info">Ajusta suavemente la velocidad al principio y al final de la canción para transiciones más naturales.</translation>
     <translation key="playing_button_text">Sonando...</translation>
+    <translation key="paused_button_text">Pausado</translation>
+    <translation key="restart_button_text">¿Reiniciar?</translation>
+    <translation key="pause_key_hint">o usa [pause_key]</translation>
     
     <!-- ================= -->
     <!-- INFORMACIÓN DE VERSIÓN -->

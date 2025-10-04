@@ -106,7 +106,7 @@ class MusicApp:
             self.update_status, self.latest_version, self.update_url = self._check_updates()
             self._create_gui_components()
             self._setup_gui_layout()
-            
+
         except Exception as e:
             logger.critical(f"GUI initialization failed: {e}", exc_info=True)
             if hasattr(self, 'root'):
@@ -153,7 +153,7 @@ class MusicApp:
         
         self.play_btn = self._create_button(
             LanguageManager.get("play_button_text"), 
-            self._play_song, 200, 40, True
+            None, 200, 40, True
         )
         
         self.duration_frame = ctk.CTkFrame(self.root)
@@ -220,6 +220,85 @@ class MusicApp:
         )
         return btn
 
+    def _update_play_button_state(self, state):
+        """Robust play button state update for CustomTkinter"""
+        if state == "playing":
+            self.play_btn.configure(
+                text=LanguageManager.get("playing_button_text"),
+                command=None,
+                fg_color="#666666",
+                hover_color="#666666",
+                text_color="#ffffff",
+                state="disabled"
+            )
+        elif state == "paused":
+            has_different_file = (hasattr(self, '_originally_paused_file') and 
+                                self._originally_paused_file is not None and 
+                                self.selected_file is not None and
+                                self._originally_paused_file != self.selected_file)
+            
+            if has_different_file:
+                pause_key_hint = LanguageManager.get("pause_key_hint").replace("[pause_key]", self.pause_key)
+                self.play_btn.configure(
+                    text=f"{LanguageManager.get('play_button_text')}\n{pause_key_hint}",
+                    command=self._play_song,
+                    fg_color="#8B4B8B",
+                    hover_color="#6A3A6A",
+                    text_color="#ffffff",
+                    state="normal",
+                    height=50
+                )
+                logger.debug(f"Mixed state (purple) - originally paused: {self._originally_paused_file}, selected: {self.selected_file}")
+            else:
+                pause_key_hint = LanguageManager.get("pause_key_hint").replace("[pause_key]", self.pause_key)
+                self.play_btn.configure(
+                    text=f"{LanguageManager.get('restart_button_text')}\n{pause_key_hint}",
+                    command=self._play_song,
+                    fg_color="#D2691E",
+                    hover_color="#A0522D",
+                    text_color="#ffffff",
+                    state="normal",
+                    height=50
+                )
+                logger.debug(f"Restart state (orange) - originally paused: {self._originally_paused_file}, selected: {self.selected_file}")
+        elif state == "ready":
+            self.play_btn.configure(
+                text=LanguageManager.get("play_button_text"),
+                command=self._play_song,
+                fg_color="#1f538d",
+                hover_color="#2b6cb0",
+                text_color="#ffffff",
+                state="normal",
+                height=40
+            )
+        elif state == "disabled":
+            self.play_btn.configure(
+                text=LanguageManager.get("play_button_text"),
+                command=None,
+                fg_color="#666666",
+                hover_color="#666666",
+                text_color="#aaaaaa",
+                state="disabled",
+                height=40
+            )
+
+        self.root.update_idletasks()
+
+    def _stop_song(self):
+        """Stoppt die Wiedergabe komplett"""
+        if self.player.playback_active:
+            self.player.stop()
+            self._update_play_button_state("ready")
+
+    def _resume_from_pause(self):
+        """Setzt die Wiedergabe fort - gleiche Funktion wie Pause-Key"""
+        if self.player.pause_flag.is_set():
+            self.player.pause_flag.clear()
+            self._update_play_button_state("playing")
+            
+            if window := self.player._find_sky_window():
+                self.player._focus_window(window)
+
     def _setup_gui_layout(self):
         status_frame = ctk.CTkFrame(self.root, height=1, fg_color="transparent")
         status_frame.pack(side="bottom", fill="x", padx=10, pady=3)
@@ -250,7 +329,10 @@ class MusicApp:
         self.keypress_btn.pack(pady=10)
         self.speed_btn.pack(pady=10)
         self.ramping_btn.pack(pady=10)
+        
         self.play_btn.pack(pady=10)
+        
+        self._update_play_button_state("disabled")
         
         if not self.smooth_ramping_enabled and self.show_ramping_info:
             self.ramping_frame.pack(pady=5, before=self.play_btn)
@@ -331,65 +413,8 @@ class MusicApp:
         except Exception as e:
             messagebox.showerror("Error", f"Browser error: {e}")
 
-    def _select_file(self):
-        try:
-            logger.info("Opening file selection dialog")
-            songs_dir = Path("resources/Songs")
-            try:
-                if not songs_dir.exists():
-                    logger.warning("Songs directory not found, falling back to CWD")
-                    songs_dir = Path.cwd()
-            except Exception as e:
-                logger.error(f"Directory check failed: {e}")
-                songs_dir = Path.cwd()
-
-            file = filedialog.askopenfilename(
-                initialdir=songs_dir,
-                filetypes=[(LanguageManager.get("supported_formats"), "*.json *.txt *.skysheet")]
-            )
-            if file:
-                self.selected_file = file
-                try:
-                    name = Path(file).name
-                    display = name if len(name) <= 30 else f"{name[:25]}..."
-                    self.file_btn.configure(text=display)
-                except Exception as e:
-                    logger.error(f"Filename processing failed: {e}")
-                    self.file_btn.configure(text="Selected file")
-                
-                self.play_btn.configure(
-                    text=LanguageManager.get("play_button_text"),
-                    state="normal"
-                )
-
-                try:
-                    relative_path = Path(file).relative_to(Path.cwd())
-                    logger.info(f"Selected song: {relative_path}")
-                except ValueError:
-                    logger.info(f"Selected song: {file}")
-        except Exception as e:
-            logger.error(f"File selection failed: {e}")
-            messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
-
-    def _play_song(self):
-        if not self.selected_file:
-            messagebox.showwarning("Warning", LanguageManager.get("choose_song_warning"))
-            return
-            
-        if self.player.playback_active:
-            self.player.stop()
-            
-        try:
-            song = self.player.parse_song(self.selected_file)
-            Thread(target=self._play_thread, args=(song,), daemon=True).start()
-        except Exception as e:
-            messagebox.showerror("Error", f"{LanguageManager.get('play_error_message')}: {e}")
-
     def _play_thread(self, song_data):
-        self.root.after(0, lambda: self.play_btn.configure(
-            text=LanguageManager.get("playing_button_text"),
-            state="disabled"
-        ))
+        self.root.after(0, lambda: self._update_play_button_state("playing"))
         
         logger.info("Starting playback thread")
         
@@ -428,10 +453,7 @@ class MusicApp:
         if not window_focused:
             logger.error(f"Failed to focus Sky window after {focus_attempts} attempts")
             self.root.after(0, lambda: messagebox.showerror("Error", LanguageManager.get("sky_not_running")))
-            self.root.after(0, lambda: self.play_btn.configure(
-                text=LanguageManager.get("play_button_text"),
-                state="normal"
-            ))
+            self.root.after(0, lambda: self._update_play_button_state("ready"))
             return
         
         elapsed_time = time.time() - focus_start_time
@@ -458,10 +480,8 @@ class MusicApp:
             except Exception as e:
                 logger.warning(f"Could not play completion beep: {e}")
             logger.info("Playback thread completed")
-            self.root.after(0, lambda: self.play_btn.configure(
-                text=LanguageManager.get("play_button_text"),
-                state="normal"
-            ))
+
+            self.root.after(0, lambda: self._update_play_button_state("ready"))
 
     def _handle_keypress(self, key):
         """Handle pause key events with comprehensive state logging"""
@@ -475,14 +495,6 @@ class MusicApp:
                 'currently_paused': self.player.pause_flag.is_set(),
                 'song_loaded': bool(self.selected_file)
             }
-            
-            logger.debug(
-                "Pause key pressed - State: " +
-                f"Playback: {'ACTIVE' if state_info['playback_active'] else 'INACTIVE'}, " +
-                f"Pause: {'ENABLED' if state_info['pause_enabled'] else 'DISABLED'}, " +
-                f"Status: {'PAUSED' if state_info['currently_paused'] else 'PLAYING'}, " +
-                f"Song: {'LOADED' if state_info['song_loaded'] else 'NOT LOADED'}"
-            )
 
             if not state_info['song_loaded']:
                 logger.debug("Pause Ignored - no song loaded")
@@ -498,6 +510,7 @@ class MusicApp:
 
             if state_info['currently_paused']:
                 self.player.pause_flag.clear()
+                self.root.after(0, lambda: self._update_play_button_state("playing"))
                 
                 if window := self.player._find_sky_window():
                     if self.player._focus_window(window):
@@ -506,9 +519,81 @@ class MusicApp:
                         logger.debug("Failed to focus game window")
             else:
                 self.player.pause_flag.set()
+
+                if not hasattr(self, '_originally_paused_file'):
+                    self._originally_paused_file = self.selected_file
+                    logger.debug(f"Originally paused file set to: {self._originally_paused_file}")
+                
+                self.root.after(0, lambda: self._update_play_button_state("paused"))
                 
         except Exception as e:
             logger.error(f"Critical error in pause handler: {str(e)}", exc_info=True)
+
+    def _select_file(self):
+        try:
+            logger.info("Opening file selection dialog")
+            songs_dir = Path("resources/Songs")
+            try:
+                if not songs_dir.exists():
+                    logger.warning("Songs directory not found, falling back to CWD")
+                    songs_dir = Path.cwd()
+            except Exception as e:
+                logger.error(f"Directory check failed: {e}")
+                songs_dir = Path.cwd()
+
+            file = filedialog.askopenfilename(
+                initialdir=songs_dir,
+                filetypes=[(LanguageManager.get("supported_formats"), "*.json *.txt *.skysheet")]
+            )
+            if file:
+                self.selected_file = file
+                
+                try:
+                    name = Path(file).name
+                    display = name if len(name) <= 30 else f"{name[:25]}..."
+                    self.file_btn.configure(text=display)
+                except Exception as e:
+                    logger.error(f"Filename processing failed: {e}")
+                    self.file_btn.configure(text="Selected file")
+
+                if self.player.playback_active and self.player.pause_flag.is_set():
+                    self._update_play_button_state("paused")
+                    logger.info(f"File selected while song is paused - showing appropriate pause state")
+                else:
+                    self._update_play_button_state("ready")
+                    logger.info(f"File selected: {file} - Ready to play new song")
+
+                try:
+                    relative_path = Path(file).relative_to(Path.cwd())
+                    logger.info(f"Selected song: {relative_path}")
+                except ValueError:
+                    logger.info(f"Selected song: {file}")
+            else:
+                self._update_play_button_state("disabled")
+        except Exception as e:
+            logger.error(f"File selection failed: {e}")
+            messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
+
+    def _play_song(self):
+        if not self.selected_file:
+            messagebox.showwarning("Warning", LanguageManager.get("choose_song_warning"))
+            return
+
+        if hasattr(self, '_originally_paused_file'):
+            del self._originally_paused_file
+            logger.debug("Cleared originally paused file due to new song play")
+            
+        if self.player.playback_active:
+            self.player.stop()
+            time.sleep(0.1)
+        
+        try:
+            song = self.player.parse_song(self.selected_file)
+            Thread(target=self._play_thread, args=(song,), daemon=True).start()
+        except Exception as e:
+            messagebox.showerror("Error", f"{LanguageManager.get('play_error_message')}: {e}")
+
+            self.root.after(0, lambda: self._update_play_button_state("ready"))
 
     def _set_duration(self, event):
         try:

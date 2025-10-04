@@ -46,6 +46,9 @@
     <translation key="smooth_ramping">Glatte Overgange</translation>
     <translation key="smooth_ramping_info">Justerer hastigheden blødt i begyndelsen og slutningen af sangen for mere naturlige overgange.</translation>
     <translation key="playing_button_text">Spiller...</translation>
+    <translation key="paused_button_text">Pauset</translation>
+    <translation key="restart_button_text">Genstarte?</translation>
+    <translation key="pause_key_hint">eller brug [pause_key]</translation>
     
     <!-- ================= -->
     <!-- VERSIONOPLYSNINGER -->
