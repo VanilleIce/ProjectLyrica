@@ -265,8 +265,8 @@ class MusicApp:
             self.play_btn.configure(
                 text=LanguageManager.get("play_button_text"),
                 command=self._play_song,
-                fg_color="#1f538d",
-                hover_color="#2b6cb0",
+                fg_color="#2b6cb0",
+                hover_color="#1f538d",
                 text_color="#ffffff",
                 state="normal",
                 height=40
