@@ -163,13 +163,15 @@ class MusicPlayer:
             self.is_ramping_end = False
             self.is_ramping_after_pause = False
             self.ramp_counter = 0
+            self.ramp_begin_completed = False
 
             if self.enable_ramping:
                 self.is_ramping_begin = True
                 self.ramp_counter = 0
+                self.ramp_begin_completed = False
                 begin_config = self.ramp_begin_config
                 self.logger.info(f"Ramping ENABLED - begin: {begin_config.get('steps', 20)} notes "
-                               f"({begin_config.get('start_percentage', 50)}% → {begin_config.get('end_percentage', 100)}%)")
+                            f"({begin_config.get('start_percentage', 50)}% → {begin_config.get('end_percentage', 100)}%)")
             else:
                 self.logger.info("Ramping DISABLED")
             
@@ -203,25 +205,30 @@ class MusicPlayer:
                     ramp_factor = 1.0
                     
                     if self.enable_ramping:
-                        if self.is_ramping_begin:
+                        if self.is_ramping_begin and not self.ramp_begin_completed:
                             begin_config = self.ramp_begin_config
                             steps = begin_config.get('steps', 20)
                             start_pct = begin_config.get('start_percentage', 50)
                             end_pct = begin_config.get('end_percentage', 100)
                             
-                            ramp_factor = (start_pct + (end_pct - start_pct) * (self.ramp_counter / steps)) / 100.0
+                            progress = min(1.0, self.ramp_counter / steps)
+                            ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+                            
                             self.ramp_counter += 1
                             if self.ramp_counter >= steps:
                                 self.is_ramping_begin = False
+                                self.ramp_begin_completed = True
                                 logger.info(f"Beginning ramping COMPLETED after {steps} notes")
-                        
+
                         elif self.is_ramping_after_pause:
                             after_pause_config = self.ramp_after_pause_config
                             steps = after_pause_config.get('steps', 12)
                             start_pct = after_pause_config.get('start_percentage', 50)
                             end_pct = after_pause_config.get('end_percentage', 100)
                             
-                            ramp_factor = (start_pct + (end_pct - start_pct) * (self.ramp_counter / steps)) / 100.0
+                            progress = min(1.0, self.ramp_counter / steps)
+                            ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+                            
                             self.ramp_counter += 1
                             if self.ramp_counter >= steps:
                                 self.is_ramping_after_pause = False
@@ -230,6 +237,7 @@ class MusicPlayer:
                         elif i >= len(notes) - self.ramp_end_config.get('steps', 16):
                             if not self.is_ramping_end:
                                 self.is_ramping_end = True
+                                self.ramp_counter = 0
                                 logger.info(f"End ramping STARTED for last {self.ramp_end_config.get('steps', 16)} notes")
                             
                             end_config = self.ramp_end_config
@@ -237,7 +245,8 @@ class MusicPlayer:
                             start_pct = end_config.get('start_percentage', 100)
                             end_pct = end_config.get('end_percentage', 50)
                             
-                            progress = (len(notes) - i) / steps
+                            notes_remaining = len(notes) - i
+                            progress = max(0.0, min(1.0, (steps - notes_remaining) / steps))
                             ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
                         
                         current_speed = self.current_speed * ramp_factor
@@ -266,7 +275,8 @@ class MusicPlayer:
                                     'begin': self.is_ramping_begin,
                                     'end': self.is_ramping_end,
                                     'after_pause': self.is_ramping_after_pause,
-                                    'counter': self.ramp_counter
+                                    'counter': self.ramp_counter,
+                                    'begin_completed': self.ramp_begin_completed
                                 }
                                 
                                 with self.status_lock:
@@ -295,26 +305,28 @@ class MusicPlayer:
                                         break
 
                                 self.is_ramping_begin = ramping_state['begin']
-                                self.is_ramping_end = ramping_state['end']
+                                self.is_ramping_end = ramping_state['end'] 
                                 self.is_ramping_after_pause = ramping_state['after_pause']
                                 self.ramp_counter = ramping_state['counter']
+                                self.ramp_begin_completed = ramping_state['begin_completed']
 
                                 if self.enable_ramping:
-                                    any_ramp_active = (
+                                    was_ramping_active = (
                                         ramping_state['begin'] or 
                                         ramping_state['end'] or 
                                         ramping_state['after_pause']
                                     )
-                                    
-                                    if not any_ramp_active:
+
+                                    if not was_ramping_active:
                                         self.is_ramping_after_pause = True
                                         self.ramp_counter = 0
                                         logger.info(f"Starting post-pause ramping for {self.ramp_after_pause_config.get('steps', 12)} notes")
                                     else:
-                                        logger.info(f"Resuming existing ramping after pause: "
-                                                   f"begin={ramping_state['begin']}, "
-                                                   f"end={ramping_state['end']}, "
-                                                   f"after_pause={ramping_state['after_pause']}")
+                                        logger.info(f"Continuing existing ramping after pause: "
+                                                f"begin={ramping_state['begin']}, "
+                                                f"end={ramping_state['end']}, "
+                                                f"after_pause={ramping_state['after_pause']}, "
+                                                f"counter={ramping_state['counter']}")
 
                                 current_time = precision_timer()
                                 last_note_time = current_time
@@ -352,8 +364,8 @@ class MusicPlayer:
                 self.playback_active = False
                 self.pause_enabled = False
                 logger.info(f"Playback finished - Total notes: {len(notes)}, "
-                           f"Pauses: {self.pause_count}, "
-                           f"Total pause time: {self.total_pause_time:.2f}s")
+                        f"Pauses: {self.pause_count}, "
+                        f"Total pause time: {self.total_pause_time:.2f}s")
         except Exception as e:
             logger.critical(f"Playback initialization failed: {e}", exc_info=True)
             self._release_all()

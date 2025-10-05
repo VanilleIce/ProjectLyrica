@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.5.0"
+VERSION = "2.5.1"
 
 # -------------------------------
 # Music App
