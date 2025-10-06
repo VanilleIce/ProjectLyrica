@@ -37,7 +37,7 @@ def setup_logging(version):
             file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
             file_handler.setFormatter(logging.Formatter(
                 '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                datefmt='%d--%m-%Y - %H:%M'
+                datefmt='%d-%m-%Y - %H:%M'
             ))
             root_logger.addHandler(file_handler)
         except Exception as e:
