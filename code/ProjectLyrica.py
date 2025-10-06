@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.5.1"
+VERSION = "2.5.2"
 
 # -------------------------------
 # Music App
@@ -545,6 +545,7 @@ class MusicApp:
                 initialdir=songs_dir,
                 filetypes=[(LanguageManager.get("supported_formats"), "*.json *.txt *.skysheet")]
             )
+            
             if file:
                 self.selected_file = file
                 
@@ -568,8 +569,19 @@ class MusicApp:
                     logger.info(f"Selected song: {relative_path}")
                 except ValueError:
                     logger.info(f"Selected song: {file}")
+                    
             else:
-                self._update_play_button_state("disabled")
+                if hasattr(self, 'selected_file') and self.selected_file:
+                    logger.info("File dialog closed without selection - keeping previous file")
+                    
+                    if self.player.playback_active and self.player.pause_flag.is_set():
+                        self._update_play_button_state("paused")
+                    else:
+                        self._update_play_button_state("ready")
+                else:
+                    self._update_play_button_state("disabled")
+                    logger.info("File dialog closed without selection - no previous file")
+                    
         except Exception as e:
             logger.error(f"File selection failed: {e}")
             messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
