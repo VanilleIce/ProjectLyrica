@@ -1,11 +1,7 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import logging
-import platform
-import sys
-import subprocess
-import ctypes
+import logging, platform, subprocess, sys, ctypes
 from ctypes import wintypes
 from pathlib import Path
 
@@ -41,7 +37,7 @@ def setup_logging(version):
             file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
             file_handler.setFormatter(logging.Formatter(
                 '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                datefmt='%Y-%m-%d %H:%M:%S'
+                datefmt='%d--%m-%Y - %H:%M'
             ))
             root_logger.addHandler(file_handler)
         except Exception as e:
