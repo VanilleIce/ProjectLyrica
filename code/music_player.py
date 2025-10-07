@@ -1,14 +1,11 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import json
-import time
-import logging
+import json, time, logging, psutil
 from pathlib import Path
 from threading import Event, Lock
 from pynput.keyboard import Controller
 import pygetwindow as gw
-import psutil
 from tkinter import messagebox
 
 from language_manager import LanguageManager
@@ -71,9 +68,6 @@ class MusicPlayer:
 
             self.current_speed = 1000
             self.press_duration = 0.1
-            
-            logger.info(f"Timing initialized: delays=({self.initial_delay}s, {self.pause_resume_delay}s), "
-                    f"ramping_enabled={self.enable_ramping}")
                     
         except Exception as e:
             logger.error(f"Error initializing timing: {e}")
@@ -184,7 +178,6 @@ class MusicPlayer:
 
             from time import perf_counter as precision_timer
 
-            logger.info(f"Applying initial delay: {self.initial_delay}s")
             time.sleep(self.initial_delay)
             
             self.start_time = precision_timer()
@@ -381,7 +374,6 @@ class MusicPlayer:
         self.pause_enabled = False
         self._release_all()
         self.playback_active = False
-        self.logger.info("Playback stopped by user")
 
     def set_speed(self, speed):
         if speed <= 0:

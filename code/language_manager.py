@@ -1,12 +1,11 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
+import logging, traceback
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from config_manager import ConfigManager
-import logging
 from tkinter import messagebox
-import traceback
 
 from resource_loader import resource_path
 

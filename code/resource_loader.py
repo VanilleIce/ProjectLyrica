@@ -1,5 +1,7 @@
-import sys
-import os
+# Copyright (C) 2025 VanilleIce
+# This program is licensed under the GNU AGPLv3. See LICENSE for details.
+
+import sys, os
 from pathlib import Path
 
 def resource_path(relative_path):

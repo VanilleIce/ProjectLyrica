@@ -1,10 +1,8 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import json
+import json, logging, traceback
 from pathlib import Path
-import logging
-import traceback
 from typing import Any, Dict
 
 logger = logging.getLogger("ProjectLyrica.ConfigManager")
@@ -95,7 +93,8 @@ class ConfigManager:
                         return cls._create_default_config()
                         
                     user_config = json.loads(content)
-                    logger.info(f"Loaded config from {cls.SETTINGS_FILE.absolute()}")
+                    config_path = str(cls.SETTINGS_FILE.absolute()).replace(str(Path.home()), "~")
+                    logger.info(f"Loaded config from {config_path}")
                         
                     if isinstance(user_config, dict):
                         cls._config = cls._upgrade_config(user_config)
@@ -109,7 +108,8 @@ class ConfigManager:
                     backup_file = cls.SETTINGS_FILE.with_suffix('.json.bak')
                     try:
                         cls.SETTINGS_FILE.rename(backup_file)
-                        logger.info(f"Backed up corrupt config to {backup_file}")
+                        backup_path = str(backup_file.absolute()).replace(str(Path.home()), "~")
+                        logger.info(f"Backed up corrupt config to {backup_path}")
                     except Exception as backup_error:
                         logger.error(f"Could not backup corrupt config: {backup_error}")
                     

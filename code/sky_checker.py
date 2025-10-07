@@ -1,15 +1,13 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
+import logging, sys, os
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
 from pathlib import Path
 from config_manager import ConfigManager
 from language_manager import LanguageManager
 from resource_loader import resource_path
-import logging
-import sys
-import os
 
 logger = logging.getLogger("ProjectLyrica.skychecker")
 

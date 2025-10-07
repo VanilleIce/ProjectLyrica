@@ -1,9 +1,7 @@
 # Copyright (C) 2025 VanilleIce
 # This program is licensed under the GNU AGPLv3. See LICENSE for details.
 
-import logging
-import heapq
-import time
+import logging, heapq, time
 from threading import Thread, Event, Lock
 from typing import Callable, Any
 

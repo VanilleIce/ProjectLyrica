@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.5.2"
+VERSION = "2.5.2.1"
 
 # -------------------------------
 # Music App
@@ -419,10 +419,10 @@ class MusicApp:
         logger.info("Starting playback thread")
         
         try:
-            relative_path = Path(self.selected_file).relative_to(Path.cwd())
-            logger.info(f"Playing song: {relative_path}")
-        except ValueError:
-            logger.info(f"Playing song: {self.selected_file}")
+            song_name = Path(self.selected_file).name
+            logger.info(f"Playing: {song_name}")
+        except Exception as e:
+            logger.error(f"Could not get song name: {e}")
         
         logger.info("Attempting to focus Sky window")
         window_focused = False
@@ -466,7 +466,6 @@ class MusicApp:
             logger.debug(f"Focus took longer than initial delay ({elapsed_time:.2f}s), skipping wait")
         
         try:
-            logger.info("Starting actual playback")
             self.player.play(song_data)
         except Exception as play_error:
             logger.critical(f"Playback thread crashed: {play_error}", exc_info=True)
@@ -562,7 +561,6 @@ class MusicApp:
                     logger.info(f"File selected while song is paused - showing appropriate pause state")
                 else:
                     self._update_play_button_state("ready")
-                    logger.info(f"File selected: {file} - Ready to play new song")
 
                 try:
                     relative_path = Path(file).relative_to(Path.cwd())
