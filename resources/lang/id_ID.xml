@@ -25,6 +25,13 @@
     <translation key="invalid_speed">Kecepatan tidak valid! Harus lebih besar dari 0.</translation>
     <translation key="invalid_song_format">Format lagu tidak valid</translation>
 
+    <translation key="sky_only_warning">Hanya bekerja di Sky! Harap mulai Sky Children of the Light.</translation>
+    <translation key="sky_window_focus_error">Tidak dapat memfokuskan jendela Sky. Pastikan Sky sedang berjalan dan terlihat.</translation>
+
+    <translation key="speed_too_slow">Kecepatan terlalu lambat. Kecepatan minimum adalah {min_speed}. Diatur ke {min_speed_again}.</translation>
+    <translation key="speed_too_fast">Kecepatan terlalu cepat. Kecepatan maksimum adalah {max_speed}. Diatur ke {max_speed_again}.</translation>
+    <translation key="speed_setting_failed">Kesalahan saat mengatur kecepatan: {error}</translation>
+
     <!-- ================= -->
     <!-- FUNGSI PEMUTAR MUSIK -->
     <!-- ================= -->
@@ -33,9 +40,9 @@
     <translation key="disabled">Nonaktif</translation>
     <translation key="duration">Durasi Tekan Tombol</translation>
     <translation key="speed_control">Kecepatan</translation>
-    <translation key="current_speed">kecepatan saat ini</translation>
+    <translation key="current_speed">Kecepatan saat ini</translation>
     <translation key="preset">Preset</translation>
-
+    
     <!-- ================= -->
     <!-- BAHASA & TATA LETAK -->
     <!-- ================= -->
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">Aplikasi akan ditutup karena Sky.exe diperlukan</translation>
     <translation key="must_select_sky">Silakan pilih file Sky.exe</translation>
     <translation key="exe_path_invalid">File yang dipilih tidak ada</translation>
-    
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">Pengaturan</translation>
+    <translation key="info_title">Informasi</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">Pengaturan Game</translation>
+    <translation key="settings_sky_path">Jalur Sky.exe</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">Pengaturan Pemutaran</translation>
+    <translation key="settings_key_durations">Durasi Tekan Tombol</translation>
+    <translation key="settings_key_durations_hint">(detik dipisahkan koma)</translation>
+    <translation key="settings_speed_presets">Kecepatan</translation>
+    <translation key="settings_speed_presets_hint">(nilai dipisahkan koma)</translation>
+    <translation key="settings_custom_keys">Tombol Kustom</translation>
+    <translation key="settings_edit_keys">Edit Tombol</translation>
+    <translation key="settings_custom_keys_status">{count} tombol disesuaikan</translation>
+    <translation key="settings_using_default_layout">Menggunakan tata letak default</translation>
+    <translation key="settings_custom_active">Kustom (aktif)</translation>
+    <translation key="settings_custom_available">Kustom tersedia</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">Penundaan</translation>
+    <translation key="settings_initial_delay">Penundaan Awal</translation>
+    <translation key="settings_pause_delay">Penundaan Jeda</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">Transisi Kecepatan</translation>
+    <translation key="settings_ramping_start">Langkah Awal</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">Langkah Akhir</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">Langkah Setelah Jeda</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">Antarmuka</translation>
+    <translation key="settings_language">Bahasa</translation>
+    <translation key="settings_theme">Tema</translation>
+    <translation key="theme_dark">Gelap</translation>
+    <translation key="theme_light">Terang</translation>
+    <translation key="settings_keyboard_layout">Tata Letak Keyboard</translation>
+    <translation key="settings_pause_key">Tombol Jeda</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">Simpan</translation>
+    <translation key="settings_reset">Setel Ulang</translation>
+    <translation key="settings_cancel">Batal</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">Pengaturan disimpan!</translation>
+    <translation key="settings_save_error">Kesalahan saat menyimpan pengaturan</translation>
+    <translation key="settings_reset_confirm">Setel ulang semua pengaturan ke nilai default?</translation>
+    <translation key="settings_reset_success">Pengaturan diatur ulang!</translation>
+    <translation key="settings_reset_error">Kesalahan saat mengatur ulang</translation>
+    <translation key="settings_restart_required">Beberapa pengaturan memerlukan restart aplikasi untuk berlaku.</translation>
+    <translation key="settings_restart_now">Restart sekarang?</translation>
+    <translation key="settings_restart_later">Pengaturan disimpan. Harap restart aplikasi nanti.</translation>
+    <translation key="settings_restart_failed">Restart otomatis gagal. Harap restart aplikasi secara manual.</translation>
+    <translation key="custom_layout_not_found">Tata letak kustom tidak ditemukan. Secara otomatis beralih ke {fallback_layout}.</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">Harap masukkan angka yang valid</translation>
+    <translation key="settings_error_positive">Harap masukkan nilai positif</translation>
+    <translation key="settings_error_empty">Harap isi semua bidang</translation>
+    <translation key="settings_error_pause_key">Tombol jeda harus tepat satu karakter</translation>
+    <translation key="settings_error_general">Input tidak valid</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">Editor Penataan Tombol</translation>
+    <translation key="key_editor_instructions">Klik tombol di bawah lalu tekan penataan yang diinginkan pada keyboard Anda. Escape untuk membatalkan, Backspace untuk menghapus.</translation>
+    <translation key="key_editor_current_key">Tombol saat ini:</translation>
+    <translation key="key_editor_no_selection">Tidak ada tombol yang dipilih</translation>
+    <translation key="key_editor_press_key">Tekan tombol...</translation>
+    <translation key="key_editor_empty">(kosong)</translation>
+    <translation key="key_editor_delete">Hapus Kustom</translation>
+    <translation key="key_editor_changes">{changed}/{total} tombol diubah</translation>
+    <translation key="key_editor_saved_settings_hint">Tata letak kustom disimpan. Harap klik 'Simpan' di Pengaturan agar perubahan berlaku.</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">Default</translation>
+    <translation key="key_editor_custom">Disesuaikan</translation>
+    <translation key="key_editor_empty_error">Tombol {key} tidak boleh kosong</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">Simpan</translation>
+    <translation key="key_editor_reset_all">Setel Ulang Semua</translation>
+    <translation key="key_editor_import">Impor</translation>
+    <translation key="key_editor_cancel">Batal</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">Penataan tombol disimpan!</translation>
+    <translation key="key_editor_save_error">Kesalahan saat menyimpan penataan tombol</translation>
+    <translation key="key_editor_reset_confirm">Setel ulang semua tombol ke nilai default?</translation>
+    <translation key="key_editor_import_title">Impor Penataan Tombol</translation>
+    <translation key="key_editor_import_success">Penataan tombol diimpor</translation>
+    <translation key="key_editor_import_error">Kesalahan saat mengimpor penataan tombol</translation>
+    <translation key="key_editor_no_changes">Tidak ada perubahan yang dibuat pada tata letak kustom.</translation>
+    <translation key="key_editor_unconfirm_changes">Anda memiliki perubahan yang belum disimpan. Simpan sebelum menutup?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Hapus tata letak kustom dan kembali ke tata letak default?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Tata letak kustom disimpan dan diaktifkan.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">Kesalahan saat menghapus tata letak kustom.</translation>
+
 </translations>

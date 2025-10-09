@@ -25,6 +25,13 @@
     <translation key="invalid_speed">無効な速度です！0より大きい必要があります。</translation>
     <translation key="invalid_song_format">無効な曲形式</translation>
 
+    <translation key="sky_only_warning">Skyでのみ動作します！Sky Children of the Lightを起動してください。</translation>
+    <translation key="sky_window_focus_error">Skyウィンドウにフォーカスできません。Skyが実行中で表示されていることを確認してください。</translation>
+
+    <translation key="speed_too_slow">速度が遅すぎます。最小速度は{min_speed}です。{min_speed_again}に設定します。</translation>
+    <translation key="speed_too_fast">速度が速すぎます。最大速度は{max_speed}です。{max_speed_again}に設定します。</translation>
+    <translation key="speed_setting_failed">速度設定エラー: {error}</translation>
+
     <!-- ================= -->
     <!-- 音楽プレーヤー機能 -->
     <!-- ================= -->
@@ -35,7 +42,7 @@
     <translation key="speed_control">速度</translation>
     <translation key="current_speed">現在の速度</translation>
     <translation key="preset">プリセット</translation>
-
+    
     <!-- ================= -->
     <!-- 言語とレイアウト -->
     <!-- ================= -->
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">Sky.exeが必要なため、アプリケーションを終了します</translation>
     <translation key="must_select_sky">Sky.exeファイルを選択してください</translation>
     <translation key="exe_path_invalid">選択したファイルが存在しません</translation>
-    
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">設定</translation>
+    <translation key="info_title">情報</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">ゲーム設定</translation>
+    <translation key="settings_sky_path">Sky.exe パス</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">再生設定</translation>
+    <translation key="settings_key_durations">キー押下時間</translation>
+    <translation key="settings_key_durations_hint">(カンマ区切りの秒数)</translation>
+    <translation key="settings_speed_presets">速度設定</translation>
+    <translation key="settings_speed_presets_hint">(カンマ区切りの値)</translation>
+    <translation key="settings_custom_keys">カスタムキー</translation>
+    <translation key="settings_edit_keys">キー編集</translation>
+    <translation key="settings_custom_keys_status">{count} キーがカスタマイズ済み</translation>
+    <translation key="settings_using_default_layout">デフォルトレイアウトを使用中</translation>
+    <translation key="settings_custom_active">カスタム（アクティブ）</translation>
+    <translation key="settings_custom_available">カスタム利用可能</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">遅延設定</translation>
+    <translation key="settings_initial_delay">開始遅延</translation>
+    <translation key="settings_pause_delay">一時停止遅延</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">速度遷移</translation>
+    <translation key="settings_ramping_start">開始ステップ</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">終了ステップ</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">一時停止後ステップ</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">インターフェース</translation>
+    <translation key="settings_language">言語</translation>
+    <translation key="settings_theme">テーマ</translation>
+    <translation key="theme_dark">ダーク</translation>
+    <translation key="theme_light">ライト</translation>
+    <translation key="settings_keyboard_layout">キーボードレイアウト</translation>
+    <translation key="settings_pause_key">一時停止キー</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">保存</translation>
+    <translation key="settings_reset">リセット</translation>
+    <translation key="settings_cancel">キャンセル</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">設定を保存しました！</translation>
+    <translation key="settings_save_error">設定の保存中にエラーが発生しました</translation>
+    <translation key="settings_reset_confirm">すべての設定をデフォルト値にリセットしますか？</translation>
+    <translation key="settings_reset_success">設定をリセットしました！</translation>
+    <translation key="settings_reset_error">リセット中にエラーが発生しました</translation>
+    <translation key="settings_restart_required">一部の設定を適用するにはアプリケーションの再起動が必要です。</translation>
+    <translation key="settings_restart_now">今すぐ再起動しますか？</translation>
+    <translation key="settings_restart_later">設定を保存しました。後でアプリケーションを再起動してください。</translation>
+    <translation key="settings_restart_failed">自動再起動に失敗しました。手動でアプリケーションを再起動してください。</translation>
+    <translation key="custom_layout_not_found">カスタムレイアウトが見つかりません。自動的に {fallback_layout} に切り替えました。</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">有効な数値を入力してください</translation>
+    <translation key="settings_error_positive">正の値を入力してください</translation>
+    <translation key="settings_error_empty">すべてのフィールドに入力してください</translation>
+    <translation key="settings_error_pause_key">一時停止キーは1文字でなければなりません</translation>
+    <translation key="settings_error_general">無効な入力</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">キー割り当てエディター</translation>
+    <translation key="key_editor_instructions">下のキーをクリックして、キーボードで希望の割り当てを押してください。Escでキャンセル、Backspaceで削除。</translation>
+    <translation key="key_editor_current_key">現在のキー：</translation>
+    <translation key="key_editor_no_selection">キーが選択されていません</translation>
+    <translation key="key_editor_press_key">キーを押してください...</translation>
+    <translation key="key_editor_empty">（空）</translation>
+    <translation key="key_editor_delete">カスタムを削除</translation>
+    <translation key="key_editor_changes">{changed}/{total} キーが変更されました</translation>
+    <translation key="key_editor_saved_settings_hint">カスタムレイアウトを保存しました。設定で「保存」をクリックして変更を適用してください。</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">デフォルト</translation>
+    <translation key="key_editor_custom">カスタム</translation>
+    <translation key="key_editor_empty_error">キー {key} を空にすることはできません</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">保存</translation>
+    <translation key="key_editor_reset_all">すべてリセット</translation>
+    <translation key="key_editor_import">インポート</translation>
+    <translation key="key_editor_cancel">キャンセル</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">キー割り当てを保存しました！</translation>
+    <translation key="key_editor_save_error">キー割り当ての保存中にエラーが発生しました</translation>
+    <translation key="key_editor_reset_confirm">すべてのキーをデフォルト値にリセットしますか？</translation>
+    <translation key="key_editor_import_title">キー割り当てのインポート</translation>
+    <translation key="key_editor_import_success">キー割り当てをインポートしました</translation>
+    <translation key="key_editor_import_error">キー割り当てのインポート中にエラーが発生しました</translation>
+    <translation key="key_editor_no_changes">カスタムレイアウトに変更はありません。</translation>
+    <translation key="key_editor_unconfirm_changes">保存されていない変更があります。閉じる前に保存しますか？</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">カスタムレイアウトを削除してデフォルトレイアウトに戻しますか？</translation>
+    <translation key="key_editor_custom_layout_saved_activated">カスタムレイアウトを保存して有効化しました。</translation>
+    <translation key="key_editor_error_deleting_custom_layout">カスタムレイアウトの削除中にエラーが発生しました。</translation>
+
 </translations>

@@ -25,6 +25,13 @@
     <translation key="invalid_speed">Nieprawidłowa prędkość! Musi być większa od 0.</translation>
     <translation key="invalid_song_format">Nieprawidłowy format utworu</translation>
 
+    <translation key="sky_only_warning">Działa tylko w Sky! Uruchom Sky Children of the Light.</translation>
+    <translation key="sky_window_focus_error">Nie można ustawić okna Sky na pierwszym planie. Upewnij się, że Sky jest uruchomione i widoczne.</translation>
+
+    <translation key="speed_too_slow">Prędkość zbyt wolna. Minimalna prędkość to {min_speed}. Ustawiono na {min_speed_again}.</translation>
+    <translation key="speed_too_fast">Prędkość zbyt szybka. Maksymalna prędkość to {max_speed}. Ustawiono na {max_speed_again}.</translation>
+    <translation key="speed_setting_failed">Błąd podczas ustawiania prędkości: {error}</translation>
+
     <!-- ================= -->
     <!-- FUNKCJE ODTWARZACZA MUZYKI -->
     <!-- ================= -->
@@ -33,9 +40,9 @@
     <translation key="disabled">Wyłączono</translation>
     <translation key="duration">Czas naciśnięcia klawisza</translation>
     <translation key="speed_control">Prędkość</translation>
-    <translation key="current_speed">aktualna prędkość</translation>
+    <translation key="current_speed">Aktualna prędkość</translation>
     <translation key="preset">Ustawienia wstępne</translation>
-
+    
     <!-- ================= -->
     <!-- JĘZYK I UKŁAD -->
     <!-- ================= -->
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">Aplikacja zostanie zamknięta, ponieważ wymagany jest plik Sky.exe</translation>
     <translation key="must_select_sky">Proszę wybrać plik Sky.exe</translation>
     <translation key="exe_path_invalid">Wybrany plik nie istnieje</translation>
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">Ustawienia</translation>
+    <translation key="info_title">Informacja</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">Ustawienia Gry</translation>
+    <translation key="settings_sky_path">Ścieżka Sky.exe</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">Ustawienia Odtwarzania</translation>
+    <translation key="settings_key_durations">Czas Naciskania Klawiszy</translation>
+    <translation key="settings_key_durations_hint">(sekundy oddzielone przecinkami)</translation>
+    <translation key="settings_speed_presets">Prędkości</translation>
+    <translation key="settings_speed_presets_hint">(wartości oddzielone przecinkami)</translation>
+    <translation key="settings_custom_keys">Niestandardowe Klawisze</translation>
+    <translation key="settings_edit_keys">Edytuj Klawisze</translation>
+    <translation key="settings_custom_keys_status">{count} klawiszy dostosowanych</translation>
+    <translation key="settings_using_default_layout">Używanie układu domyślnego</translation>
+    <translation key="settings_custom_active">Niestandardowy (aktywny)</translation>
+    <translation key="settings_custom_available">Niestandardowy dostępny</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">Opóźnienia</translation>
+    <translation key="settings_initial_delay">Opóźnienie Początkowe</translation>
+    <translation key="settings_pause_delay">Opóźnienie Pauzy</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">Przejścia Prędkości</translation>
+    <translation key="settings_ramping_start">Kroki Startowe</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">Kroki Końcowe</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">Kroki po Pauzie</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">Interfejs</translation>
+    <translation key="settings_language">Język</translation>
+    <translation key="settings_theme">Motyw</translation>
+    <translation key="theme_dark">Ciemny</translation>
+    <translation key="theme_light">Jasny</translation>
+    <translation key="settings_keyboard_layout">Układ Klawiatury</translation>
+    <translation key="settings_pause_key">Klawisz Pauzy</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">Zapisz</translation>
+    <translation key="settings_reset">Resetuj</translation>
+    <translation key="settings_cancel">Anuluj</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">Ustawienia zapisane!</translation>
+    <translation key="settings_save_error">Błąd podczas zapisywania ustawień</translation>
+    <translation key="settings_reset_confirm">Zresetować wszystkie ustawienia do wartości domyślnych?</translation>
+    <translation key="settings_reset_success">Ustawienia zresetowane!</translation>
+    <translation key="settings_reset_error">Błąd podczas resetowania</translation>
+    <translation key="settings_restart_required">Niektóre ustawienia wymagają restartu aplikacji, aby zostały zastosowane.</translation>
+    <translation key="settings_restart_now">Restartować teraz?</translation>
+    <translation key="settings_restart_later">Ustawienia zapisane. Proszę zrestartować aplikację później.</translation>
+    <translation key="settings_restart_failed">Automatyczny restart nie powiódł się. Proszę zrestartować aplikację ręcznie.</translation>
+    <translation key="custom_layout_not_found">Niestandardowy układ nie znaleziony. Automatycznie przełączono na {fallback_layout}.</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">Proszę wprowadzić prawidłowe liczby</translation>
+    <translation key="settings_error_positive">Proszę wprowadzić wartości dodatnie</translation>
+    <translation key="settings_error_empty">Proszę wypełnić wszystkie pola</translation>
+    <translation key="settings_error_pause_key">Klawisz pauzy musi być dokładnie jednym znakiem</translation>
+    <translation key="settings_error_general">Nieprawidłowe dane wejściowe</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">Edytor Mapowania Klawiszy</translation>
+    <translation key="key_editor_instructions">Kliknij klawisz poniżej, a następnie naciśnij żądane mapowanie na klawiaturze. Escape, aby anulować, Backspace, aby usunąć.</translation>
+    <translation key="key_editor_current_key">Aktualny klawisz:</translation>
+    <translation key="key_editor_no_selection">Nie wybrano klawisza</translation>
+    <translation key="key_editor_press_key">Naciśnij klawisz...</translation>
+    <translation key="key_editor_empty">(pusty)</translation>
+    <translation key="key_editor_delete">Usuń Niestandardowy</translation>
+    <translation key="key_editor_changes">{changed}/{total} klawiszy zmienionych</translation>
+    <translation key="key_editor_saved_settings_hint">Niestandardowy układ zapisany. Kliknij 'Zapisz' w Ustawieniach, aby zmiany zostały zastosowane.</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">Domyślny</translation>
+    <translation key="key_editor_custom">Dostosowany</translation>
+    <translation key="key_editor_empty_error">Klawisz {key} nie może być pusty</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">Zapisz</translation>
+    <translation key="key_editor_reset_all">Resetuj Wszystko</translation>
+    <translation key="key_editor_import">Importuj</translation>
+    <translation key="key_editor_cancel">Anuluj</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">Mapowanie klawiszy zapisane!</translation>
+    <translation key="key_editor_save_error">Błąd podczas zapisywania mapowania klawiszy</translation>
+    <translation key="key_editor_reset_confirm">Zresetować wszystkie klawisze do wartości domyślnych?</translation>
+    <translation key="key_editor_import_title">Importuj Mapowanie Klawiszy</translation>
+    <translation key="key_editor_import_success">Mapowanie klawiszy zaimportowane</translation>
+    <translation key="key_editor_import_error">Błąd podczas importowania mapowania klawiszy</translation>
+    <translation key="key_editor_no_changes">Nie wprowadzono zmian w niestandardowym układzie.</translation>
+    <translation key="key_editor_unconfirm_changes">Masz niezapisane zmiany. Zapisać przed zamknięciem?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Usunąć niestandardowy układ i wrócić do układu domyślnego?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Niestandardowy układ zapisany i aktywowany.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">Błąd podczas usuwania niestandardowego układu.</translation>
 
 </translations>
