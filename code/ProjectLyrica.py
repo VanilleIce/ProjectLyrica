@@ -56,7 +56,7 @@ class MusicApp:
             SkyChecker.show_initial_settings()
             self.config = ConfigManager.get_config()
 
-        self._init_player()
+        self._init_player()    
         self._init_gui()
         self._setup_key_listener()
 
@@ -381,6 +381,7 @@ class MusicApp:
 
     def _open_settings(self):
         from settings_window import SettingsWindow
+        
         SettingsWindow(
             parent=self.root,
             theme_callback=self._on_theme_changed,

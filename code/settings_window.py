@@ -17,21 +17,37 @@ class SettingsWindow:
     _open_windows = []
     
     def __init__(self, parent=None, theme_callback=None, timing_callback=None, playback_callback=None):
-        if SettingsWindow._open_windows:
-            SettingsWindow._open_windows[0].window.focus()
-            return
+        for window in SettingsWindow._open_windows[:]:
+            try:
+                if hasattr(window, 'window') and window.window.winfo_exists():
+                    window.window.focus()
+                    window.window.lift()
+                    return
+                else:
+                    SettingsWindow._open_windows.remove(window)
+            except Exception as e:
+                SettingsWindow._open_windows.remove(window)
 
         self.parent = parent
-        self.window = ctk.CTkToplevel(parent) if parent else ctk.CTkToplevel()
+        self.window = ctk.CTkToplevel(parent)
         self.window.title(LanguageManager.get('settings_window_title'))
         self.window.geometry("620x680")
         self.window.resizable(False, False)
+
+        self.window.withdraw()
+
+        try:
+            self.window.iconbitmap(resource_path("resources/icons/icon.ico"))
+        except Exception:
+            pass
         
         SettingsWindow._open_windows.append(self)
         self.window.protocol("WM_DELETE_WINDOW", self._on_close)
         
-        self._check_missing_custom_layout()
+        self.window.transient(parent)
+        self.window.grab_set()
         
+        self._check_missing_custom_layout()
         self._original_custom_hash = self._get_custom_file_hash()
         self._load_current_config()
         self._create_ui()
@@ -42,6 +58,9 @@ class SettingsWindow:
         self.playback_callback = playback_callback
         
         self._position_window()
+
+        self.window.deiconify()
+        self.window.focus()
 
     def _check_missing_custom_layout(self):
         """Checks whether custom layout has been deleted"""
@@ -57,18 +76,30 @@ class SettingsWindow:
             logger.error(f"Error checking missing custom in settings: {e}")
 
     def _position_window(self):
-        """Positions the window and sets the icon"""
-        try:
-            self.window.iconbitmap(resource_path("resources/icons/icon.ico"))
-        except Exception:
-            pass
-
-        if self.parent and hasattr(self.parent, 'winfo_x'):
-            main_x = self.parent.winfo_x()
-            main_width = self.parent.winfo_width()
-            settings_x = main_x + main_width + 10
-            settings_y = self.parent.winfo_y()
-            self.window.geometry(f"+{settings_x}+{settings_y}")
+        """Position window next to main window"""
+        if self.parent and hasattr(self.parent, 'winfo_x') and self.parent.winfo_exists():
+            try:
+                self.parent.update_idletasks()
+                
+                main_x = self.parent.winfo_x()
+                main_y = self.parent.winfo_y()
+                main_width = self.parent.winfo_width()
+                
+                settings_x = main_x + main_width + 10
+                settings_y = main_y
+                
+                screen_width = self.window.winfo_screenwidth()
+                if settings_x + 620 > screen_width:
+                    settings_x = max(0, screen_width - 620 - 10)
+                
+                self.window.geometry(f"620x680+{settings_x}+{settings_y}")
+                
+            except Exception:
+                # Fallback Position
+                self.window.geometry("620x680+100+100")
+        else:
+            # Fallback Position
+            self.window.geometry("620x680+100+100")
 
     def _load_current_config(self):
         """Load current configuration"""
@@ -664,9 +695,14 @@ class SettingsWindow:
 
     def _on_close(self):
         """Close the window"""
-        if self in SettingsWindow._open_windows:
-            SettingsWindow._open_windows.remove(self)
-        self.window.destroy()
+        try:
+            if self in SettingsWindow._open_windows:
+                SettingsWindow._open_windows.remove(self)
+            if hasattr(self, 'window') and self.window.winfo_exists():
+                self.window.destroy()
+        except Exception as e:
+            logger.error(f"Error closing settings window: {e}")
+            SettingsWindow._open_windows.clear()
 
     @classmethod
     def is_open(cls):
