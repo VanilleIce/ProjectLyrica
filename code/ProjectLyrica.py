@@ -62,6 +62,7 @@ class MusicApp:
         self._init_player()    
         self._init_gui()
 
+        self.current_play_state = "ready"
         self._start_sky_check()
 
         self._setup_key_listener()
@@ -71,32 +72,15 @@ class MusicApp:
     def _start_sky_check(self):
         def check_sky():
             try:
-                current_state = "ready"
-                self._update_play_button_state(current_state)
-                self.root.after(3000, check_sky)
+                if self.current_play_state in ["ready", "disabled"]:
+                    self._update_play_button_state("ready")
+                
+                self.root.after(2000, check_sky)
             except Exception as e:
                 logger.error(f"Sky check timer error: {e}")
                 self.root.after(5000, check_sky)
         
-        self.root.after(1000, check_sky)
-
-    def _check_sky_running(self):
-        try:
-            current_time = time.time()
-            if current_time - self._last_sky_check < 3:
-                return self._sky_running_cache
-            
-            if hasattr(self, 'player') and self.player is not None:
-                window = self.player._find_sky_window()
-                result = window is not None
-
-                self._sky_running_cache = result
-                self._last_sky_check = current_time
-                return result
-            return False
-        except Exception as e:
-            logger.error(f"Error checking if Sky is running: {e}")
-            return False
+        check_sky()
 
     def _update_play_button_based_on_sky(self):
         if not hasattr(self, 'player') or self.player is None:
@@ -113,11 +97,20 @@ class MusicApp:
         else:
             self._update_play_button_state("ready")
 
-    def _check_sky_running(self):
+    def _check_sky_running(self, use_cache=True):
         try:
+            current_time = time.time()
+            
+            if use_cache and current_time - self._last_sky_check < 1:
+                return self._sky_running_cache
+            
             if hasattr(self, 'player') and self.player is not None:
                 window = self.player._find_sky_window()
-                return window is not None
+                result = window is not None
+
+                self._sky_running_cache = result
+                self._last_sky_check = current_time
+                return result
             return False
         except Exception as e:
             logger.error(f"Error checking if Sky is running: {e}")
@@ -297,6 +290,8 @@ class MusicApp:
     def _update_play_button_state(self, state):
         logger.debug(f"Update play button state: {state}")
         
+        self.current_play_state = state
+        
         if state == "playing":
             self.play_btn.configure(
                 text=LanguageManager.get("playing_button_text"),
@@ -338,7 +333,7 @@ class MusicApp:
                 )
                 
         elif state == "ready":
-            sky_running = self._check_sky_running()
+            sky_running = self._check_sky_running(use_cache=False)
             has_file = bool(self.selected_file)
             
             if sky_running and has_file:
@@ -351,7 +346,7 @@ class MusicApp:
                     state="normal",
                     height=40
                 )
-            elif not sky_running and has_file:
+            elif not sky_running:
                 self.play_btn.configure(
                     text=LanguageManager.get("sky_only_warning"),
                     command=None,
@@ -372,7 +367,6 @@ class MusicApp:
                     height=40
                 )
         elif state == "disabled":
-            # Fallback
             self.play_btn.configure(
                 text=LanguageManager.get("play_button_text"),
                 command=None,
@@ -427,8 +421,6 @@ class MusicApp:
         self.ramping_btn.pack(pady=10)
         
         self.play_btn.pack(pady=10)
-        
-        self._update_play_button_state("disabled")
         
         if not self.smooth_ramping_enabled and self.show_ramping_info:
             self.ramping_frame.pack(pady=5, before=self.play_btn)
@@ -663,7 +655,7 @@ class MusicApp:
             self.root.after(0, lambda: self._update_play_button_state("ready"))
 
     def _handle_keypress(self, key):
-        """Handle pause key events - ONLY for pause/resume"""
+        """Handle pause key events for pause/resume"""
         try:
             if not hasattr(key, 'char') or key.char != self.pause_key:
                 return
@@ -734,7 +726,7 @@ class MusicApp:
                     self._update_play_button_state("paused")
                 else:
                     self._update_play_button_state("ready")
-
+                
                 try:
                     relative_path = Path(file).relative_to(Path.cwd())
                     logger.info(f"Selected song: {relative_path}")
@@ -750,24 +742,24 @@ class MusicApp:
                         self._update_play_button_state("ready")
                 else:
                     self._update_play_button_state("ready")
-                    
+                        
         except Exception as e:
             logger.error(f"File selection failed: {e}")
             messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
             self._update_play_button_state("ready")
 
     def _play_song(self):
-        if not self._check_sky_running():
+        if not self._check_sky_running(use_cache=False):
             messagebox.showerror(
                 LanguageManager.get("error_title"),
                 LanguageManager.get("sky_only_warning")
             )
-            self._update_play_button_state("disabled")
+            self._update_play_button_state("ready")
             return
             
         if not self.selected_file:
             messagebox.showwarning("Warning", LanguageManager.get("choose_song_warning"))
-            self._update_play_button_state("disabled")
+            self._update_play_button_state("ready")
             return
 
         try:
