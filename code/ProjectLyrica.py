@@ -56,11 +56,47 @@ class MusicApp:
             SkyChecker.show_initial_settings()
             self.config = ConfigManager.get_config()
 
+        self._last_sky_check = 0
+        self._sky_running_cache = False
+
         self._init_player()    
         self._init_gui()
+
+        self._start_sky_check()
+
         self._setup_key_listener()
 
         ConfigManager.log_system_info(VERSION)
+
+    def _start_sky_check(self):
+        def check_sky():
+            try:
+                current_state = "ready"
+                self._update_play_button_state(current_state)
+                self.root.after(3000, check_sky)
+            except Exception as e:
+                logger.error(f"Sky check timer error: {e}")
+                self.root.after(5000, check_sky)
+        
+        self.root.after(1000, check_sky)
+
+    def _check_sky_running(self):
+        try:
+            current_time = time.time()
+            if current_time - self._last_sky_check < 3:
+                return self._sky_running_cache
+            
+            if hasattr(self, 'player') and self.player is not None:
+                window = self.player._find_sky_window()
+                result = window is not None
+
+                self._sky_running_cache = result
+                self._last_sky_check = current_time
+                return result
+            return False
+        except Exception as e:
+            logger.error(f"Error checking if Sky is running: {e}")
+            return False
 
     def _update_play_button_based_on_sky(self):
         if not hasattr(self, 'player') or self.player is None:
@@ -277,7 +313,6 @@ class MusicApp:
                 self.selected_file is not None):
                 
                 has_different_file = (self._originally_paused_file != self.selected_file)
-                logger.debug(f"Paused state - originally: {self._originally_paused_file}, selected: {self.selected_file}, different: {has_different_file}")
             
             pause_key_hint = LanguageManager.get("pause_key_hint").replace("[pause_key]", self.pause_key)
             
@@ -291,7 +326,6 @@ class MusicApp:
                     state="normal",
                     height=50
                 )
-                logger.info("Play button set to PURPLE - different file selected during pause")
             else:
                 self.play_btn.configure(
                     text=f"{LanguageManager.get('restart_button_text')}\n{pause_key_hint}",
@@ -302,19 +336,43 @@ class MusicApp:
                     state="normal",
                     height=50
                 )
-                logger.info("Play button set to ORANGE - same file paused")
                 
         elif state == "ready":
-            self.play_btn.configure(
-                text=LanguageManager.get("play_button_text"),
-                command=self._play_song,
-                fg_color="#2b6cb0",
-                hover_color="#1f538d",
-                text_color="#ffffff",
-                state="normal",
-                height=40
-            )
+            sky_running = self._check_sky_running()
+            has_file = bool(self.selected_file)
+            
+            if sky_running and has_file:
+                self.play_btn.configure(
+                    text=LanguageManager.get("play_button_text"),
+                    command=self._play_song,
+                    fg_color="#2b6cb0",
+                    hover_color="#1f538d",
+                    text_color="#ffffff",
+                    state="normal",
+                    height=40
+                )
+            elif not sky_running and has_file:
+                self.play_btn.configure(
+                    text=LanguageManager.get("sky_only_warning"),
+                    command=None,
+                    fg_color="#666666",
+                    hover_color="#666666",
+                    text_color="#aaaaaa",
+                    state="disabled",
+                    height=40
+                )
+            else:
+                self.play_btn.configure(
+                    text=LanguageManager.get("play_button_text"),
+                    command=None,
+                    fg_color="#666666",
+                    hover_color="#666666",
+                    text_color="#aaaaaa",
+                    state="disabled",
+                    height=40
+                )
         elif state == "disabled":
+            # Fallback
             self.play_btn.configure(
                 text=LanguageManager.get("play_button_text"),
                 command=None,
@@ -357,8 +415,6 @@ class MusicApp:
             font=("Arial", 16),
             command=self._open_settings,
             fg_color="transparent",
-            text_color="#FFFFFF" if current_theme == "dark" else "#000000",
-            hover_color="#2B2B2B" if current_theme == "dark" else "#E0E0E0",
             border_width=0
         )
         self.settings_btn.pack(side="right", padx=(0, 5))
@@ -392,6 +448,15 @@ class MusicApp:
     def _on_theme_changed(self, new_theme):
         """Called when theme is changed"""
         logger.info(f"Theme changed to: {new_theme}")
+
+        from settings_window import SettingsWindow
+        if SettingsWindow.is_open():
+            for window in SettingsWindow._open_windows[:]:
+                try:
+                    window._on_close()
+                except:
+                    pass
+            SettingsWindow._open_windows.clear()
 
         text_color = "#FFFFFF" if new_theme == "dark" else "#000000"
         hover_color = "#2B2B2B" if new_theme == "dark" else "#E0E0E0"
@@ -656,7 +721,6 @@ class MusicApp:
                     self.file_btn.configure(text="Selected file")
 
                 if self.player.playback_active and self.player.pause_flag.is_set():
-
                     if not hasattr(self, '_originally_paused_file'):
                         self._originally_paused_file = previous_file
                         logger.info(f"Set originally paused file to: {previous_file}")
@@ -685,11 +749,12 @@ class MusicApp:
                     else:
                         self._update_play_button_state("ready")
                 else:
-                    self._update_play_button_state("disabled")
+                    self._update_play_button_state("ready")
                     
         except Exception as e:
             logger.error(f"File selection failed: {e}")
             messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
+            self._update_play_button_state("ready")
 
     def _play_song(self):
         if not self._check_sky_running():

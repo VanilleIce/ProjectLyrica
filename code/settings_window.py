@@ -694,14 +694,20 @@ class SettingsWindow:
                 messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_reset_error'))
 
     def _on_close(self):
-        """Close the window"""
+        """Close the window and release all grabs"""
         try:
+            try:
+                self.window.grab_release()
+            except:
+                pass
+
             if self in SettingsWindow._open_windows:
                 SettingsWindow._open_windows.remove(self)
+
             if hasattr(self, 'window') and self.window.winfo_exists():
                 self.window.destroy()
+                
         except Exception as e:
-            logger.error(f"Error closing settings window: {e}")
             SettingsWindow._open_windows.clear()
 
     @classmethod
