@@ -4,47 +4,54 @@
     <!-- MAIN APPLICATION TEXTS -->
     <!-- ==================== -->
     <translation key="project_title">Project Lyrica</translation>
-    <translation key="file_select_title">Select song</translation>
+    <translation key="file_select_title">Select Song</translation>
     <translation key="play_button_text">▶ Play</translation>
-    <translation key="supported_formats">Supported formats</translation>
+    <translation key="supported_formats">Supported Formats</translation>
 
     <!-- ================= -->
     <!-- WARNINGS & ERRORS -->
     <!-- ================= -->
     <translation key="warning_title">Warning</translation>
     <translation key="error_title">Error</translation>
-    <translation key="choose_song_warning">Please select a song before proceeding.</translation>
-    <translation key="play_error_message">Error playing the music</translation>
+    <translation key="choose_song_warning">Please select a song</translation>
+    <translation key="play_error_message">Error playing music</translation>
     <translation key="security_error_path">Unauthorized file path</translation>
     <translation key="invalid_file_format">Invalid file format. Supported: .json, .txt, .skysheet</translation>
     <translation key="sky_window_not_found">Sky window not found</translation>
-    <translation key="window_focus_error">Window could not be focused</translation>
-    <translation key="browser_open_error">Browser could not be opened</translation>
+    <translation key="window_focus_error">Could not focus window</translation>
+    <translation key="browser_open_error">Could not open browser</translation>
     <translation key="sky_not_running">Sky must be running!</translation>
-    <translation key="missing_song_notes">Missing song data (songNotes)</translation>
+    <translation key="missing_song_notes">Song data missing (songNotes)</translation>
     <translation key="invalid_speed">Invalid speed! Must be greater than 0.</translation>
     <translation key="invalid_song_format">Invalid song format</translation>
+
+    <translation key="sky_only_warning">Only works in Sky! Please start Sky Children of the Light.</translation>
+    <translation key="sky_window_focus_error">Could not focus Sky window. Make sure Sky is running and visible.</translation>
+
+    <translation key="speed_too_slow">Speed too slow. Minimum speed is {min_speed}. Setting to {min_speed_again}.</translation>
+    <translation key="speed_too_fast">Speed too fast. Maximum speed is {max_speed}. Setting to {max_speed_again}.</translation>
+    <translation key="speed_setting_failed">Failed to set speed: {error}</translation>
 
     <!-- ================= -->
     <!-- MUSIC PLAYER FUNCTIONS -->
     <!-- ================= -->
-    <translation key="key_press">Key press</translation>
+    <translation key="key_press">Key Press</translation>
     <translation key="enabled">Enabled</translation>
     <translation key="disabled">Disabled</translation>
-    <translation key="duration">Key press duration</translation>
+    <translation key="duration">Key Press Duration</translation>
     <translation key="speed_control">Speed</translation>
-    <translation key="current_speed">Current speed</translation>
+    <translation key="current_speed">Current Speed</translation>
     <translation key="preset">Preset</translation>
-
+    
     <!-- ================= -->
     <!-- LANGUAGE & LAYOUT -->
     <!-- ================= -->
     <translation key="language_window_title">Language Selection</translation>
     <translation key="select_language">Select language:</translation>
-    <translation key="language_saved">Language has been saved</translation>
+    <translation key="language_saved">Language saved</translation>
     <translation key="save_button_text">Save</translation>
-    <translation key="smooth_ramping">Smooth Transitions</translation>
-    <translation key="smooth_ramping_info">Smoothly adjusts speed at the beginning and end of the song for more natural transitions.</translation>
+    <translation key="smooth_ramping">Smooth Ramping</translation>
+    <translation key="smooth_ramping_info">Smooth speed change at the beginning and end of the song for more natural transitions.</translation>
     <translation key="playing_button_text">Playing...</translation>
     <translation key="paused_button_text">Paused</translation>
     <translation key="restart_button_text">Restart?</translation>
@@ -61,12 +68,141 @@
     <!-- ================= -->
     <!-- SkyChecker -->
     <!-- ================= -->
-    <translation key="window_settings_title">Sky.exe selection</translation>
-    <translation key="select_sky_exe_instruction">Please select the Sky.exe:</translation>
+    <translation key="window_settings_title">Sky.exe Selection</translation>
+    <translation key="select_sky_exe_instruction">Please select the Sky.exe file:</translation>
     <translation key="select_sky_exe">Select Sky.exe</translation>
-    <translation key="exe_path_required">You must select the Sky. exe to continue</translation>
-    <translation key="exe_path_required_exit">The application is terminated because the Sky.exe is required</translation>
+    <translation key="exe_path_required">You must select Sky.exe to continue</translation>
+    <translation key="exe_path_required_exit">Application will exit because Sky.exe is required</translation>
     <translation key="must_select_sky">Please select the Sky.exe file</translation>
     <translation key="exe_path_invalid">The selected file does not exist</translation>
-    
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">Settings</translation>
+    <translation key="info_title">Information</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">Game Settings</translation>
+    <translation key="settings_sky_path">Sky.exe Path</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">Playback Settings</translation>
+    <translation key="settings_key_durations">Key Press Durations</translation>
+    <translation key="settings_key_durations_hint">(comma-separated seconds)</translation>
+    <translation key="settings_speed_presets">Speeds</translation>
+    <translation key="settings_speed_presets_hint">(comma-separated values)</translation>
+    <translation key="settings_custom_keys">Custom Keys</translation>
+    <translation key="settings_edit_keys">Edit Keys</translation>
+    <translation key="settings_custom_keys_status">{count} keys customized</translation>
+    <translation key="settings_using_default_layout">Using default layout</translation>
+    <translation key="settings_custom_active">Custom (active)</translation>
+    <translation key="settings_custom_available">Custom available</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">Delays</translation>
+    <translation key="settings_initial_delay">Start Delay</translation>
+    <translation key="settings_pause_delay">Pause Delay</translation>
+
+    <!-- ================= -->
+    <!-- Speed Transitions -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">Speed Transitions</translation>
+    <translation key="settings_ramping_start">Start Steps</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">End Steps</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">After Pause Steps</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">Interface</translation>
+    <translation key="settings_language">Language</translation>
+    <translation key="settings_theme">Theme</translation>
+    <translation key="theme_dark">Dark</translation>
+    <translation key="theme_light">Light</translation>
+    <translation key="settings_keyboard_layout">Keyboard Layout</translation>
+    <translation key="settings_pause_key">Pause Key</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">Save</translation>
+    <translation key="settings_reset">Reset</translation>
+    <translation key="settings_cancel">Cancel</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">Settings saved!</translation>
+    <translation key="settings_save_error">Error saving settings</translation>
+    <translation key="settings_reset_confirm">Reset all settings to default values?</translation>
+    <translation key="settings_reset_success">Settings reset!</translation>
+    <translation key="settings_reset_error">Error resetting</translation>
+    <translation key="settings_restart_required">Some settings require restart to take effect.</translation>
+    <translation key="settings_restart_now">Restart now?</translation>
+    <translation key="settings_restart_later">Settings saved. Please restart the app later.</translation>
+    <translation key="settings_restart_failed">Automatic restart failed. Please restart the app manually.</translation>
+    <translation key="custom_layout_not_found">Custom layout not found. Automatically switched to {fallback_layout}.</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">Please enter valid numbers</translation>
+    <translation key="settings_error_positive">Please enter positive values</translation>
+    <translation key="settings_error_empty">Please fill all fields</translation>
+    <translation key="settings_error_pause_key">Pause key must be exactly one character</translation>
+    <translation key="settings_error_general">Invalid input</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">Key Layout Editor</translation>
+    <translation key="key_editor_instructions">Click on a key below and then press the desired layout on your keyboard. Escape to cancel, Backspace to delete.</translation>
+    <translation key="key_editor_current_key">Current Key:</translation>
+    <translation key="key_editor_no_selection">No key selected</translation>
+    <translation key="key_editor_press_key">Press a key...</translation>
+    <translation key="key_editor_empty">(empty)</translation>
+    <translation key="key_editor_delete">Delete Custom</translation>
+    <translation key="key_editor_changes">{changed}/{total} keys changed</translation>
+    <translation key="key_editor_saved_settings_hint">Custom layout saved. Please click 'Save' in Settings for changes to take effect.</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">Default</translation>
+    <translation key="key_editor_custom">Customized</translation>
+    <translation key="key_editor_empty_error">Key {key} cannot be empty</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">Save</translation>
+    <translation key="key_editor_reset_all">Reset All</translation>
+    <translation key="key_editor_import">Import</translation>
+    <translation key="key_editor_cancel">Cancel</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">Key layout saved!</translation>
+    <translation key="key_editor_save_error">Error saving key layout</translation>
+    <translation key="key_editor_reset_confirm">Reset all keys to default values?</translation>
+    <translation key="key_editor_import_title">Import Key Layout</translation>
+    <translation key="key_editor_import_success">Key layout imported</translation>
+    <translation key="key_editor_import_error">Error importing key layout</translation>
+    <translation key="key_editor_no_changes">No changes made to custom layout.</translation>
+    <translation key="key_editor_unconfirm_changes">You have unsaved changes. Save before closing?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Delete custom layout and return to standard layout?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Custom layout saved and activated.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">Error deleting custom layout.</translation>
+
 </translations>

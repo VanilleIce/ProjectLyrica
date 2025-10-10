@@ -25,6 +25,13 @@
     <translation key="invalid_speed">유효하지 않은 속도! 0보다 커야 합니다.</translation>
     <translation key="invalid_song_format">무효한 노래 형식</translation>
 
+    <translation key="sky_only_warning">Sky에서만 작동합니다! Sky Children of the Light를 시작해 주세요.</translation>
+    <translation key="sky_window_focus_error">Sky 창에 포커스를 맞출 수 없습니다. Sky가 실행 중이고 표시되는지 확인하세요.</translation>
+
+    <translation key="speed_too_slow">속도가 너무 느립니다. 최소 속도는 {min_speed}입니다. {min_speed_again}으로 설정합니다.</translation>
+    <translation key="speed_too_fast">속도가 너무 빠릅니다. 최대 속도는 {max_speed}입니다. {max_speed_again}으로 설정합니다.</translation>
+    <translation key="speed_setting_failed">속도 설정 오류: {error}</translation>
+
     <!-- ================= -->
     <!-- 음악 플레이어 기능 -->
     <!-- ================= -->
@@ -35,7 +42,7 @@
     <translation key="speed_control">속도</translation>
     <translation key="current_speed">현재 속도</translation>
     <translation key="preset">프리셋</translation>
-
+    
     <!-- ================= -->
     <!-- 언어 및 레이아웃 -->
     <!-- ================= -->
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">Sky.exe가 필요하여 애플리케이션이 종료됩니다</translation>
     <translation key="must_select_sky">Sky.exe 파일을 선택해 주세요</translation>
     <translation key="exe_path_invalid">선택한 파일이 존재하지 않습니다</translation>
-    
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">설정</translation>
+    <translation key="info_title">정보</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">게임 설정</translation>
+    <translation key="settings_sky_path">Sky.exe 경로</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">재생 설정</translation>
+    <translation key="settings_key_durations">키 누름 시간</translation>
+    <translation key="settings_key_durations_hint">(쉼표로 구분된 초)</translation>
+    <translation key="settings_speed_presets">속도</translation>
+    <translation key="settings_speed_presets_hint">(쉼표로 구분된 값)</translation>
+    <translation key="settings_custom_keys">사용자 지정 키</translation>
+    <translation key="settings_edit_keys">키 편집</translation>
+    <translation key="settings_custom_keys_status">{count} 키 사용자 지정됨</translation>
+    <translation key="settings_using_default_layout">기본 레이아웃 사용 중</translation>
+    <translation key="settings_custom_active">사용자 지정 (활성)</translation>
+    <translation key="settings_custom_available">사용자 지정 사용 가능</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">지연 설정</translation>
+    <translation key="settings_initial_delay">시작 지연</translation>
+    <translation key="settings_pause_delay">일시 정지 지연</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">속도 전환</translation>
+    <translation key="settings_ramping_start">시작 단계</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">종료 단계</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">일시 정지 후 단계</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">인터페이스</translation>
+    <translation key="settings_language">언어</translation>
+    <translation key="settings_theme">테마</translation>
+    <translation key="theme_dark">다크</translation>
+    <translation key="theme_light">라이트</translation>
+    <translation key="settings_keyboard_layout">키보드 레이아웃</translation>
+    <translation key="settings_pause_key">일시 정지 키</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">저장</translation>
+    <translation key="settings_reset">재설정</translation>
+    <translation key="settings_cancel">취소</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">설정이 저장되었습니다!</translation>
+    <translation key="settings_save_error">설정 저장 중 오류 발생</translation>
+    <translation key="settings_reset_confirm">모든 설정을 기본값으로 재설정하시겠습니까?</translation>
+    <translation key="settings_reset_success">설정이 재설정되었습니다!</translation>
+    <translation key="settings_reset_error">재설정 중 오류 발생</translation>
+    <translation key="settings_restart_required">일부 설정을 적용하려면 애플리케이션을 다시 시작해야 합니다.</translation>
+    <translation key="settings_restart_now">지금 다시 시작하시겠습니까?</translation>
+    <translation key="settings_restart_later">설정이 저장되었습니다. 나중에 애플리케이션을 다시 시작해 주세요.</translation>
+    <translation key="settings_restart_failed">자동 재시작에 실패했습니다. 수동으로 애플리케이션을 다시 시작해 주세요.</translation>
+    <translation key="custom_layout_not_found">사용자 지정 레이아웃을 찾을 수 없습니다. 자동으로 {fallback_layout}(으)로 전환되었습니다.</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">유효한 숫자를 입력해 주세요</translation>
+    <translation key="settings_error_positive">양의 값을 입력해 주세요</translation>
+    <translation key="settings_error_empty">모든 필드를 채워 주세요</translation>
+    <translation key="settings_error_pause_key">일시 정지 키는 정확히 한 문자여야 합니다</translation>
+    <translation key="settings_error_general">잘못된 입력</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">키 할당 편집기</translation>
+    <translation key="key_editor_instructions">아래 키를 클릭한 후 키보드에서 원하는 할당을 누르세요. 취소는 Esc, 삭제는 Backspace입니다.</translation>
+    <translation key="key_editor_current_key">현재 키:</translation>
+    <translation key="key_editor_no_selection">선택된 키 없음</translation>
+    <translation key="key_editor_press_key">키를 누르세요...</translation>
+    <translation key="key_editor_empty">(비어 있음)</translation>
+    <translation key="key_editor_delete">사용자 지정 삭제</translation>
+    <translation key="key_editor_changes">{changed}/{total} 키 변경됨</translation>
+    <translation key="key_editor_saved_settings_hint">사용자 지정 레이아웃이 저장되었습니다. 변경 사항을 적용하려면 설정에서 '저장'을 클릭하세요.</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">기본값</translation>
+    <translation key="key_editor_custom">사용자 지정</translation>
+    <translation key="key_editor_empty_error">키 {key}는 비워둘 수 없습니다</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">저장</translation>
+    <translation key="key_editor_reset_all">모두 재설정</translation>
+    <translation key="key_editor_import">가져오기</translation>
+    <translation key="key_editor_cancel">취소</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">키 할당이 저장되었습니다!</translation>
+    <translation key="key_editor_save_error">키 할당 저장 중 오류 발생</translation>
+    <translation key="key_editor_reset_confirm">모든 키를 기본값으로 재설정하시겠습니까?</translation>
+    <translation key="key_editor_import_title">키 할당 가져오기</translation>
+    <translation key="key_editor_import_success">키 할당을 가져왔습니다</translation>
+    <translation key="key_editor_import_error">키 할당 가져오기 중 오류 발생</translation>
+    <translation key="key_editor_no_changes">사용자 지정 레이아웃에 변경 사항이 없습니다.</translation>
+    <translation key="key_editor_unconfirm_changes">저장되지 않은 변경 사항이 있습니다. 닫기 전에 저장하시겠습니까?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">사용자 지정 레이아웃을 삭제하고 기본 레이아웃으로 돌아가시겠습니까?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">사용자 지정 레이아웃이 저장되고 활성화되었습니다.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">사용자 지정 레이아웃 삭제 중 오류 발생.</translation>
+
 </translations>

@@ -25,6 +25,13 @@
     <translation key="invalid_speed">无效的速度！必须大于0。</translation>
     <translation key="invalid_song_format">无效的歌曲格式</translation>
 
+    <translation key="sky_only_warning">仅在 Sky 中有效！请启动 Sky Children of the Light。</translation>
+    <translation key="sky_window_focus_error">无法聚焦 Sky 窗口。请确保 Sky 正在运行并且可见。</translation>
+
+    <translation key="speed_too_slow">速度太慢。最小速度是 {min_speed}。将设置为 {min_speed_again}。</translation>
+    <translation key="speed_too_fast">速度太快。最大速度是 {max_speed}。将设置为 {max_speed_again}。</translation>
+    <translation key="speed_setting_failed">设置速度时出错：{error}</translation>
+
     <!-- ================= -->
     <!-- 音乐播放器功能 -->
     <!-- ================= -->
@@ -35,7 +42,7 @@
     <translation key="speed_control">速度</translation>
     <translation key="current_speed">当前速度</translation>
     <translation key="preset">预设</translation>
-
+    
     <!-- ================= -->
     <!-- 语言和布局 -->
     <!-- ================= -->
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">应用程序将退出，因为需要 Sky.exe</translation>
     <translation key="must_select_sky">请选择 Sky.exe 文件</translation>
     <translation key="exe_path_invalid">所选文件不存在</translation>
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">设置</translation>
+    <translation key="info_title">信息</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">游戏设置</translation>
+    <translation key="settings_sky_path">Sky.exe 路径</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">播放设置</translation>
+    <translation key="settings_key_durations">按键持续时间</translation>
+    <translation key="settings_key_durations_hint">(逗号分隔的秒数)</translation>
+    <translation key="settings_speed_presets">速度</translation>
+    <translation key="settings_speed_presets_hint">(逗号分隔的值)</translation>
+    <translation key="settings_custom_keys">自定义按键</translation>
+    <translation key="settings_edit_keys">编辑按键</translation>
+    <translation key="settings_custom_keys_status">{count} 个按键已自定义</translation>
+    <translation key="settings_using_default_layout">使用默认布局</translation>
+    <translation key="settings_custom_active">自定义（活动）</translation>
+    <translation key="settings_custom_available">自定义可用</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">延迟</translation>
+    <translation key="settings_initial_delay">开始延迟</translation>
+    <translation key="settings_pause_delay">暂停延迟</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">速度过渡</translation>
+    <translation key="settings_ramping_start">开始步骤</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">结束步骤</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">暂停后步骤</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">界面</translation>
+    <translation key="settings_language">语言</translation>
+    <translation key="settings_theme">主题</translation>
+    <translation key="theme_dark">深色</translation>
+    <translation key="theme_light">浅色</translation>
+    <translation key="settings_keyboard_layout">键盘布局</translation>
+    <translation key="settings_pause_key">暂停键</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">保存</translation>
+    <translation key="settings_reset">重置</translation>
+    <translation key="settings_cancel">取消</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">设置已保存！</translation>
+    <translation key="settings_save_error">保存设置时出错</translation>
+    <translation key="settings_reset_confirm">将所有设置重置为默认值？</translation>
+    <translation key="settings_reset_success">设置已重置！</translation>
+    <translation key="settings_reset_error">重置时出错</translation>
+    <translation key="settings_restart_required">某些设置需要重启应用程序才能生效。</translation>
+    <translation key="settings_restart_now">立即重启？</translation>
+    <translation key="settings_restart_later">设置已保存。请稍后重启应用程序。</translation>
+    <translation key="settings_restart_failed">自动重启失败。请手动重启应用程序。</translation>
+    <translation key="custom_layout_not_found">未找到自定义布局。已自动切换到 {fallback_layout}。</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">请输入有效的数字</translation>
+    <translation key="settings_error_positive">请输入正值</translation>
+    <translation key="settings_error_empty">请填写所有字段</translation>
+    <translation key="settings_error_pause_key">暂停键必须恰好是一个字符</translation>
+    <translation key="settings_error_general">无效输入</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">按键映射编辑器</translation>
+    <translation key="key_editor_instructions">点击下面的按键，然后在键盘上按下所需的映射。Esc 取消，Backspace 删除。</translation>
+    <translation key="key_editor_current_key">当前按键：</translation>
+    <translation key="key_editor_no_selection">未选择按键</translation>
+    <translation key="key_editor_press_key">按下按键...</translation>
+    <translation key="key_editor_empty">(空)</translation>
+    <translation key="key_editor_delete">删除自定义</translation>
+    <translation key="key_editor_changes">{changed}/{total} 个按键已修改</translation>
+    <translation key="key_editor_saved_settings_hint">自定义布局已保存。请在设置中点击"保存"以使更改生效。</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">默认</translation>
+    <translation key="key_editor_custom">自定义</translation>
+    <translation key="key_editor_empty_error">按键 {key} 不能为空</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">保存</translation>
+    <translation key="key_editor_reset_all">全部重置</translation>
+    <translation key="key_editor_import">导入</translation>
+    <translation key="key_editor_cancel">取消</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">按键映射已保存！</translation>
+    <translation key="key_editor_save_error">保存按键映射时出错</translation>
+    <translation key="key_editor_reset_confirm">将所有按键重置为默认值？</translation>
+    <translation key="key_editor_import_title">导入按键映射</translation>
+    <translation key="key_editor_import_success">按键映射已导入</translation>
+    <translation key="key_editor_import_error">导入按键映射时出错</translation>
+    <translation key="key_editor_no_changes">未对自定义布局进行任何更改。</translation>
+    <translation key="key_editor_unconfirm_changes">您有未保存的更改。关闭前是否保存？</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">删除自定义布局并返回默认布局？</translation>
+    <translation key="key_editor_custom_layout_saved_activated">自定义布局已保存并激活。</translation>
+    <translation key="key_editor_error_deleting_custom_layout">删除自定义布局时出错。</translation>
 
 </translations>

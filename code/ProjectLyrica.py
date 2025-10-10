@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.5.2.1"
+VERSION = "2.6.0"
 
 # -------------------------------
 # Music App
@@ -38,24 +38,91 @@ VERSION = "2.5.2.1"
 class MusicApp:
     def __init__(self):
         setup_logging(VERSION)
-        self._init_language()
         self._check_running()
+
+        self.config = ConfigManager.get_config()
+
+        try:
+            custom_was_missing, fallback_layout = ConfigManager.check_and_handle_missing_custom()
+            if custom_was_missing:
+                logger.info(f"Custom layout was missing, switched to {fallback_layout}")
+                self.config = ConfigManager.get_config()
+        except Exception as e:
+            logger.error(f"Error handling missing custom layout: {e}")
+
+        self._init_language()
 
         if ConfigManager.get_value("game_settings.sky_exe_path") is None:
             SkyChecker.show_initial_settings()
+            self.config = ConfigManager.get_config()
 
-        self._init_player()
+        self._last_sky_check = 0
+        self._sky_running_cache = False
+
+        self._init_player()    
         self._init_gui()
+
+        self.current_play_state = "ready"
+        self._start_sky_check()
+
         self._setup_key_listener()
 
         ConfigManager.log_system_info(VERSION)
 
+    def _start_sky_check(self):
+        def check_sky():
+            try:
+                if self.current_play_state in ["ready", "disabled"]:
+                    self._update_play_button_state("ready")
+                
+                self.root.after(2000, check_sky)
+            except Exception as e:
+                logger.error(f"Sky check timer error: {e}")
+                self.root.after(5000, check_sky)
+        
+        check_sky()
+
+    def _update_play_button_based_on_sky(self):
+        if not hasattr(self, 'player') or self.player is None:
+            self._update_play_button_state("disabled")
+            return
+            
+        sky_running = self._check_sky_running()
+        has_file = bool(self.selected_file)
+
+        if self.player.playback_active and self.player.pause_flag.is_set():
+            self._update_play_button_state("paused")
+        elif not sky_running or not has_file:
+            self._update_play_button_state("disabled")
+        else:
+            self._update_play_button_state("ready")
+
+    def _check_sky_running(self, use_cache=True):
+        try:
+            current_time = time.time()
+            
+            if use_cache and current_time - self._last_sky_check < 1:
+                return self._sky_running_cache
+            
+            if hasattr(self, 'player') and self.player is not None:
+                window = self.player._find_sky_window()
+                result = window is not None
+
+                self._sky_running_cache = result
+                self._last_sky_check = current_time
+                return result
+            return False
+        except Exception as e:
+            logger.error(f"Error checking if Sky is running: {e}")
+            return False
+
     def _init_language(self):
         LanguageManager.init()
-        ui_language = ConfigManager.get_value("ui_settings.selected_language")
+        ui_language = self.config.get("ui_settings", {}).get("selected_language")
         
         if not ui_language:
             LanguageWindow.show()
+            self.config = ConfigManager.get_config()
 
     def _check_running(self):
         self._mutex = ctypes.windll.kernel32.CreateMutexW(None, False, "ProjectLyricaMutex")
@@ -64,8 +131,9 @@ class MusicApp:
             sys.exit(1)
 
     def _init_player(self):
-        config = ConfigManager.get_config()
-        self.player = MusicPlayer()
+        config = self.config
+        
+        self.player = MusicPlayer(config)
         self.selected_file = None
 
         playback_settings = config.get("playback_settings", {})
@@ -99,9 +167,8 @@ class MusicApp:
             self.root.iconbitmap(resource_path("resources/icons/icon.ico"))
             self.root.protocol('WM_DELETE_WINDOW', self._shutdown)
             
-            theme = ConfigManager.get_value("ui_settings.theme")
+            theme = self.config.get("ui_settings", {}).get("theme", "dark")
             ctk.set_appearance_mode(theme)
-            self.theme_icon = "🌞" if theme == "light" else "🌙"
             
             self.update_status, self.latest_version, self.update_url = self._check_updates()
             self._create_gui_components()
@@ -221,7 +288,10 @@ class MusicApp:
         return btn
 
     def _update_play_button_state(self, state):
-        """Robust play button state update for CustomTkinter"""
+        logger.debug(f"Update play button state: {state}")
+        
+        self.current_play_state = state
+        
         if state == "playing":
             self.play_btn.configure(
                 text=LanguageManager.get("playing_button_text"),
@@ -232,13 +302,16 @@ class MusicApp:
                 state="disabled"
             )
         elif state == "paused":
-            has_different_file = (hasattr(self, '_originally_paused_file') and 
-                                self._originally_paused_file is not None and 
-                                self.selected_file is not None and
-                                self._originally_paused_file != self.selected_file)
+            has_different_file = False
+            if (hasattr(self, '_originally_paused_file') and 
+                self._originally_paused_file is not None and 
+                self.selected_file is not None):
+                
+                has_different_file = (self._originally_paused_file != self.selected_file)
+            
+            pause_key_hint = LanguageManager.get("pause_key_hint").replace("[pause_key]", self.pause_key)
             
             if has_different_file:
-                pause_key_hint = LanguageManager.get("pause_key_hint").replace("[pause_key]", self.pause_key)
                 self.play_btn.configure(
                     text=f"{LanguageManager.get('play_button_text')}\n{pause_key_hint}",
                     command=self._play_song,
@@ -248,9 +321,7 @@ class MusicApp:
                     state="normal",
                     height=50
                 )
-                logger.debug(f"Mixed state (purple) - originally paused: {self._originally_paused_file}, selected: {self.selected_file}")
             else:
-                pause_key_hint = LanguageManager.get("pause_key_hint").replace("[pause_key]", self.pause_key)
                 self.play_btn.configure(
                     text=f"{LanguageManager.get('restart_button_text')}\n{pause_key_hint}",
                     command=self._play_song,
@@ -260,17 +331,41 @@ class MusicApp:
                     state="normal",
                     height=50
                 )
-                logger.debug(f"Restart state (orange) - originally paused: {self._originally_paused_file}, selected: {self.selected_file}")
+                
         elif state == "ready":
-            self.play_btn.configure(
-                text=LanguageManager.get("play_button_text"),
-                command=self._play_song,
-                fg_color="#2b6cb0",
-                hover_color="#1f538d",
-                text_color="#ffffff",
-                state="normal",
-                height=40
-            )
+            sky_running = self._check_sky_running(use_cache=False)
+            has_file = bool(self.selected_file)
+            
+            if sky_running and has_file:
+                self.play_btn.configure(
+                    text=LanguageManager.get("play_button_text"),
+                    command=self._play_song,
+                    fg_color="#2b6cb0",
+                    hover_color="#1f538d",
+                    text_color="#ffffff",
+                    state="normal",
+                    height=40
+                )
+            elif not sky_running:
+                self.play_btn.configure(
+                    text=LanguageManager.get("sky_only_warning"),
+                    command=None,
+                    fg_color="#666666",
+                    hover_color="#666666",
+                    text_color="#aaaaaa",
+                    state="disabled",
+                    height=40
+                )
+            else:
+                self.play_btn.configure(
+                    text=LanguageManager.get("play_button_text"),
+                    command=None,
+                    fg_color="#666666",
+                    hover_color="#666666",
+                    text_color="#aaaaaa",
+                    state="disabled",
+                    height=40
+                )
         elif state == "disabled":
             self.play_btn.configure(
                 text=LanguageManager.get("play_button_text"),
@@ -285,19 +380,10 @@ class MusicApp:
         self.root.update_idletasks()
 
     def _stop_song(self):
-        """Stoppt die Wiedergabe komplett"""
+        """Stops playback completely"""
         if self.player.playback_active:
             self.player.stop()
             self._update_play_button_state("ready")
-
-    def _resume_from_pause(self):
-        """Setzt die Wiedergabe fort - gleiche Funktion wie Pause-Key"""
-        if self.player.pause_flag.is_set():
-            self.player.pause_flag.clear()
-            self._update_play_button_state("playing")
-            
-            if window := self.player._find_sky_window():
-                self.player._focus_window(window)
 
     def _setup_gui_layout(self):
         status_frame = ctk.CTkFrame(self.root, height=1, fg_color="transparent")
@@ -312,16 +398,20 @@ class MusicApp:
         )
         self.version_link.pack(side="right")
         self.version_link.bind("<Button-1>", self._open_releases)
+
+        current_theme = self.config.get("ui_settings", {}).get("theme", "dark")
         
-        self.theme_btn = ctk.CTkButton(
+        self.settings_btn = ctk.CTkButton(
             status_frame,
-            text=self.theme_icon,
-            width=30,
-            height=30,
+            text="⚙️", 
+            width=8,
+            height=20,
             font=("Arial", 16),
-            command=self._toggle_theme
+            command=self._open_settings,
+            fg_color="transparent",
+            border_width=0
         )
-        self.theme_btn.pack(side="right", padx=(0, 5))
+        self.settings_btn.pack(side="right", padx=(0, 5))
         
         ctk.CTkLabel(self.root, text=LanguageManager.get("project_title"), 
                     font=("Arial", 18, "bold")).pack(pady=10)
@@ -332,12 +422,116 @@ class MusicApp:
         
         self.play_btn.pack(pady=10)
         
-        self._update_play_button_state("disabled")
-        
         if not self.smooth_ramping_enabled and self.show_ramping_info:
             self.ramping_frame.pack(pady=5, before=self.play_btn)
         
         self._adjust_window_size()
+
+    def _open_settings(self):
+        from settings_window import SettingsWindow
+        
+        SettingsWindow(
+            parent=self.root,
+            theme_callback=self._on_theme_changed,
+            timing_callback=self._on_timing_changed,
+            playback_callback=self._on_playback_changed,
+            pause_key_callback=self._on_pause_key_changed
+        )
+
+    def _on_pause_key_changed(self, new_pause_key):
+        logger.info(f"Pause key changed to: '{new_pause_key}'")
+        self.pause_key = new_pause_key
+        
+        if self.current_play_state == "paused":
+            self._update_play_button_state("paused")
+
+    def _on_theme_changed(self, new_theme):
+        """Called when theme is changed"""
+        logger.info(f"Theme changed to: {new_theme}")
+
+        from settings_window import SettingsWindow
+        if SettingsWindow.is_open():
+            for window in SettingsWindow._open_windows[:]:
+                try:
+                    window._on_close()
+                except:
+                    pass
+            SettingsWindow._open_windows.clear()
+
+        text_color = "#FFFFFF" if new_theme == "dark" else "#000000"
+        hover_color = "#2B2B2B" if new_theme == "dark" else "#E0E0E0"
+        
+        self.settings_btn.configure(
+            text_color=text_color,
+            hover_color=hover_color
+        )
+
+    def _on_timing_changed(self, timing_updates):
+        """Called when timing settings are changed"""
+        logger.info(f"Timing settings updated: {timing_updates}")
+
+        if hasattr(self, 'player'):
+            # Delays
+            self.player.initial_delay = timing_updates["delays"]["initial_delay"]
+            self.player.pause_resume_delay = timing_updates["delays"]["pause_resume_delay"]
+            
+            # Ramping
+            self.player.ramp_begin_config = timing_updates["ramping"]["begin"]
+            self.player.ramp_end_config = timing_updates["ramping"]["end"]
+            self.player.ramp_after_pause_config = timing_updates["ramping"]["after_pause"]
+            
+            logger.info("MusicPlayer timing settings updated immediately")
+
+    def _on_playback_changed(self, playback_updates):
+        """Called when playback settings are changed"""
+        logger.info(f"Playback settings updated: {playback_updates}")
+        
+        if hasattr(self, 'speed_presets'):
+            self.speed_presets = playback_updates["speed_presets"]
+            self._update_speed_preset_buttons()
+        
+        if hasattr(self, 'player'):
+            self.player.key_press_durations = playback_updates["key_press_durations"]
+            logger.info("MusicPlayer playback settings updated immediately")
+            
+        if hasattr(self, 'duration_presets'):
+            self.duration_presets = playback_updates["key_press_durations"]
+            self._update_duration_preset_buttons()
+
+    def _update_speed_preset_buttons(self):
+        """Updates the speed preset buttons"""
+        if hasattr(self, 'speed_preset_frame') and self.speed_preset_frame.winfo_exists():
+            for widget in self.speed_preset_frame.winfo_children():
+                widget.destroy()
+            
+            if hasattr(self, 'speed_presets') and self.speed_presets:
+                for speed in self.speed_presets:
+                    if speed <= 0:
+                        continue
+                        
+                    btn = ctk.CTkButton(
+                        self.speed_preset_frame, 
+                        text=str(speed), 
+                        width=40,
+                        height=25,
+                        font=("Arial", 12),
+                        command=lambda s=speed: self._set_speed(s)
+                    )
+                    btn.pack(side="left", padx=2)
+        
+    def _update_duration_preset_buttons(self):
+        """Updates the duration preset buttons"""
+        if hasattr(self, 'preset_frame') and self.preset_frame.winfo_exists():
+            for widget in self.preset_frame.winfo_children():
+                widget.destroy()
+            
+            if hasattr(self, 'duration_presets') and self.duration_presets:
+                for preset in self.duration_presets:
+                    btn = ctk.CTkButton(
+                        self.preset_frame, text=f"{preset} s", width=50,
+                        command=lambda p=preset: self._apply_preset(p)
+                    )
+                    btn.pack(side="left", padx=2)
 
     def _adjust_window_size(self):
         try:
@@ -390,20 +584,6 @@ class MusicApp:
         self._adjust_window_size()
         logger.info(f"Smooth ramping {'enabled' if self.smooth_ramping_enabled else 'disabled'}")
 
-    def _toggle_theme(self):
-        try:
-            current = ctk.get_appearance_mode().lower()
-            new_theme = "light" if current == "dark" else "dark"
-            ctk.set_appearance_mode(new_theme)
-            self.theme_btn.configure(text="🌞" if new_theme == "light" else "🌙")
-            ConfigManager.save({
-                "ui_settings": {
-                    "theme": new_theme
-                }
-            })
-        except Exception as e:
-            logger.error(f"Theme toggle failed: {e}")
-
     def _open_releases(self, event):
         try:
             if self.update_status == "update" and self.update_url:
@@ -414,8 +594,6 @@ class MusicApp:
             messagebox.showerror("Error", f"Browser error: {e}")
 
     def _play_thread(self, song_data):
-        self.root.after(0, lambda: self._update_play_button_state("playing"))
-        
         logger.info("Starting playback thread")
         
         try:
@@ -441,7 +619,6 @@ class MusicApp:
                         break
                     else:
                         logger.warning(f"Failed to focus Sky window on attempt {attempt}/{focus_attempts}")
-                        window = self.player._find_sky_window()
                 else:
                     logger.warning(f"No Sky window found on attempt {attempt}/{focus_attempts}")
             except Exception as e:
@@ -452,7 +629,10 @@ class MusicApp:
         
         if not window_focused:
             logger.error(f"Failed to focus Sky window after {focus_attempts} attempts")
-            self.root.after(0, lambda: messagebox.showerror("Error", LanguageManager.get("sky_not_running")))
+            self.root.after(0, lambda: messagebox.showerror(
+                LanguageManager.get("error_title"), 
+                LanguageManager.get("sky_window_focus_error")
+            ))
             self.root.after(0, lambda: self._update_play_button_state("ready"))
             return
         
@@ -483,45 +663,28 @@ class MusicApp:
             self.root.after(0, lambda: self._update_play_button_state("ready"))
 
     def _handle_keypress(self, key):
-        """Handle pause key events with comprehensive state logging"""
+        """Handle pause key events for pause/resume"""
         try:
             if not hasattr(key, 'char') or key.char != self.pause_key:
                 return
 
-            state_info = {
-                'playback_active': self.player.playback_active,
-                'pause_enabled': self.player.pause_enabled,
-                'currently_paused': self.player.pause_flag.is_set(),
-                'song_loaded': bool(self.selected_file)
-            }
-
-            if not state_info['song_loaded']:
-                logger.debug("Pause Ignored - no song loaded")
-                return
-                
-            if not state_info['playback_active']:
-                logger.debug("Pause Ignored - playback not active")
-                return
-                
-            if not state_info['pause_enabled']:
-                logger.debug("Pause Ignored - pause disabled")
+            if not self.selected_file or not self.player.playback_active or not self.player.pause_enabled:
                 return
 
-            if state_info['currently_paused']:
+            if self.player.pause_flag.is_set():
+                logger.info("Resuming playback via pause key")
                 self.player.pause_flag.clear()
                 self.root.after(0, lambda: self._update_play_button_state("playing"))
                 
                 if window := self.player._find_sky_window():
-                    if self.player._focus_window(window):
-                        logger.debug("Successfully focused game window")
-                    else:
-                        logger.debug("Failed to focus game window")
+                    self.player._focus_window(window)
             else:
+                logger.info("Pausing playback via pause key")
                 self.player.pause_flag.set()
 
                 if not hasattr(self, '_originally_paused_file'):
                     self._originally_paused_file = self.selected_file
-                    logger.debug(f"Originally paused file set to: {self._originally_paused_file}")
+                    logger.info(f"Originally paused file set to: {self._originally_paused_file}")
                 
                 self.root.after(0, lambda: self._update_play_button_state("paused"))
                 
@@ -546,6 +709,7 @@ class MusicApp:
             )
             
             if file:
+                previous_file = getattr(self, 'selected_file', None)
                 self.selected_file = file
                 
                 try:
@@ -557,11 +721,20 @@ class MusicApp:
                     self.file_btn.configure(text="Selected file")
 
                 if self.player.playback_active and self.player.pause_flag.is_set():
+                    if not hasattr(self, '_originally_paused_file'):
+                        self._originally_paused_file = previous_file
+                        logger.info(f"Set originally paused file to: {previous_file}")
+                    
+                    has_different_file = (self._originally_paused_file != self.selected_file)
+                    if has_different_file:
+                        logger.info(f"Different file selected during pause - showing PURPLE button")
+                    else:
+                        logger.info(f"Same file selected during pause - showing ORANGE button")
+                        
                     self._update_play_button_state("paused")
-                    logger.info(f"File selected while song is paused - showing appropriate pause state")
                 else:
                     self._update_play_button_state("ready")
-
+                
                 try:
                     relative_path = Path(file).relative_to(Path.cwd())
                     logger.info(f"Selected song: {relative_path}")
@@ -571,39 +744,48 @@ class MusicApp:
             else:
                 if hasattr(self, 'selected_file') and self.selected_file:
                     logger.info("File dialog closed without selection - keeping previous file")
-                    
                     if self.player.playback_active and self.player.pause_flag.is_set():
                         self._update_play_button_state("paused")
                     else:
                         self._update_play_button_state("ready")
                 else:
-                    self._update_play_button_state("disabled")
-                    logger.info("File dialog closed without selection - no previous file")
-                    
+                    self._update_play_button_state("ready")
+                        
         except Exception as e:
             logger.error(f"File selection failed: {e}")
             messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
+            self._update_play_button_state("ready")
 
     def _play_song(self):
+        if not self._check_sky_running(use_cache=False):
+            messagebox.showerror(
+                LanguageManager.get("error_title"),
+                LanguageManager.get("sky_only_warning")
+            )
+            self._update_play_button_state("ready")
+            return
+            
         if not self.selected_file:
             messagebox.showwarning("Warning", LanguageManager.get("choose_song_warning"))
+            self._update_play_button_state("ready")
             return
 
-        if hasattr(self, '_originally_paused_file'):
-            del self._originally_paused_file
-            logger.debug("Cleared originally paused file due to new song play")
-            
-        if self.player.playback_active:
-            self.player.stop()
-            time.sleep(0.1)
-        
         try:
+            if self.player.playback_active:
+                self.player.stop()
+                time.sleep(0.1)
+
+            if hasattr(self, '_originally_paused_file'):
+                del self._originally_paused_file
+                logger.info("Cleared originally paused file for restart")
+
             song = self.player.parse_song(self.selected_file)
+            self._update_play_button_state("playing")
             Thread(target=self._play_thread, args=(song,), daemon=True).start()
+            
         except Exception as e:
             messagebox.showerror("Error", f"{LanguageManager.get('play_error_message')}: {e}")
-
-            self.root.after(0, lambda: self._update_play_button_state("ready"))
+            self._update_play_button_state("ready")
 
     def _set_duration(self, event):
         try:
@@ -638,15 +820,21 @@ class MusicApp:
                 
             if speed < MIN_SPEED:
                 messagebox.showwarning(
-                    "Warning", 
-                    f"Speed too slow. Minimum speed is {MIN_SPEED}. Setting to {MIN_SPEED}."
+                    LanguageManager.get('warning_title'), 
+                    LanguageManager.get('speed_too_slow').format(
+                        min_speed=MIN_SPEED, 
+                        min_speed_again=MIN_SPEED
+                    )
                 )
                 speed = MIN_SPEED
                 
             if speed > MAX_SPEED:
                 messagebox.showwarning(
-                    "Warning", 
-                    f"Speed too fast. Maximum speed is {MAX_SPEED}. Setting to {MAX_SPEED}."
+                    LanguageManager.get('warning_title'), 
+                    LanguageManager.get('speed_too_fast').format(
+                        max_speed=MAX_SPEED,
+                        max_speed_again=MAX_SPEED
+                    )
                 )
                 speed = MAX_SPEED
                 
@@ -656,7 +844,10 @@ class MusicApp:
             
         except Exception as e:
             logger.error(f"Speed setting failed: {e}")
-            messagebox.showerror("Error", f"Failed to set speed: {e}")
+            messagebox.showerror(
+                LanguageManager.get('error_title'), 
+                LanguageManager.get('speed_setting_failed').format(error=str(e))
+            )
 
     def _toggle_keypress(self):
         try:
@@ -714,7 +905,6 @@ class MusicApp:
                 try:
                     if self.key_listener.is_alive():
                         self.key_listener.stop()
-                        time.sleep(0.1)
                 except Exception as e:
                     logger.error(f"Key listener stop failed: {e}")
 
