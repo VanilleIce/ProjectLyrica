@@ -25,6 +25,13 @@
     <translation key="invalid_speed">Ungültige Geschwindigkeit! Muss größer als 0 sein.</translation>
     <translation key="invalid_song_format">Ungültiges Songformat</translation>
 
+    <translation key="sky_only_warning">Funktioniert nur in Sky cotl!</translation>
+    <translation key="sky_window_focus_error">Could not focus Sky window. Make sure Sky is running and visible.</translation>
+
+    <translation key="speed_too_slow">Geschwindigkeit zu langsam. Mindestgeschwindigkeit ist {min_speed}. Wird auf {min_speed_again} gesetzt.</translation>
+    <translation key="speed_too_fast">Geschwindigkeit zu schnell. Maximale Geschwindigkeit ist {max_speed}. Wird auf {max_speed_again} gesetzt.</translation>
+    <translation key="speed_setting_failed">Fehler beim Setzen der Geschwindigkeit: {error}</translation>
+
     <!-- ================= -->
     <!-- MUSIKPLAYER-FUNKTIONEN -->
     <!-- ================= -->
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">Die Anwendung wird beendet, da die Sky.exe benötigt wird</translation>
     <translation key="must_select_sky">Bitte wählen Sie die Sky.exe-Datei aus</translation>
     <translation key="exe_path_invalid">Die ausgewählte Datei existiert nicht</translation>
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">Einstellungen</translation>
+    <translation key="info_title">Information</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">Spiel Einstellungen</translation>
+    <translation key="settings_sky_path">Sky.exe Pfad</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">Wiedergabe Einstellungen</translation>
+    <translation key="settings_key_durations">Tastendruck Dauer</translation>
+    <translation key="settings_key_durations_hint">(Komma-getrennte Sekunden)</translation>
+    <translation key="settings_speed_presets">Geschwindigkeiten</translation>
+    <translation key="settings_speed_presets_hint">(Komma-getrennte Werte)</translation>
+    <translation key="settings_custom_keys">Benutzerdefinierte Tasten</translation>
+    <translation key="settings_edit_keys">Tasten bearbeiten</translation>
+    <translation key="settings_custom_keys_status">{count} Tasten angepasst</translation>
+    <translation key="settings_using_default_layout">Standardbelegung verwenden</translation>
+    <translation key="settings_custom_active">Custom (active)</translation>
+    <translation key="settings_custom_available">Custom available</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">Verzögerungen</translation>
+    <translation key="settings_initial_delay">Start Verzögerung</translation>
+    <translation key="settings_pause_delay">Pausen Verzögerung</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">Geschwindigkeits-Übergänge</translation>
+    <translation key="settings_ramping_start">Start Schritte</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">Ende Schritte</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">Nach Pause Schritte</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">Oberfläche</translation>
+    <translation key="settings_language">Sprache</translation>
+    <translation key="settings_theme">Design</translation>
+    <translation key="theme_dark">Dunkel</translation>
+    <translation key="theme_light">Hell</translation>
+    <translation key="settings_keyboard_layout">Tastatur Layout</translation>
+    <translation key="settings_pause_key">Pause Taste</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">Speichern</translation>
+    <translation key="settings_reset">Zurücksetzen</translation>
+    <translation key="settings_cancel">Abbrechen</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">Einstellungen gespeichert!</translation>
+    <translation key="settings_save_error">Fehler beim Speichern der Einstellungen</translation>
+    <translation key="settings_reset_confirm">Alle Einstellungen auf Standardwerte zurücksetzen?</translation>
+    <translation key="settings_reset_success">Einstellungen zurückgesetzt!</translation>
+    <translation key="settings_reset_error">Fehler beim Zurücksetzen</translation>
+    <translation key="settings_restart_required">Einige Einstellungen benötigen einen Neustart um wirksam zu werden.</translation>
+    <translation key="settings_restart_now">Jetzt neu starten?</translation>
+    <translation key="settings_restart_later">Einstellungen gespeichert. Bitte starten Sie die App später neu.</translation>
+    <translation key="settings_restart_failed">Automatischer Neustart fehlgeschlagen. Bitte starten Sie die App manuell neu.</translation>
+    <translation key="custom_layout_not_found">Benutzerdefiniertes Layout nicht gefunden. Automatisch zu {fallback_layout} gewechselt.</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">Bitte geben Sie gültige Zahlen ein</translation>
+    <translation key="settings_error_positive">Bitte geben Sie positive Werte ein</translation>
+    <translation key="settings_error_empty">Bitte füllen Sie alle Felder aus</translation>
+    <translation key="settings_error_pause_key">Pause-Taste muss genau ein Zeichen sein</translation>
+    <translation key="settings_error_general">Ungültige Eingabe</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">Tastenbelegung Editor</translation>
+    <translation key="key_editor_instructions">Klicke auf eine Taste unten und drücke dann die gewünschte Belegung auf deiner Tastatur. Escape zum Abbrechen, Backspace zum Löschen.</translation>
+    <translation key="key_editor_current_key">Aktuelle Taste:</translation>
+    <translation key="key_editor_no_selection">Keine Taste ausgewählt</translation>
+    <translation key="key_editor_press_key">Taste drücken...</translation>
+    <translation key="key_editor_empty">(leer)</translation>
+    <translation key="key_editor_delete">Delete Custom</translation>
+    <translation key="key_editor_changes">{changed}/{total} Tasten geändert</translation>
+    <translation key="key_editor_saved_settings_hint">Custom layout saved. Please click 'Save' in Settings for changes to take effect.</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">Standard</translation>
+    <translation key="key_editor_custom">Angepasst</translation>
+    <translation key="key_editor_empty_error">Taste {key} darf nicht leer sein</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">Speichern</translation>
+    <translation key="key_editor_reset_all">Alle zurücksetzen</translation>
+    <translation key="key_editor_import">Importieren</translation>
+    <translation key="key_editor_cancel">Abbrechen</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">Tastenbelegung gespeichert!</translation>
+    <translation key="key_editor_save_error">Fehler beim Speichern der Tastenbelegung</translation>
+    <translation key="key_editor_reset_confirm">Alle Tasten auf Standardwerte zurücksetzen?</translation>
+    <translation key="key_editor_import_title">Tastenbelegung importieren</translation>
+    <translation key="key_editor_import_success">Tastenbelegung importiert</translation>
+    <translation key="key_editor_import_error">Fehler beim Importieren der Tastenbelegung</translation>
+    <translation key="key_editor_no_changes">No changes made to custom layout.</translation>
+    <translation key="key_editor_unconfirm_changes">You have unsaved changes. Save before closing?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Benutzerdefiniertes Layout löschen und zum Standard-Layout zurückkehren?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Custom layout saved and activated.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">Fehler beim Löschen des benutzerdefinierten Layouts.</translation>
 
 </translations>

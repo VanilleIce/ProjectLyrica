@@ -4,26 +4,33 @@
     <!-- نصوص التطبيق الرئيسية -->
     <!-- ==================== -->
     <translation key="project_title">مشروع ليريكا</translation>
-    <translation key="file_select_title">اختيار أغنية</translation>
+    <translation key="file_select_title">اختر أغنية</translation>
     <translation key="play_button_text">▶ تشغيل</translation>
-    <translation key="supported_formats">التنسيقات المدعومة</translation>
+    <translation key="supported_formats">الصيغ المدعومة</translation>
 
     <!-- ================= -->
     <!-- تحذيرات وأخطاء -->
     <!-- ================= -->
     <translation key="warning_title">تحذير</translation>
     <translation key="error_title">خطأ</translation>
-    <translation key="choose_song_warning">يرجى اختيار أغنية قبل المتابعة.</translation>
+    <translation key="choose_song_warning">الرجاء اختيار أغنية</translation>
     <translation key="play_error_message">خطأ في تشغيل الموسيقى</translation>
-    <translation key="security_error_path">مسار ملف غير مصرح به</translation>
+    <translation key="security_error_path">مسار ملف غير مسموح</translation>
     <translation key="invalid_file_format">تنسيق ملف غير صالح. المدعوم: .json, .txt, .skysheet</translation>
     <translation key="sky_window_not_found">نافذة سكاي غير موجودة</translation>
     <translation key="window_focus_error">تعذر تركيز النافذة</translation>
     <translation key="browser_open_error">تعذر فتح المتصفح</translation>
-    <translation key="sky_not_running">يجب أن يكون سكاي قيد التشغيل!</translation>
+    <translation key="sky_not_running">يجب تشغيل سكاي!</translation>
     <translation key="missing_song_notes">بيانات الأغنية مفقودة (songNotes)</translation>
     <translation key="invalid_speed">سرعة غير صالحة! يجب أن تكون أكبر من 0.</translation>
-    <translation key="invalid_song_format">تنسيق الأغنية غير صالح</translation>
+    <translation key="invalid_song_format">تنسيق أغنية غير صالح</translation>
+
+    <translation key="sky_only_warning">يعمل فقط في سكاي! الرجاء تشغيل Sky Children of the Light.</translation>
+    <translation key="sky_window_focus_error">تعذر تركيز نافذة سكاي. تأكد من تشغيل سكاي وأنها مرئية.</translation>
+
+    <translation key="speed_too_slow">السرعة بطيئة جداً. الحد الأدنى للسرعة هو {min_speed}. يتم التعيين إلى {min_speed_again}.</translation>
+    <translation key="speed_too_fast">السرعة سريعة جداً. الحد الأقصى للسرعة هو {max_speed}. يتم التعيين إلى {max_speed_again}.</translation>
+    <translation key="speed_setting_failed">فشل في تعيين السرعة: {error}</translation>
 
     <!-- ================= -->
     <!-- وظائف مشغل الموسيقى -->
@@ -34,39 +41,168 @@
     <translation key="duration">مدة ضغط المفتاح</translation>
     <translation key="speed_control">السرعة</translation>
     <translation key="current_speed">السرعة الحالية</translation>
-    <translation key="preset">الإعدادات المسبقة</translation>
-
+    <translation key="preset">إعداد مسبق</translation>
+    
     <!-- ================= -->
     <!-- اللغة والتخطيط -->
     <!-- ================= -->
     <translation key="language_window_title">اختيار اللغة</translation>
-    <translation key="select_language">اختار اللغة:</translation>
+    <translation key="select_language">اختر اللغة:</translation>
     <translation key="language_saved">تم حفظ اللغة</translation>
     <translation key="save_button_text">حفظ</translation>
     <translation key="smooth_ramping">الانتقالات السلسة</translation>
-    <translation key="smooth_ramping_info">يضبط السرعة بسلاسة في بداية ونهاية الأغنية لانتقالات أكثر طبيعية.</translation>
-    <translation key="playing_button_text">يعمل...</translation>
-    <translation key="paused_button_text">إيقاف مؤقت</translation>
+    <translation key="smooth_ramping_info">تغيير سرعة سلس في بداية ونهاية الأغنية لانتقالات أكثر طبيعية.</translation>
+    <translation key="playing_button_text">جاري التشغيل...</translation>
+    <translation key="paused_button_text">متوقف مؤقتاً</translation>
     <translation key="restart_button_text">إعادة التشغيل؟</translation>
     <translation key="pause_key_hint">أو استخدم [pause_key]</translation>
     
     <!-- ================= -->
     <!-- معلومات الإصدار -->
     <!-- ================= -->
-    <translation key="update_available_text">تحديث متاح! v {}</translation>
-    <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">فشل في التحقق</translation>
+    <translation key="update_available_text">تحديث متاح! الإصدار {}</translation>
+    <translation key="current_version_text">الإصدار {}</translation>
+    <translation key="update_error_text">فشل الفحص</translation>
     <translation key="no_connection_text">لا يوجد اتصال بالخادم</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- مدقق سكاي -->
     <!-- ================= -->
     <translation key="window_settings_title">اختيار Sky.exe</translation>
-    <translation key="select_sky_exe_instruction">الرجاء اختيار Sky.exe:</translation>
-    <translation key="select_sky_exe">اختيار Sky.exe</translation>
-    <translation key="exe_path_required">يجب عليك اختيار Sky.exe للمتابعة</translation>
+    <translation key="select_sky_exe_instruction">الرجاء اختيار ملف Sky.exe:</translation>
+    <translation key="select_sky_exe">اختر Sky.exe</translation>
+    <translation key="exe_path_required">يجب اختيار Sky.exe للمتابعة</translation>
     <translation key="exe_path_required_exit">سيتم إغلاق التطبيق لأن Sky.exe مطلوب</translation>
     <translation key="must_select_sky">الرجاء اختيار ملف Sky.exe</translation>
-    <translation key="exe_path_invalid">الملف المحدد غير موجود</translation>
-    
+    <translation key="exe_path_invalid">الملف المختار غير موجود</translation>
+
+    <!-- ================= -->
+    <!-- نافذة الإعدادات -->
+    <!-- ================= -->
+    <translation key="settings_window_title">الإعدادات</translation>
+    <translation key="info_title">معلومات</translation>
+
+    <!-- ================= -->
+    <!-- إعدادات اللعبة -->
+    <!-- ================= -->
+    <translation key="settings_game_title">إعدادات اللعبة</translation>
+    <translation key="settings_sky_path">مسار Sky.exe</translation>
+
+    <!-- ================= -->
+    <!-- إعدادات التشغيل -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">إعدادات التشغيل</translation>
+    <translation key="settings_key_durations">مدة ضغط المفتاح</translation>
+    <translation key="settings_key_durations_hint">(ثواني مفصولة بفواصل)</translation>
+    <translation key="settings_speed_presets">السرعات</translation>
+    <translation key="settings_speed_presets_hint">(قيم مفصولة بفواصل)</translation>
+    <translation key="settings_custom_keys">مفاتيح مخصصة</translation>
+    <translation key="settings_edit_keys">تحرير المفاتيح</translation>
+    <translation key="settings_custom_keys_status">{count} مفاتيح معدلة</translation>
+    <translation key="settings_using_default_layout">استخدام التخطيط الافتراضي</translation>
+    <translation key="settings_custom_active">مخصص (مفعل)</translation>
+    <translation key="settings_custom_available">مخصص متاح</translation>
+
+    <!-- ================= -->
+    <!-- التأخيرات -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">التأخيرات</translation>
+    <translation key="settings_initial_delay">تأخير البدء</translation>
+    <translation key="settings_pause_delay">تأخير الإيقاف المؤقت</translation>
+
+    <!-- ================= -->
+    <!-- انتقالات السرعة -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">انتقالات السرعة</translation>
+    <translation key="settings_ramping_start">خطوات البدء</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">خطوات النهاية</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">خطوات بعد الإيقاف المؤقت</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- الواجهة -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">الواجهة</translation>
+    <translation key="settings_language">اللغة</translation>
+    <translation key="settings_theme">المظهر</translation>
+    <translation key="theme_dark">داكن</translation>
+    <translation key="theme_light">فاتح</translation>
+    <translation key="settings_keyboard_layout">تخطيط لوحة المفاتيح</translation>
+    <translation key="settings_pause_key">مفتاح الإيقاف المؤقت</translation>
+
+    <!-- ================= -->
+    <!-- الأزرار -->
+    <!-- ================= -->
+    <translation key="settings_save">حفظ</translation>
+    <translation key="settings_reset">إعادة تعيين</translation>
+    <translation key="settings_cancel">إلغاء</translation>
+
+    <!-- ================= -->
+    <!-- الرسائل -->
+    <!-- ================= -->
+    <translation key="settings_saved">تم حفظ الإعدادات!</translation>
+    <translation key="settings_save_error">خطأ في حفظ الإعدادات</translation>
+    <translation key="settings_reset_confirm">إعادة تعيين جميع الإعدادات إلى القيم الافتراضية؟</translation>
+    <translation key="settings_reset_success">تم إعادة تعيين الإعدادات!</translation>
+    <translation key="settings_reset_error">خطأ في الإعادة التعيين</translation>
+    <translation key="settings_restart_required">بعض الإعدادات تتطلب إعادة تشغيل لتصبح فعالة.</translation>
+    <translation key="settings_restart_now">إعادة التشغيل الآن؟</translation>
+    <translation key="settings_restart_later">تم حفظ الإعدادات. الرجاء إعادة تشغيل التطبيق لاحقاً.</translation>
+    <translation key="settings_restart_failed">فشل إعادة التشغيل التلقائي. الرجاء إعادة تشغيل التطبيق يدوياً.</translation>
+    <translation key="custom_layout_not_found">التخطيط المخصص غير موجود. تم التبديل تلقائياً إلى {fallback_layout}.</translation>
+
+    <!-- ================= -->
+    <!-- أخطاء التحقق -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">الرجاء إدخال أرقام صالحة</translation>
+    <translation key="settings_error_positive">الرجاء إدخال قيم موجبة</translation>
+    <translation key="settings_error_empty">الرجاء ملء جميع الحقول</translation>
+    <translation key="settings_error_pause_key">مفتاح الإيقاف المؤقت يجب أن يكون حرفاً واحداً فقط</translation>
+    <translation key="settings_error_general">إدخال غير صالح</translation>
+
+    <!-- ================= -->
+    <!-- محرر تخطيط المفاتيح -->
+    <!-- ================= -->
+    <translation key="key_editor_title">محرر تخطيط المفاتيح</translation>
+    <translation key="key_editor_instructions">انقر على مفتاح أدناه ثم اضغط على التخطيط المطلوب على لوحة المفاتيح. Escape للإلغاء، Backspace للحذف.</translation>
+    <translation key="key_editor_current_key">المفتاح الحالي:</translation>
+    <translation key="key_editor_no_selection">لم يتم اختيار مفتاح</translation>
+    <translation key="key_editor_press_key">اضغط على المفتاح...</translation>
+    <translation key="key_editor_empty">(فارغ)</translation>
+    <translation key="key_editor_delete">حذف المخصص</translation>
+    <translation key="key_editor_changes">{changed}/{total} مفاتيح معدلة</translation>
+    <translation key="key_editor_saved_settings_hint">تم حفظ التخطيط المخصص. الرجاء النقر على 'حفظ' في الإعدادات لتفعيل التغييرات.</translation>
+
+    <!-- ================= -->
+    <!-- تسميات الحالة -->
+    <!-- ================= -->
+    <translation key="key_editor_default">افتراضي</translation>
+    <translation key="key_editor_custom">معدل</translation>
+    <translation key="key_editor_empty_error">المفتاح {key} لا يمكن أن يكون فارغاً</translation>
+
+    <!-- ================= -->
+    <!-- الأزرار -->
+    <!-- ================= -->
+    <translation key="key_editor_save">حفظ</translation>
+    <translation key="key_editor_reset_all">إعادة تعيين الكل</translation>
+    <translation key="key_editor_import">استيراد</translation>
+    <translation key="key_editor_cancel">إلغاء</translation>
+
+    <!-- ================= -->
+    <!-- رسائل الحوار -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">تم حفظ تخطيط المفاتيح!</translation>
+    <translation key="key_editor_save_error">خطأ في حفظ تخطيط المفاتيح</translation>
+    <translation key="key_editor_reset_confirm">إعادة تعيين جميع المفاتيح إلى القيم الافتراضية؟</translation>
+    <translation key="key_editor_import_title">استيراد تخطيط المفاتيح</translation>
+    <translation key="key_editor_import_success">تم استيراد تخطيط المفاتيح</translation>
+    <translation key="key_editor_import_error">خطأ في استيراد تخطيط المفاتيح</translation>
+    <translation key="key_editor_no_changes">لم يتم إجراء أي تغييرات على التخطيط المخصص.</translation>
+    <translation key="key_editor_unconfirm_changes">لديك تغييرات غير محفوظة. الحفظ قبل الإغلاق؟</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">حذف التخطيط المخصص والعودة إلى التخطيط القياسي؟</translation>
+    <translation key="key_editor_custom_layout_saved_activated">تم حفظ وتفعيل التخطيط المخصص.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">خطأ في حذف التخطيط المخصص.</translation>
+
 </translations>

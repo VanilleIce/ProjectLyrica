@@ -25,6 +25,13 @@
     <translation key="invalid_speed">Недопустимая скорость! Должна быть больше 0.</translation>
     <translation key="invalid_song_format">Недопустимый формат песни</translation>
 
+    <translation key="sky_only_warning">Работает только в Sky! Пожалуйста, запустите Sky Children of the Light.</translation>
+    <translation key="sky_window_focus_error">Не удалось сфокусироваться на окне Sky. Убедитесь, что Sky запущен и виден.</translation>
+
+    <translation key="speed_too_slow">Скорость слишком медленная. Минимальная скорость {min_speed}. Установлено на {min_speed_again}.</translation>
+    <translation key="speed_too_fast">Скорость слишком быстрая. Максимальная скорость {max_speed}. Установлено на {max_speed_again}.</translation>
+    <translation key="speed_setting_failed">Ошибка при установке скорости: {error}</translation>
+
     <!-- ================= -->
     <!-- ФУНКЦИИ МУЗЫКАЛЬНОГО ПЛЕЕРА -->
     <!-- ================= -->
@@ -35,7 +42,7 @@
     <translation key="speed_control">Скорость</translation>
     <translation key="current_speed">Текущая скорость</translation>
     <translation key="preset">Пресет</translation>
-
+    
     <!-- ================= -->
     <!-- ЯЗЫК И МАКЕТ -->
     <!-- ================= -->
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">Приложение будет закрыто, так как требуется Sky.exe</translation>
     <translation key="must_select_sky">Пожалуйста, выберите файл Sky.exe</translation>
     <translation key="exe_path_invalid">Выбранный файл не существует</translation>
-    
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">Настройки</translation>
+    <translation key="info_title">Информация</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">Настройки Игры</translation>
+    <translation key="settings_sky_path">Путь к Sky.exe</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">Настройки Воспроизведения</translation>
+    <translation key="settings_key_durations">Длительность Нажатия Клавиш</translation>
+    <translation key="settings_key_durations_hint">(секунды, разделенные запятыми)</translation>
+    <translation key="settings_speed_presets">Скорости</translation>
+    <translation key="settings_speed_presets_hint">(значения, разделенные запятыми)</translation>
+    <translation key="settings_custom_keys">Пользовательские Клавиши</translation>
+    <translation key="settings_edit_keys">Редактировать Клавиши</translation>
+    <translation key="settings_custom_keys_status">{count} клавиш настроено</translation>
+    <translation key="settings_using_default_layout">Используется стандартная раскладка</translation>
+    <translation key="settings_custom_active">Пользовательская (активная)</translation>
+    <translation key="settings_custom_available">Пользовательская доступна</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">Задержки</translation>
+    <translation key="settings_initial_delay">Начальная Задержка</translation>
+    <translation key="settings_pause_delay">Задержка Паузы</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">Переходы Скорости</translation>
+    <translation key="settings_ramping_start">Начальные Шаги</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">Конечные Шаги</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">Шаги после Паузы</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">Интерфейс</translation>
+    <translation key="settings_language">Язык</translation>
+    <translation key="settings_theme">Тема</translation>
+    <translation key="theme_dark">Темная</translation>
+    <translation key="theme_light">Светлая</translation>
+    <translation key="settings_keyboard_layout">Раскладка Клавиатуры</translation>
+    <translation key="settings_pause_key">Клавиша Паузы</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">Сохранить</translation>
+    <translation key="settings_reset">Сбросить</translation>
+    <translation key="settings_cancel">Отмена</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">Настройки сохранены!</translation>
+    <translation key="settings_save_error">Ошибка при сохранении настроек</translation>
+    <translation key="settings_reset_confirm">Сбросить все настройки к значениям по умолчанию?</translation>
+    <translation key="settings_reset_success">Настройки сброшены!</translation>
+    <translation key="settings_reset_error">Ошибка при сбросе</translation>
+    <translation key="settings_restart_required">Некоторые настройки требуют перезапуска приложения для вступления в силу.</translation>
+    <translation key="settings_restart_now">Перезапустить сейчас?</translation>
+    <translation key="settings_restart_later">Настройки сохранены. Пожалуйста, перезапустите приложение позже.</translation>
+    <translation key="settings_restart_failed">Автоматический перезапуск не удался. Пожалуйста, перезапустите приложение вручную.</translation>
+    <translation key="custom_layout_not_found">Пользовательская раскладка не найдена. Автоматически переключено на {fallback_layout}.</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">Пожалуйста, введите допустимые числа</translation>
+    <translation key="settings_error_positive">Пожалуйста, введите положительные значения</translation>
+    <translation key="settings_error_empty">Пожалуйста, заполните все поля</translation>
+    <translation key="settings_error_pause_key">Клавиша паузы должна быть ровно одним символом</translation>
+    <translation key="settings_error_general">Неверный ввод</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">Редактор Раскладки Клавиш</translation>
+    <translation key="key_editor_instructions">Нажмите на клавишу ниже, а затем нажмите нужное назначение на вашей клавиатуре. Escape для отмены, Backspace для удаления.</translation>
+    <translation key="key_editor_current_key">Текущая клавиша:</translation>
+    <translation key="key_editor_no_selection">Клавиша не выбрана</translation>
+    <translation key="key_editor_press_key">Нажмите клавишу...</translation>
+    <translation key="key_editor_empty">(пусто)</translation>
+    <translation key="key_editor_delete">Удалить Пользовательскую</translation>
+    <translation key="key_editor_changes">{changed}/{total} клавиш изменено</translation>
+    <translation key="key_editor_saved_settings_hint">Пользовательская раскладка сохранена. Нажмите 'Сохранить' в Настройках для применения изменений.</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">По умолчанию</translation>
+    <translation key="key_editor_custom">Настроено</translation>
+    <translation key="key_editor_empty_error">Клавиша {key} не может быть пустой</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">Сохранить</translation>
+    <translation key="key_editor_reset_all">Сбросить Все</translation>
+    <translation key="key_editor_import">Импорт</translation>
+    <translation key="key_editor_cancel">Отмена</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">Раскладка клавиш сохранена!</translation>
+    <translation key="key_editor_save_error">Ошибка при сохранении раскладки клавиш</translation>
+    <translation key="key_editor_reset_confirm">Сбросить все клавиши к значениям по умолчанию?</translation>
+    <translation key="key_editor_import_title">Импорт Раскладки Клавиш</translation>
+    <translation key="key_editor_import_success">Раскладка клавиш импортирована</translation>
+    <translation key="key_editor_import_error">Ошибка при импорте раскладки клавиш</translation>
+    <translation key="key_editor_no_changes">В пользовательскую раскладку не внесено изменений.</translation>
+    <translation key="key_editor_unconfirm_changes">У вас есть несохраненные изменения. Сохранить перед закрытием?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Удалить пользовательскую раскладку и вернуться к стандартной раскладке?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Пользовательская раскладка сохранена и активирована.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">Ошибка при удалении пользовательской раскладки.</translation>
+
 </translations>

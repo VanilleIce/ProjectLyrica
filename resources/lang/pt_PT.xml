@@ -25,6 +25,13 @@
     <translation key="invalid_speed">Velocidade inválida! Deve ser maior que 0.</translation>
     <translation key="invalid_song_format">Formato de música inválido</translation>
 
+    <translation key="sky_only_warning">Funciona apenas no Sky! Por favor, inicie o Sky Children of the Light.</translation>
+    <translation key="sky_window_focus_error">Não foi possível focar a janela do Sky. Certifique-se de que o Sky está em execução e visível.</translation>
+
+    <translation key="speed_too_slow">Velocidade demasiado lenta. A velocidade mínima é {min_speed}. Será definida para {min_speed_again}.</translation>
+    <translation key="speed_too_fast">Velocidade demasiado rápida. A velocidade máxima é {max_speed}. Será definida para {max_speed_again}.</translation>
+    <translation key="speed_setting_failed">Erro ao definir a velocidade: {error}</translation>
+
     <!-- ================= -->
     <!-- FUNÇÕES DO REPRODUTOR DE MÚSICA -->
     <!-- ================= -->
@@ -34,18 +41,18 @@
     <translation key="duration">Duração da pressão da tecla</translation>
     <translation key="speed_control">Velocidade</translation>
     <translation key="current_speed">Velocidade atual</translation>
-    <translation key="preset">Preset</translation>
-
+    <translation key="preset">Predefinição</translation>
+    
     <!-- ================= -->
     <!-- IDIOMA E LAYOUT -->
     <!-- ================= -->
     <translation key="language_window_title">Seleção de Idioma</translation>
     <translation key="select_language">Selecione o idioma:</translation>
     <translation key="language_saved">Idioma salvo com sucesso</translation>
-    <translation key="save_button_text">Salvar</translation>
+    <translation key="save_button_text">Guardar</translation>
     <translation key="smooth_ramping">Transições Suaves</translation>
     <translation key="smooth_ramping_info">Ajusta suavemente a velocidade no início e no final da música para transições mais naturais.</translation>
-    <translation key="playing_button_text">Tocando...</translation>
+    <translation key="playing_button_text">A tocar...</translation>
     <translation key="paused_button_text">Em pausa</translation>
     <translation key="restart_button_text">Reiniciar?</translation>
     <translation key="pause_key_hint">ou use [pause_key]</translation>
@@ -68,5 +75,134 @@
     <translation key="exe_path_required_exit">O aplicativo será encerrado porque o Sky.exe é necessário</translation>
     <translation key="must_select_sky">Por favor, selecione o arquivo Sky.exe</translation>
     <translation key="exe_path_invalid">O arquivo selecionado não existe</translation>
+
+    <!-- ================= -->
+    <!-- Settings Window -->
+    <!-- ================= -->
+    <translation key="settings_window_title">Definições</translation>
+    <translation key="info_title">Informação</translation>
+
+    <!-- ================= -->
+    <!-- Game Settings -->
+    <!-- ================= -->
+    <translation key="settings_game_title">Definições do Jogo</translation>
+    <translation key="settings_sky_path">Caminho do Sky.exe</translation>
+
+    <!-- ================= -->
+    <!-- Playback Settings -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">Definições de Reprodução</translation>
+    <translation key="settings_key_durations">Duração do Pressionamento das Teclas</translation>
+    <translation key="settings_key_durations_hint">(segundos separados por vírgulas)</translation>
+    <translation key="settings_speed_presets">Velocidades</translation>
+    <translation key="settings_speed_presets_hint">(valores separados por vírgulas)</translation>
+    <translation key="settings_custom_keys">Teclas Personalizadas</translation>
+    <translation key="settings_edit_keys">Editar Teclas</translation>
+    <translation key="settings_custom_keys_status">{count} teclas personalizadas</translation>
+    <translation key="settings_using_default_layout">A usar layout padrão</translation>
+    <translation key="settings_custom_active">Personalizado (ativo)</translation>
+    <translation key="settings_custom_available">Personalizado disponível</translation>
+
+    <!-- ================= -->
+    <!-- Delays -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">Atrasos</translation>
+    <translation key="settings_initial_delay">Atraso Inicial</translation>
+    <translation key="settings_pause_delay">Atraso de Pausa</translation>
+
+    <!-- ================= -->
+    <!-- Ramping -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">Transições de Velocidade</translation>
+    <translation key="settings_ramping_start">Passos de Início</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">Passos de Fim</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">Passos após Pausa</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+
+    <!-- ================= -->
+    <!-- Interface -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">Interface</translation>
+    <translation key="settings_language">Idioma</translation>
+    <translation key="settings_theme">Tema</translation>
+    <translation key="theme_dark">Escuro</translation>
+    <translation key="theme_light">Claro</translation>
+    <translation key="settings_keyboard_layout">Layout do Teclado</translation>
+    <translation key="settings_pause_key">Tecla de Pausa</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="settings_save">Guardar</translation>
+    <translation key="settings_reset">Repor</translation>
+    <translation key="settings_cancel">Cancelar</translation>
+
+    <!-- ================= -->
+    <!-- Messages -->
+    <!-- ================= -->
+    <translation key="settings_saved">Definições guardadas!</translation>
+    <translation key="settings_save_error">Erro ao guardar as definições</translation>
+    <translation key="settings_reset_confirm">Repor todas as definições para os valores padrão?</translation>
+    <translation key="settings_reset_success">Definições repostas!</translation>
+    <translation key="settings_reset_error">Erro ao repor</translation>
+    <translation key="settings_restart_required">Algumas definições requerem o reinício da aplicação para terem efeito.</translation>
+    <translation key="settings_restart_now">Reiniciar agora?</translation>
+    <translation key="settings_restart_later">Definições guardadas. Por favor, reinicie a aplicação mais tarde.</translation>
+    <translation key="settings_restart_failed">Reinício automático falhou. Por favor, reinicie a aplicação manualmente.</translation>
+    <translation key="custom_layout_not_found">Layout personalizado não encontrado. Mudado automaticamente para {fallback_layout}.</translation>
+
+    <!-- ================= -->
+    <!-- Validation Errors -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">Por favor, insira números válidos</translation>
+    <translation key="settings_error_positive">Por favor, insira valores positivos</translation>
+    <translation key="settings_error_empty">Por favor, preencha todos os campos</translation>
+    <translation key="settings_error_pause_key">A tecla de pausa deve ser exatamente um caractere</translation>
+    <translation key="settings_error_general">Entrada inválida</translation>
+
+    <!-- ================= -->
+    <!-- Key Editor -->
+    <!-- ================= -->
+    <translation key="key_editor_title">Editor de Mapeamento de Teclas</translation>
+    <translation key="key_editor_instructions">Clique numa tecla abaixo e depois pressione o mapeamento desejado no seu teclado. Escape para cancelar, Backspace para eliminar.</translation>
+    <translation key="key_editor_current_key">Tecla atual:</translation>
+    <translation key="key_editor_no_selection">Nenhuma tecla selecionada</translation>
+    <translation key="key_editor_press_key">Pressione uma tecla...</translation>
+    <translation key="key_editor_empty">(vazio)</translation>
+    <translation key="key_editor_delete">Eliminar Personalizado</translation>
+    <translation key="key_editor_changes">{changed}/{total} teclas modificadas</translation>
+    <translation key="key_editor_saved_settings_hint">Layout personalizado guardado. Por favor, clique em 'Guardar' nas Definições para que as alterações tenham efeito.</translation>
+
+    <!-- ================= -->
+    <!-- Status Labels -->
+    <!-- ================= -->
+    <translation key="key_editor_default">Padrão</translation>
+    <translation key="key_editor_custom">Personalizado</translation>
+    <translation key="key_editor_empty_error">A tecla {key} não pode estar vazia</translation>
+
+    <!-- ================= -->
+    <!-- Buttons -->
+    <!-- ================= -->
+    <translation key="key_editor_save">Guardar</translation>
+    <translation key="key_editor_reset_all">Repor Tudo</translation>
+    <translation key="key_editor_import">Importar</translation>
+    <translation key="key_editor_cancel">Cancelar</translation>
+
+    <!-- ================= -->
+    <!-- Dialog Messages -->
+    <!-- ================= -->
+    <translation key="key_editor_saved">Mapeamento de teclas guardado!</translation>
+    <translation key="key_editor_save_error">Erro ao guardar o mapeamento de teclas</translation>
+    <translation key="key_editor_reset_confirm">Repor todas as teclas para os valores padrão?</translation>
+    <translation key="key_editor_import_title">Importar Mapeamento de Teclas</translation>
+    <translation key="key_editor_import_success">Mapeamento de teclas importado</translation>
+    <translation key="key_editor_import_error">Erro ao importar o mapeamento de teclas</translation>
+    <translation key="key_editor_no_changes">Nenhuma alteração feita ao layout personalizado.</translation>
+    <translation key="key_editor_unconfirm_changes">Tem alterações não guardadas. Guardar antes de fechar?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Eliminar layout personalizado e voltar ao layout padrão?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Layout personalizado guardado e ativado.</translation>
+    <translation key="key_editor_error_deleting_custom_layout">Erro ao eliminar o layout personalizado.</translation>
 
 </translations>

@@ -4,6 +4,7 @@
 import json, logging, traceback
 from pathlib import Path
 from typing import Any, Dict
+import xml.etree.ElementTree as ET
 
 logger = logging.getLogger("ProjectLyrica.ConfigManager")
 
@@ -93,8 +94,6 @@ class ConfigManager:
                         return cls._create_default_config()
                         
                     user_config = json.loads(content)
-                    config_path = str(cls.SETTINGS_FILE.absolute()).replace(str(Path.home()), "~")
-                    logger.info(f"Loaded config from {config_path}")
                         
                     if isinstance(user_config, dict):
                         cls._config = cls._upgrade_config(user_config)
@@ -108,8 +107,7 @@ class ConfigManager:
                     backup_file = cls.SETTINGS_FILE.with_suffix('.json.bak')
                     try:
                         cls.SETTINGS_FILE.rename(backup_file)
-                        backup_path = str(backup_file.absolute()).replace(str(Path.home()), "~")
-                        logger.info(f"Backed up corrupt config to {backup_path}")
+                        logger.info("Backed up corrupt config to settings.json.bak")
                     except Exception as backup_error:
                         logger.error(f"Could not backup corrupt config: {backup_error}")
                     
@@ -361,6 +359,57 @@ class ConfigManager:
             return False
 
     @classmethod
+    def check_and_handle_missing_custom(cls):
+        """Checks whether custom layout has been deleted and resets to default"""
+        try:
+            custom_file = Path('resources/layouts/CUSTOM.xml')
+            config = cls.get_config()
+            current_layout = config.get("ui_settings", {}).get("keyboard_layout", "")
+            
+            if current_layout == "Custom" and not custom_file.exists():
+                logger.warning("Custom layout is active but CUSTOM.xml is missing!")
+
+                lang_code = config.get("ui_settings", {}).get("selected_language", "en_US")
+                
+                lang_to_layout = {
+                    "ar": "Arabic",      # Arabisch → Arabic
+                    "da": "QWERTY",      # Dänisch → QWERTY
+                    "de": "QWERTZ",      # Deutsch → QWERTZ
+                    "en": "QWERTY",      # Englisch → QWERTY
+                    "en_US": "QWERTY",   # Englisch (US) → QWERTY
+                    "es": "QWERTY",      # Spanisch → QWERTY
+                    "fr": "AZERTY",      # Französisch → AZERTY
+                    "id": "QWERTY",      # Indonesisch → QWERTY
+                    "it": "QWERTY",      # Italienisch → QWERTY
+                    "ja": "JIS",         # Japanisch → JIS
+                    "ko_KR": "QWERTY",   # Koreanisch → QWERTY
+                    "mg_MG": "QWERTY",   # Malagasy → QWERTY
+                    "nl": "QWERTY",      # Niederländisch → QWERTY
+                    "pl": "QWERTY",      # Polnisch → QWERTY
+                    "pt": "QWERTY",      # Portugiesisch → QWERTY
+                    "ru": "йцукен",      # Russisch → йцукен
+                    "zh": "QWERTY",      # Chinesisch → QWERTY
+                }
+                
+                fallback_layout = lang_to_layout.get(lang_code, "QWERTY")
+                logger.info(f"Falling back to {fallback_layout} for language {lang_code}")
+                
+                updates = {
+                    "ui_settings": {
+                        "keyboard_layout": fallback_layout
+                    }
+                }
+                cls.save(updates)
+                
+                return True, fallback_layout
+                
+            return False, None
+            
+        except Exception as e:
+            logger.error(f"Error checking missing custom layout: {e}")
+            return False, None
+
+    @classmethod
     def log_system_info(cls, version: str):
         """Log detailed system and configuration information."""
         config = cls.get_config()
@@ -375,31 +424,43 @@ class ConfigManager:
         try:
             from language_manager import LanguageManager, KeyboardLayoutManager
             
-            languages = LanguageManager.get_languages()
-            layout = next((lyt for code, _, lyt in languages if code == lang_code), "QWERTY")
+            current_layout = ui_settings.get("keyboard_layout", "QWERTY")
 
-            default_key_map = KeyboardLayoutManager.load_layout_silently(layout)
-            current_key_map = config.get("key_mapping", {})
-            
-            is_custom = current_key_map != default_key_map
+            if current_layout == "Custom":
+                custom_file = Path("resources/layouts/CUSTOM.xml")
+                if custom_file.exists():
+                    tree = ET.parse(custom_file)
+                    current_key_map = {}
+                    for key in tree.findall('key'):
+                        key_id = key.get('id')
+                        key_text = key.text.strip() if key.text else ""
+                        if key_id:
+                            current_key_map[key_id] = key_text
+                else:
+                    current_key_map = {}
+                default_key_map = {}
+                is_custom = True
+                layout_display = "Custom"
+            else:
+                default_key_map = KeyboardLayoutManager.load_layout_silently(current_layout)
+                current_key_map = config.get("key_mapping", {})
+                is_custom = current_key_map != default_key_map
+                layout_display = current_layout
 
             key_map_details = []
-            relevant_keys = set(default_key_map.keys()).intersection(set(current_key_map.keys()))
+            relevant_keys = set(current_key_map.keys())
             
             for key in sorted(relevant_keys):
                 current_val = current_key_map[key]
-                default_val = default_key_map[key]
-                
-                if current_val == default_val:
-                    key_map_details.append(f"  {key}: {current_val} (default)")
+                if current_layout == "Custom":
+                    key_map_details.append(f"  {key}: {current_val}")
                 else:
-                    key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
-
-            if is_custom:
-                layout_display = f"Custom ({layout})"
-            else:
-                layout_display = layout
-                
+                    default_val = default_key_map.get(key, "")
+                    if current_val == default_val:
+                        key_map_details.append(f"  {key}: {current_val} (default)")
+                    else:
+                        key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
+                        
         except Exception as e:
             logger.error(f"Key mapping analysis error: {e}")
             key_map_details = ["  [Error: Could not analyze key mapping]"]
@@ -437,5 +498,5 @@ class ConfigManager:
         except UnicodeEncodeError:
             cleaned_info = [line.encode('ascii', 'replace').decode('ascii') for line in info]
             logger.info("Application Config (ASCII-safe):\n\t" + "\n\t".join(cleaned_info))
-        
+
         logger.info("Full configuration logged")
