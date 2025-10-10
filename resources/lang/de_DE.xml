@@ -25,7 +25,7 @@
     <translation key="invalid_speed">Ungültige Geschwindigkeit! Muss größer als 0 sein.</translation>
     <translation key="invalid_song_format">Ungültiges Songformat</translation>
 
-    <translation key="sky_only_warning">Only works in Sky! Please start Sky Children of the Light.</translation>
+    <translation key="sky_only_warning">Funktioniert nur in Sky cotl!</translation>
     <translation key="sky_window_focus_error">Could not focus Sky window. Make sure Sky is running and visible.</translation>
 
     <translation key="speed_too_slow">Geschwindigkeit zu langsam. Mindestgeschwindigkeit ist {min_speed}. Wird auf {min_speed_again} gesetzt.</translation>
