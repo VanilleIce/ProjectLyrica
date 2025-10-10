@@ -1,5 +1,7 @@
 customtkinter>=5.2.2
 pynput>=1.8.1
-pygetwindow>=0.0.9
-psutil>=7.0.0
-requests>=2.32.4
+pygetwindow>=0.0.9; sys_platform == "win32"
+psutil>=7.1.0
+requests>=2.32.5
+
+python>=3.13.8
