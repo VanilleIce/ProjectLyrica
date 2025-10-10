@@ -434,8 +434,16 @@ class MusicApp:
             parent=self.root,
             theme_callback=self._on_theme_changed,
             timing_callback=self._on_timing_changed,
-            playback_callback=self._on_playback_changed
+            playback_callback=self._on_playback_changed,
+            pause_key_callback=self._on_pause_key_changed
         )
+
+    def _on_pause_key_changed(self, new_pause_key):
+        logger.info(f"Pause key changed to: '{new_pause_key}'")
+        self.pause_key = new_pause_key
+        
+        if self.current_play_state == "paused":
+            self._update_play_button_state("paused")
 
     def _on_theme_changed(self, new_theme):
         """Called when theme is changed"""

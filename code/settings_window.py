@@ -16,7 +16,7 @@ logger = logging.getLogger("ProjectLyrica.SettingsWindow")
 class SettingsWindow:
     _open_windows = []
     
-    def __init__(self, parent=None, theme_callback=None, timing_callback=None, playback_callback=None):
+    def __init__(self, parent=None, theme_callback=None, timing_callback=None, playback_callback=None, pause_key_callback=None):
         for window in SettingsWindow._open_windows[:]:
             try:
                 if hasattr(window, 'window') and window.window.winfo_exists():
@@ -56,6 +56,7 @@ class SettingsWindow:
         self.theme_callback = theme_callback
         self.timing_callback = timing_callback
         self.playback_callback = playback_callback
+        self.pause_key_callback = pause_key_callback
         
         self._position_window()
 
@@ -596,6 +597,9 @@ class SettingsWindow:
             needs_restart = (original_layout != layout_name) or (original_lang != new_lang_code)
             
             if ConfigManager.save(updates):
+                new_pause_key = self.pause_key_var.get()
+                if hasattr(self, 'pause_key_callback') and self.pause_key_callback:
+                    self.pause_key_callback(new_pause_key)
                 
                 # Theme
                 new_theme = self.theme_var.get()
