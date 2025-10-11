@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.6.0"
+VERSION = "2.6.1"
 
 # -------------------------------
 # Music App
@@ -58,6 +58,8 @@ class MusicApp:
 
         self._last_sky_check = 0
         self._sky_running_cache = False
+
+        self.current_speed_value = 1000
 
         self._init_player()    
         self._init_gui()
@@ -779,6 +781,10 @@ class MusicApp:
                 del self._originally_paused_file
                 logger.info("Cleared originally paused file for restart")
 
+            if self.player.speed_enabled:
+                self.player.set_speed(self.current_speed_value)
+                logger.info(f"Speed set to {self.current_speed_value} for playback")
+            
             song = self.player.parse_song(self.selected_file)
             self._update_play_button_state("playing")
             Thread(target=self._play_thread, args=(song,), daemon=True).start()
@@ -838,6 +844,7 @@ class MusicApp:
                 )
                 speed = MAX_SPEED
                 
+            self.current_speed_value = speed
             self.player.set_speed(speed)
             display_speed = int(speed) if speed.is_integer() else speed
             self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {display_speed}")
