@@ -175,6 +175,7 @@ class LanguageManager:
                     break
             else:
                 logger.warning(f"Layout not found for {lang_code}, using default")
+                
             try:
                 key_map = KeyboardLayoutManager.load_layout_silently(layout)
                 logger.info(f"Loaded {len(key_map)} keys from {layout} layout")
@@ -189,8 +190,6 @@ class LanguageManager:
                 },
                 "key_mapping": key_map
             }
-
-            logger.debug(f"Preparing to save config: {config_update}")
 
             success = ConfigManager.save(config_update)
             if not success:

@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.6.1"
+VERSION = "2.6.2"
 
 # -------------------------------
 # Music App
@@ -143,13 +143,11 @@ class MusicApp:
         self.speed_presets = playback_settings.get("speed_presets")
         self.pause_key = ui_settings.get("pause_key")
         
-        self.player.keypress_enabled = False
-        self.player.speed_enabled = False
-        self.player.pause_enabled = False
-
+        self.keypress_enabled = False
+        self.speed_enabled = False
         self.current_speed_value = 1000
-        
         self.smooth_ramping_enabled = playback_settings.get("enable_ramping")
+        
         ramping_count_config = config.get("ramping_info_display_count", {})
         self.ramping_info_display_count = min(ramping_count_config.get("value", 0), MAX_RAMPING_INFO_DISPLAY)
         self.show_ramping_info = self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY
@@ -537,12 +535,9 @@ class MusicApp:
 
     def _adjust_window_size(self):
         try:
-            keypress_enabled = getattr(self.player, 'keypress_enabled', False)
-            speed_enabled = getattr(self.player, 'speed_enabled', False)
-            
-            if keypress_enabled and speed_enabled:
+            if self.keypress_enabled and self.speed_enabled:
                 base_height = FULL_SIZE[1]
-            elif keypress_enabled or speed_enabled:
+            elif self.keypress_enabled or self.speed_enabled:
                 base_height = EXPANDED_SIZE[1]
             else:
                 base_height = DEFAULT_WINDOW_SIZE[1]
@@ -670,7 +665,7 @@ class MusicApp:
             if not hasattr(key, 'char') or key.char != self.pause_key:
                 return
 
-            if not self.selected_file or not self.player.playback_active or not self.player.pause_enabled:
+            if not self.selected_file or not self.player.playback_active:
                 return
 
             if self.player.pause_flag.is_set():
@@ -781,7 +776,7 @@ class MusicApp:
                 del self._originally_paused_file
                 logger.info("Cleared originally paused file for restart")
 
-            if self.player.speed_enabled:
+            if self.speed_enabled:
                 self.player.set_speed(self.current_speed_value)
                 logger.info(f"Speed set to {self.current_speed_value} for playback")
             
@@ -859,11 +854,11 @@ class MusicApp:
 
     def _toggle_keypress(self):
         try:
-            self.player.keypress_enabled = not self.player.keypress_enabled
-            status = "enabled" if self.player.keypress_enabled else "disabled"
+            self.keypress_enabled = not self.keypress_enabled
+            status = "enabled" if self.keypress_enabled else "disabled"
             self.keypress_btn.configure(text=f"{LanguageManager.get('key_press')}: {LanguageManager.get(status)}")
             
-            if self.player.keypress_enabled:
+            if self.keypress_enabled:
                 self.duration_frame.pack(pady=5, before=self.speed_btn)
                 self.duration_slider.pack(pady=5)
                 self.duration_label.pack()
@@ -878,11 +873,11 @@ class MusicApp:
 
     def _toggle_speed(self):
         try:
-            self.player.speed_enabled = not self.player.speed_enabled
-            status = "enabled" if self.player.speed_enabled else "disabled"
+            self.speed_enabled = not self.speed_enabled
+            status = "enabled" if self.speed_enabled else "disabled"
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get(status)}")
             
-            if self.player.speed_enabled:
+            if self.speed_enabled:
                 self.speed_frame.pack(pady=5, before=self.ramping_btn)
                 self.speed_preset_frame.pack(pady=(0, 8))
                 self.speed_label.pack(pady=(0, 8))
