@@ -59,8 +59,6 @@ class MusicApp:
         self._last_sky_check = 0
         self._sky_running_cache = False
 
-        self.current_speed_value = 1000
-
         self._init_player()    
         self._init_gui()
 
@@ -148,6 +146,8 @@ class MusicApp:
         self.player.keypress_enabled = False
         self.player.speed_enabled = False
         self.player.pause_enabled = False
+
+        self.current_speed_value = 1000
         
         self.smooth_ramping_enabled = playback_settings.get("enable_ramping")
         ramping_count_config = config.get("ramping_info_display_count", {})
@@ -251,7 +251,7 @@ class MusicApp:
         self.speed_frame = ctk.CTkFrame(self.root)
         self.speed_label = ctk.CTkLabel(
             self.speed_frame,
-            text=f"{LanguageManager.get('current_speed')}: {self.player.current_speed}",
+            text=f"{LanguageManager.get('current_speed')}: {self.current_speed_value}",
             font=("Arial", 12)
         )
         
@@ -846,6 +846,7 @@ class MusicApp:
                 
             self.current_speed_value = speed
             self.player.set_speed(speed)
+            
             display_speed = int(speed) if speed.is_integer() else speed
             self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {display_speed}")
             
@@ -887,7 +888,7 @@ class MusicApp:
                 self.speed_label.pack(pady=(0, 8))
             else:
                 self.speed_frame.pack_forget()
-                self.player.current_speed = 1000
+                self.current_speed_value = 1000
 
             self._adjust_window_size()
         except Exception as e:
