@@ -41,7 +41,7 @@ Simply select a song, click “Play,” and enjoy!
 ### 🎯 For End Users (Recommended)
 
  1. **Download the latest release from** [GitHub Releases](https://github.com/VanilleIce/ProjectLyrica/releases)
- 2. **Run** ^`ProjectLyrica_setup.exe^` **and follow the installer**
+ 2. **Run** `^ProjectLyrica_setup.exe^` **and follow the installer**
  3. **Start the Lyrica project** from the folder.
  
 ### 🔧 For Developers
