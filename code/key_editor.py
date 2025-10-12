@@ -6,7 +6,7 @@ from tkinter import messagebox
 import logging
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Dict, List, Tuple, Callable
+from typing import Dict
 
 from language_manager import LanguageManager
 from resource_loader import resource_path
@@ -48,7 +48,7 @@ class KeyEditorWindow:
         self._update_change_count()
 
     def _calculate_initial_changes(self):
-        """Calculates initial changes during loading’"""
+        """Calculates initial changes during loading"""
         for key_id in self.current_mapping:
             if self.current_mapping[key_id] != self.original_mapping.get(key_id, ""):
                 self.has_changes = True

@@ -14,13 +14,10 @@ class ConfigManager:
     SETTINGS_FILE = Path('settings.json')
 
     DEFAULT_CONFIG = {
-
-        "_comment": "Game execution settings",
         "game_settings": {
             "sky_exe_path": None
         },
         
-        "_comment": "Playback behavior settings", 
         "playback_settings": {
             "key_press_durations": [0.2, 0.248, 0.3, 0.5, 1.0],
             "speed_presets": [600, 800, 1000, 1200],
@@ -28,30 +25,22 @@ class ConfigManager:
         },
         
         "timing_settings": {
-            "_comment": "Timing and ramping configuration",
             "delays": {
-                "_comment": "Delay timings in seconds",
                 "initial_delay": 0.8,
                 "pause_resume_delay": 1.0
             },
             "ramping": {
-                "_comment": "Smooth speed transition settings. start_percentage: beginning speed in %",
                 "begin": {
-                    "_comment": "Ramping at playback start",
                     "steps": 20,
                     "start_percentage": 50,
                     "end_percentage": 100
                 },
-
                 "end": {
-                    "_comment": "Ramping at playback end", 
                     "steps": 16,
                     "start_percentage": 100,
                     "end_percentage": 50
                 },
-
                 "after_pause": {
-                    "_comment": "Ramping after pause/resume",
                     "steps": 12,
                     "start_percentage": 50,
                     "end_percentage": 100
@@ -60,7 +49,6 @@ class ConfigManager:
         },
 
         "ui_settings": {
-            "_comment": "User interface settings",
             "selected_language": None,
             "keyboard_layout": None,
             "pause_key": "#",
@@ -70,7 +58,6 @@ class ConfigManager:
         "key_mapping": {},
         
         "ramping_info_display_count": {
-            "_comment": "Internal counter for info display",
             "value": 0
         }
     }
@@ -144,6 +131,7 @@ class ConfigManager:
         """Upgrade existing config to latest version and migrate old values"""
         upgraded = False
 
+        # Migrate old top-level keys to new structure
         if "sky_exe_path" in config:
             if "game_settings" not in config:
                 config["game_settings"] = {}
@@ -206,6 +194,7 @@ class ConfigManager:
             logger.info(f"Migrated ramping_info_display_count from {old_value} to new structure")
             upgraded = True
 
+        # Migrate old timing_config to new timing_settings structure
         if "timing_config" in config and "timing_settings" not in config:
             old_timing = config["timing_config"]
             config["timing_settings"] = {
@@ -234,6 +223,7 @@ class ConfigManager:
             del config["timing_config"]
             upgraded = True
 
+        # Ensure all required sections exist
         new_structure = {
             "game_settings": {
                 "sky_exe_path": None
@@ -274,6 +264,7 @@ class ConfigManager:
                         config[section][key] = default_value.copy() if isinstance(default_value, dict) else default_value
                         upgraded = True
 
+        # Remove old top-level keys that have been migrated
         old_keys_to_remove = [
             "sky_exe_path", "pause_key", 
             "key_press_durations", "speed_presets", "enable_ramping",
@@ -372,34 +363,29 @@ class ConfigManager:
                 lang_code = config.get("ui_settings", {}).get("selected_language", "en_US")
                 
                 lang_to_layout = {
-                    "ar": "Arabic",      # Arabisch → Arabic
-                    "da": "QWERTY",      # Dänisch → QWERTY
-                    "de": "QWERTZ",      # Deutsch → QWERTZ
-                    "en": "QWERTY",      # Englisch → QWERTY
-                    "en_US": "QWERTY",   # Englisch (US) → QWERTY
-                    "es": "QWERTY",      # Spanisch → QWERTY
-                    "fr": "AZERTY",      # Französisch → AZERTY
-                    "id": "QWERTY",      # Indonesisch → QWERTY
-                    "it": "QWERTY",      # Italienisch → QWERTY
-                    "ja": "JIS",         # Japanisch → JIS
-                    "ko_KR": "QWERTY",   # Koreanisch → QWERTY
-                    "mg_MG": "QWERTY",   # Malagasy → QWERTY
-                    "nl": "QWERTY",      # Niederländisch → QWERTY
-                    "pl": "QWERTY",      # Polnisch → QWERTY
-                    "pt": "QWERTY",      # Portugiesisch → QWERTY
-                    "ru": "йцукен",      # Russisch → йцукен
-                    "zh": "QWERTY",      # Chinesisch → QWERTY
+                    "ar": "Arabic",
+                    "da": "QWERTY",
+                    "de": "QWERTZ", 
+                    "en": "QWERTY",
+                    "en_US": "QWERTY",
+                    "es": "QWERTY",
+                    "fr": "AZERTY",
+                    "id": "QWERTY",
+                    "it": "QWERTY",
+                    "ja": "JIS",
+                    "ko_KR": "QWERTY",
+                    "mg_MG": "QWERTY",
+                    "nl": "QWERTY",
+                    "pl": "QWERTY",
+                    "pt": "QWERTY",
+                    "ru": "йцукен",
+                    "zh": "QWERTY",
                 }
-                
                 fallback_layout = lang_to_layout.get(lang_code, "QWERTY")
-                logger.info(f"Falling back to {fallback_layout} for language {lang_code}")
                 
-                updates = {
-                    "ui_settings": {
-                        "keyboard_layout": fallback_layout
-                    }
-                }
-                cls.save(updates)
+                updates = {"ui_settings": {"keyboard_layout": fallback_layout}}
+                ConfigManager.save(updates)
+                logger.info(f"Layout reset to {fallback_layout} after custom deletion")
                 
                 return True, fallback_layout
                 

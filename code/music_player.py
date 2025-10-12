@@ -39,17 +39,9 @@ class MusicPlayer:
             self._initialize_timing(self.config)  
             self._initialize_playback_state()
             
-            self.key_press_durations = []
-            self._load_playback_settings(self.config)
-            
         except Exception as e:
             logger.critical(f"Initialization failed: {e}", exc_info=True)
             raise
-
-    def _load_playback_settings(self, config):
-        """Load playback settings from config"""
-        playback = config.get("playback_settings", {})
-        self.key_press_durations = playback.get("key_press_durations", [0.2, 0.248, 0.3, 0.5, 1.0])
 
     def _initialize_key_mapping(self, config):
         """Initialize keyboard mapping from config with support for custom layouts"""
@@ -226,7 +218,6 @@ class MusicPlayer:
         
             self._ensure_scheduler()
             self.playback_active = True
-            self.pause_enabled = True
             self.scheduler.reset()
             self.stop_event.clear()
 
@@ -454,7 +445,6 @@ class MusicPlayer:
         """Tidy up after playback"""
         self._release_all()
         self.playback_active = False
-        self.pause_enabled = False
         logger.info(f"Playback finished - Total notes: {self.note_count}, "
                   f"Pauses: {self.pause_count}, "
                   f"Total pause time: {self.total_pause_time:.2f}s")
@@ -466,7 +456,6 @@ class MusicPlayer:
             
         self.stop_event.set()
         self.pause_flag.clear()
-        self.pause_enabled = False
         self._release_all()
         self.playback_active = False
 
