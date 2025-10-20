@@ -418,19 +418,20 @@ class MusicPlayer:
         return current_speed
 
     def change_speed_during_playback(self, new_speed):
-        """Change speed during playback - MIT RAMPING"""
-        if not self.playback_active:
-            return False
-
-        new_speed = max(100, min(1500, new_speed))
-        
-        if new_speed == self.current_speed:
+        """Change speed during playback"""
+        try:
+            if not self.playback_active:
+                return False
+                
+            logger.info(f"Changing speed to {new_speed}")
+            self.current_speed = new_speed
+            
+            # Sofortige Änderung ohne Ramping
             return True
-
-        self._init_speed_ramping(new_speed)
-        
-        logger.info(f"Speed change with ramping: {self.current_speed} → {new_speed}")
-        return True
+            
+        except Exception as e:
+            logger.error(f"Speed change error: {e}")
+            return False
 
     # Init
     def _init_speed_ramping(self, target_speed):
