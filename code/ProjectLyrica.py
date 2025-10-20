@@ -145,7 +145,6 @@ class MusicApp:
         
         speed_change_settings = config.get("speed_change_settings", {})
         self.speed_change_config = speed_change_settings
-        self.speed_change_enabled = playback_settings.get("enable_ramping", False)
         
         self.keypress_enabled = False
         self.speed_enabled = False
@@ -750,11 +749,8 @@ class MusicApp:
 
     def _update_speed_ui_visibility(self):
         """Aktualisiert die Sichtbarkeit der Speed-UI"""
-        logger.info(f"Updating speed UI visibility: speed_enabled={self.speed_enabled}")
-        
         if self.speed_enabled:
             current_speed = self.current_speed_value
-            logger.info(f"Showing speed UI with speed: {current_speed}")
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
             self.speed_frame.pack(pady=5, before=self.ramping_btn)
             self.speed_preset_frame.pack(pady=(0, 8))
@@ -762,7 +758,6 @@ class MusicApp:
                 self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {current_speed}")
                 self.speed_label.pack(pady=(0, 8))
         else:
-            logger.info("Hiding speed UI")
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}")
             self.speed_frame.pack_forget()
         
