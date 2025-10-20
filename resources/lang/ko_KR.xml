@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">키보드 레이아웃</translation>
     <translation key="settings_pause_key">일시 정지 키</translation>
 
+    <translation key="settings_speed_change_title">재생 중 속도 변경</translation>
+    <translation key="settings_speed_change_enable_hint">키보드 단축키를 사용하여 재생 중 속도 변경 활성화</translation>
+    <translation key="settings_speed_change_preset_keys">프리셋 키</translation>
+    <translation key="settings_speed_change_ramp_steps">속도 전환 단계</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

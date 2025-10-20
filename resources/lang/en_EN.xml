@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Keyboard Layout</translation>
     <translation key="settings_pause_key">Pause Key</translation>
 
+    <translation key="settings_speed_change_title">Speed Change During Playback</translation>
+    <translation key="settings_speed_change_enable_hint">Enable speed change during playback using keyboard shortcuts</translation>
+    <translation key="settings_speed_change_preset_keys">Preset Keys</translation>
+    <translation key="settings_speed_change_ramp_steps">Speed Transition Steps</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Fandaharana Klavie</translation>
     <translation key="settings_pause_key">Bokotra Fijanonana</translation>
 
+    <translation key="settings_speed_change_title">Fiovana hafainganana mandritra ny filalaovana</translation>
+    <translation key="settings_speed_change_enable_hint">Ampiasaina ny fiovana hafainganana mandritra ny filalaovana amin'ny alalan'ny fitendry haingam-pandeha</translation>
+    <translation key="settings_speed_change_preset_keys">Bokotra Preset</translation>
+    <translation key="settings_speed_change_ramp_steps">Dingana Fandefasana Hafakinganana</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">キーボードレイアウト</translation>
     <translation key="settings_pause_key">一時停止キー</translation>
 
+    <translation key="settings_speed_change_title">再生中の速度変更</translation>
+    <translation key="settings_speed_change_enable_hint">キーボードショートカットを使用して再生中の速度変更を有効にする</translation>
+    <translation key="settings_speed_change_preset_keys">プリセットキー</translation>
+    <translation key="settings_speed_change_ramp_steps">速度遷移ステップ</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

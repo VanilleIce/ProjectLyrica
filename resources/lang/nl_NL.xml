@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Toetsenbordindeling</translation>
     <translation key="settings_pause_key">Pauze Toets</translation>
 
+    <translation key="settings_speed_change_title">Snelheidsverandering Tijdens Afspelen</translation>
+    <translation key="settings_speed_change_enable_hint">Snelheidsverandering tijdens afspelen inschakelen met toetsenbordsnelkoppelingen</translation>
+    <translation key="settings_speed_change_preset_keys">Preset-toetsen</translation>
+    <translation key="settings_speed_change_ramp_steps">Snelheidsovergangsstappen</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

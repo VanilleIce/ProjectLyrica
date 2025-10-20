@@ -132,10 +132,16 @@
     <translation key="settings_keyboard_layout">Tastatur Layout</translation>
     <translation key="settings_pause_key">Pause Taste</translation>
 
+    <translation key="settings_speed_change_title">Geschwindigkeitsänderung während der Wiedergabe</translation>
+    <translation key="settings_speed_change_enable_hint">Enable speed change during playback using keyboard shortcuts</translation>
+    <translation key="settings_speed_change_preset_keys">Preset-Tasten</translation>
+    <translation key="settings_speed_change_ramp_steps">Geschwindigkeits-Übergangsschritte</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->
     <translation key="settings_save">Speichern</translation>
+    <translation key="settings_no_changes">Keine Änderungen erkannt</translation>
     <translation key="settings_reset">Zurücksetzen</translation>
     <translation key="settings_cancel">Abbrechen</translation>
 

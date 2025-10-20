@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Раскладка Клавиатуры</translation>
     <translation key="settings_pause_key">Клавиша Паузы</translation>
 
+    <translation key="settings_speed_change_title">Изменение скорости во время воспроизведения</translation>
+    <translation key="settings_speed_change_enable_hint">Включить изменение скорости во время воспроизведения с помощью горячих клавиш</translation>
+    <translation key="settings_speed_change_preset_keys">Клавиши пресетов</translation>
+    <translation key="settings_speed_change_ramp_steps">Шаги перехода скорости</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

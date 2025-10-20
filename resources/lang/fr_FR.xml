@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Disposition du Clavier</translation>
     <translation key="settings_pause_key">Touche de Pause</translation>
 
+    <translation key="settings_speed_change_title">Changement de Vitesse Pendant la Lecture</translation>
+    <translation key="settings_speed_change_enable_hint">Activer le changement de vitesse pendant la lecture à l'aide de raccourcis clavier</translation>
+    <translation key="settings_speed_change_preset_keys">Touches de Préréglage</translation>
+    <translation key="settings_speed_change_ramp_steps">Étapes de Transition de Vitesse</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

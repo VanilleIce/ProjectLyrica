@@ -44,6 +44,9 @@ class ConfigManager:
                     "steps": 12,
                     "start_percentage": 50,
                     "end_percentage": 100
+                },
+                "speed_change": {
+                    "steps": 12
                 }
             }
         },
@@ -59,6 +62,15 @@ class ConfigManager:
         
         "ramping_info_display_count": {
             "value": 0
+        },
+
+        "speed_change_settings": {
+            "preset_mappings": [
+                    {"key": "9", "speed": 600},
+                    {"key": "0", "speed": 800},
+                    {"key": "ß", "speed": 1000},
+                    {"key": "´", "speed": 1200}
+            ]
         }
     }
 
@@ -217,11 +229,62 @@ class ConfigManager:
                         "steps": old_timing.get("ramp_steps_after_pause", 12),
                         "start_percentage": 50,
                         "end_percentage": 100
+                    },
+                    "speed_change": {
+                        "steps": 12
                     }
                 }
             }
             del config["timing_config"]
             upgraded = True
+
+        if "speed_change_settings" not in config:
+            config["speed_change_settings"] = cls.DEFAULT_CONFIG["speed_change_settings"].copy()
+            upgraded = True
+        else:
+            old_speed_change = config["speed_change_settings"]
+            
+            if "preset_keys" in old_speed_change and "preset_mappings" not in old_speed_change:
+                preset_keys = old_speed_change.get("preset_keys", ["1", "2", "3", "4"])
+                speed_presets = config.get("playback_settings", {}).get("speed_presets", [600, 800, 1000, 1200])
+                
+                preset_mappings = []
+                for i, key in enumerate(preset_keys):
+                    if i < len(speed_presets):
+                        preset_mappings.append({
+                            "key": key,
+                            "speed": speed_presets[i]
+                        })
+                
+                old_speed_change["preset_mappings"] = preset_mappings
+                del old_speed_change["preset_keys"]
+                upgraded = True
+
+            if "ramping" in old_speed_change and "timing_settings" in config:
+                timing_ramping = config["timing_settings"].get("ramping", {})
+                if "speed_change" not in timing_ramping:
+                    timing_ramping["speed_change"] = {
+                        "steps": old_speed_change["ramping"].get("steps", 8)
+                    }
+                    if "ramping" in old_speed_change:
+                        del old_speed_change["ramping"]
+                    upgraded = True
+
+            keys_to_remove = ["step_size", "enabled", "mode", "increment_keys"]
+            for key in keys_to_remove:
+                if key in old_speed_change:
+                    del old_speed_change[key]
+                    upgraded = True
+
+            if "preset_mappings" not in old_speed_change:
+                old_speed_change["preset_mappings"] = cls.DEFAULT_CONFIG["speed_change_settings"]["preset_mappings"].copy()
+                upgraded = True
+
+        if "timing_settings" in config and "ramping" in config["timing_settings"]:
+            timing_ramping = config["timing_settings"]["ramping"]
+            if "speed_change" not in timing_ramping:
+                timing_ramping["speed_change"] = cls.DEFAULT_CONFIG["timing_settings"]["ramping"]["speed_change"].copy()
+                upgraded = True
 
         # Ensure all required sections exist
         new_structure = {
@@ -241,7 +304,8 @@ class ConfigManager:
                 "ramping": {
                     "begin": {"steps": 20, "start_percentage": 50, "end_percentage": 100},
                     "end": {"steps": 16, "start_percentage": 100, "end_percentage": 50},
-                    "after_pause": {"steps": 12, "start_percentage": 50, "end_percentage": 100}
+                    "after_pause": {"steps": 12, "start_percentage": 50, "end_percentage": 100},
+                    "speed_change": {"steps": 12}
                 }
             },
             "ui_settings": {
@@ -251,7 +315,15 @@ class ConfigManager:
                 "theme": "dark"
             },
             "key_mapping": {},
-            "ramping_info_display_count": {"value": 0}
+            "ramping_info_display_count": {"value": 0},
+            "speed_change_settings": {
+                "preset_mappings": [
+                    {"key": "9", "speed": 600},
+                    {"key": "0", "speed": 800},
+                    {"key": "ß", "speed": 1000},
+                    {"key": "´", "speed": 1200}
+                ]
+            }
         }
 
         for section, default_values in new_structure.items():
@@ -404,6 +476,7 @@ class ConfigManager:
         game_settings = config.get("game_settings", {})
         playback_settings = config.get("playback_settings", {})
         timing_settings = config.get("timing_settings", {})
+        speed_change_settings = config.get("speed_change_settings", {})
         
         lang_code = ui_settings.get("selected_language", "en_US")
         
@@ -446,7 +519,7 @@ class ConfigManager:
                         key_map_details.append(f"  {key}: {current_val} (default)")
                     else:
                         key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
-                        
+                            
         except Exception as e:
             logger.error(f"Key mapping analysis error: {e}")
             key_map_details = ["  [Error: Could not analyze key mapping]"]
@@ -454,6 +527,12 @@ class ConfigManager:
 
         timing_delays = timing_settings.get("delays", {})
         timing_ramping = timing_settings.get("ramping", {})
+        speed_change_ramping = timing_ramping.get("speed_change", {})
+        
+        preset_mappings = speed_change_settings.get("preset_mappings", [])
+        preset_info = []
+        for mapping in preset_mappings:
+            preset_info.append(f"    {mapping.get('key', '?')} → {mapping.get('speed', '?')}")
         
         info = [
             "== Player Config ==",
@@ -467,6 +546,7 @@ class ConfigManager:
             f"Ramp Steps Begin: {timing_ramping.get('begin', {}).get('steps')}",
             f"Ramp Steps End: {timing_ramping.get('end', {}).get('steps')}",
             f"Ramp Steps Pause: {timing_ramping.get('after_pause', {}).get('steps')}",
+            f"Speed Change Ramp Steps: {speed_change_ramping.get('steps')}",
             "",
             "== Player Settings ==",
             f"Pause Key: '{ui_settings.get('pause_key')}'",
@@ -474,6 +554,10 @@ class ConfigManager:
             f"Press Duration Presets: {playback_settings.get('key_press_durations')}",
             f"Enable Ramping: {playback_settings.get('enable_ramping')}",
             f"Ramping Info Display Count: {config.get('ramping_info_display_count', {}).get('value')}",
+            "",
+            "== Speed Change Settings ==",
+            f"Preset Mappings:",
+            *preset_info,
             "",
             "== Key Mapping ==",
             *key_map_details

@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Layout do Teclado</translation>
     <translation key="settings_pause_key">Tecla de Pausa</translation>
 
+    <translation key="settings_speed_change_title">Alteração de Velocidade Durante a Reprodução</translation>
+    <translation key="settings_speed_change_enable_hint">Ativar alteração de velocidade durante a reprodução usando atalhos de teclado</translation>
+    <translation key="settings_speed_change_preset_keys">Teclas de Predefinição</translation>
+    <translation key="settings_speed_change_ramp_steps">Passos de Transição de Velocidade</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

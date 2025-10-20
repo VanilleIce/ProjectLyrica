@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">键盘布局</translation>
     <translation key="settings_pause_key">暂停键</translation>
 
+    <translation key="settings_speed_change_title">播放期间速度变化</translation>
+    <translation key="settings_speed_change_enable_hint">启用使用键盘快捷键在播放期间更改速度</translation>
+    <translation key="settings_speed_change_preset_keys">预设按键</translation>
+    <translation key="settings_speed_change_ramp_steps">速度过渡步骤</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

@@ -29,7 +29,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.6.2"
+VERSION = "2.7.0"
 
 # -------------------------------
 # Music App
@@ -63,8 +63,11 @@ class MusicApp:
         self._init_gui()
 
         self.current_play_state = "ready"
+        
+        self.speed_changed_by_preset = False
+        self.last_speed_before_disable = 1000
+        
         self._start_sky_check()
-
         self._setup_key_listener()
 
         ConfigManager.log_system_info(VERSION)
@@ -143,6 +146,9 @@ class MusicApp:
         self.speed_presets = playback_settings.get("speed_presets")
         self.pause_key = ui_settings.get("pause_key")
         
+        speed_change_settings = config.get("speed_change_settings", {})
+        self.speed_change_config = speed_change_settings
+        
         self.keypress_enabled = False
         self.speed_enabled = False
         self.current_speed_value = 1000
@@ -208,8 +214,9 @@ class MusicApp:
             self._toggle_keypress
         )
         
+        speed_display_text = f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}"
         self.speed_btn = self._create_button(
-            f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}", 
+            speed_display_text, 
             self._toggle_speed
         )
 
@@ -247,9 +254,11 @@ class MusicApp:
                 btn.pack(side="left", padx=2)
         
         self.speed_frame = ctk.CTkFrame(self.root)
+        
+        current_speed = self.player.get_current_speed()
         self.speed_label = ctk.CTkLabel(
             self.speed_frame,
-            text=f"{LanguageManager.get('current_speed')}: {self.current_speed_value}",
+            text=f"{LanguageManager.get('current_speed')}: {current_speed}",
             font=("Arial", 12)
         )
         
@@ -435,8 +444,21 @@ class MusicApp:
             theme_callback=self._on_theme_changed,
             timing_callback=self._on_timing_changed,
             playback_callback=self._on_playback_changed,
-            pause_key_callback=self._on_pause_key_changed
+            pause_key_callback=self._on_pause_key_changed,
+            speed_change_callback=self._on_speed_change_changed
         )
+
+    def _on_speed_change_changed(self, speed_change_updates):
+        """Handle speed change settings updates"""
+        logger.info(f"Speed change settings updated: {speed_change_updates}")
+        
+        self.config = ConfigManager.get_config()
+        
+        speed_change_settings = self.config.get("speed_change_settings", {})
+        self.speed_change_config = speed_change_settings
+        
+        if "preset_mappings" in speed_change_updates:
+            logger.info("Speed change preset mappings updated")
 
     def _on_pause_key_changed(self, new_pause_key):
         logger.info(f"Pause key changed to: '{new_pause_key}'")
@@ -446,7 +468,6 @@ class MusicApp:
             self._update_play_button_state("paused")
 
     def _on_theme_changed(self, new_theme):
-        """Called when theme is changed"""
         logger.info(f"Theme changed to: {new_theme}")
 
         from settings_window import SettingsWindow
@@ -467,23 +488,26 @@ class MusicApp:
         )
 
     def _on_timing_changed(self, timing_updates):
-        """Called when timing settings are changed"""
         logger.info(f"Timing settings updated: {timing_updates}")
 
         if hasattr(self, 'player'):
-            # Delays
-            self.player.initial_delay = timing_updates["delays"]["initial_delay"]
-            self.player.pause_resume_delay = timing_updates["delays"]["pause_resume_delay"]
+            if "delays" in timing_updates:
+                delays = timing_updates["delays"]
+                self.player.initial_delay = delays.get("initial_delay", self.player.initial_delay)
+                self.player.pause_resume_delay = delays.get("pause_resume_delay", self.player.pause_resume_delay)
             
-            # Ramping
-            self.player.ramp_begin_config = timing_updates["ramping"]["begin"]
-            self.player.ramp_end_config = timing_updates["ramping"]["end"]
-            self.player.ramp_after_pause_config = timing_updates["ramping"]["after_pause"]
+            if "ramping" in timing_updates:
+                ramping = timing_updates["ramping"]
+                self.player.ramp_begin_config = ramping.get("begin", self.player.ramp_begin_config)
+                self.player.ramp_end_config = ramping.get("end", self.player.ramp_end_config)
+                self.player.ramp_after_pause_config = ramping.get("after_pause", self.player.ramp_after_pause_config)
+
+                self.player.speed_change_ramping_config = ramping.get("speed_change", self.player.speed_change_ramping_config)
+                self.player.speed_change_ramp_steps = ramping.get("speed_change", {}).get("steps", 8)
             
             logger.info("MusicPlayer timing settings updated immediately")
 
     def _on_playback_changed(self, playback_updates):
-        """Called when playback settings are changed"""
         logger.info(f"Playback settings updated: {playback_updates}")
         
         if hasattr(self, 'speed_presets'):
@@ -499,7 +523,6 @@ class MusicApp:
             self._update_duration_preset_buttons()
 
     def _update_speed_preset_buttons(self):
-        """Updates the speed preset buttons"""
         if hasattr(self, 'speed_preset_frame') and self.speed_preset_frame.winfo_exists():
             for widget in self.speed_preset_frame.winfo_children():
                 widget.destroy()
@@ -520,7 +543,6 @@ class MusicApp:
                     btn.pack(side="left", padx=2)
         
     def _update_duration_preset_buttons(self):
-        """Updates the duration preset buttons"""
         if hasattr(self, 'preset_frame') and self.preset_frame.winfo_exists():
             for widget in self.preset_frame.winfo_children():
                 widget.destroy()
@@ -660,33 +682,103 @@ class MusicApp:
             self.root.after(0, lambda: self._update_play_button_state("ready"))
 
     def _handle_keypress(self, key):
-        """Handle pause key events for pause/resume"""
+        """Handle all key events including pause and speed changes"""
         try:
-            if not hasattr(key, 'char') or key.char != self.pause_key:
+            key_char = getattr(key, 'char', None)
+            key_name = getattr(key, 'name', None)
+            
+            # Pause key handling
+            if key_char == self.pause_key:
+                self._handle_pause_key()
                 return
-
-            if not self.selected_file or not self.player.playback_active:
-                return
-
-            if self.player.pause_flag.is_set():
-                logger.info("Resuming playback via pause key")
-                self.player.pause_flag.clear()
-                self.root.after(0, lambda: self._update_play_button_state("playing"))
                 
-                if window := self.player._find_sky_window():
-                    self.player._focus_window(window)
-            else:
-                logger.info("Pausing playback via pause key")
-                self.player.pause_flag.set()
-
-                if not hasattr(self, '_originally_paused_file'):
-                    self._originally_paused_file = self.selected_file
-                    logger.info(f"Originally paused file set to: {self._originally_paused_file}")
-                
-                self.root.after(0, lambda: self._update_play_button_state("paused"))
-                
+            # Speed change handling
+            if self.player.playback_active:
+                self._handle_preset_speed_change(key_char, key_name)
+                    
         except Exception as e:
-            logger.error(f"Critical error in pause handler: {str(e)}", exc_info=True)
+            logger.error(f"Key handler error: {e}")
+
+    def _handle_pause_key(self):
+        """Handle pause key events"""
+        if not self.selected_file or not self.player.playback_active:
+            return
+
+        if self.player.pause_flag.is_set():
+            logger.info("Resuming playback via pause key")
+            self.player.pause_flag.clear()
+            self.root.after(0, lambda: self._update_play_button_state("playing"))
+            
+            if window := self.player._find_sky_window():
+                self.player._focus_window(window)
+        else:
+            logger.info("Pausing playback via pause key")
+            self.player.pause_flag.set()
+
+            if not hasattr(self, '_originally_paused_file'):
+                self._originally_paused_file = self.selected_file
+                logger.info(f"Originally paused file set to: {self._originally_paused_file}")
+            
+            self.root.after(0, lambda: self._update_play_button_state("paused"))
+
+    def _handle_speed_change_key(self, key_char, key_name):
+        """Handle speed change keys during playback - nur Preset Mode"""
+        if self.player.playback_active:
+            self._handle_preset_speed_change(key_char, key_name)
+
+    def _handle_preset_speed_change(self, key_char, key_name):
+        """Change to user-mapped preset speed - immer verfügbar"""
+        preset_mappings = self.speed_change_config.get('preset_mappings', [])
+        
+        for mapping in preset_mappings:
+            preset_key = mapping.get('key', '')
+            preset_speed = mapping.get('speed', 600)
+            
+            # Check if pressed key matches preset key
+            if (key_char and key_char == preset_key) or (key_name and key_name == preset_key):
+                self.speed_changed_by_preset = True
+                self.current_speed_value = preset_speed
+
+                self.last_speed_before_disable = preset_speed
+                    
+                if self.player.playback_active and not self.player.pause_flag.is_set():
+                    success = self.player.change_speed_during_playback(preset_speed)
+                    if success:
+                        logger.info(f"Speed change with ramping to {preset_speed}")
+                else:
+                    self.player.current_speed = preset_speed
+                    logger.info(f"Speed changed directly to {preset_speed} (paused: {self.player.pause_flag.is_set()})")
+                
+                self.root.after(0, lambda: self._update_speed_display(preset_speed))
+                return
+
+    def _update_speed_ui_visibility(self):
+        if self.speed_enabled:
+            current_speed = int(self.current_speed_value)
+            self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
+            self.speed_frame.pack(pady=5, before=self.ramping_btn)
+            self.speed_preset_frame.pack(pady=(0, 8))
+            if hasattr(self, 'speed_label'):
+                self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {current_speed}")
+                self.speed_label.pack(pady=(0, 8))
+        else:
+            self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}")
+            self.speed_frame.pack_forget()
+        
+        self._adjust_window_size()
+
+    def _update_speed_display(self, new_speed):
+        self.current_speed_value = new_speed
+        self.player.current_speed = new_speed
+
+        display_speed = int(new_speed)
+
+        self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {display_speed}")
+        
+        if self.speed_enabled and hasattr(self, 'speed_label') and self.speed_label.winfo_exists():
+            self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {display_speed}")
+        
+        self.root.update_idletasks()
 
     def _select_file(self):
         try:
@@ -776,9 +868,9 @@ class MusicApp:
                 del self._originally_paused_file
                 logger.info("Cleared originally paused file for restart")
 
-            if self.speed_enabled:
-                self.player.set_speed(self.current_speed_value)
-                logger.info(f"Speed set to {self.current_speed_value} for playback")
+            current_speed = self.current_speed_value
+            self.player.current_speed = current_speed
+            logger.info(f"Starting playback with speed: {current_speed}")
             
             song = self.player.parse_song(self.selected_file)
             self._update_play_button_state("playing")
@@ -840,11 +932,9 @@ class MusicApp:
                 speed = MAX_SPEED
                 
             self.current_speed_value = speed
-            self.player.set_speed(speed)
-            
-            display_speed = int(speed) if speed.is_integer() else speed
-            self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {display_speed}")
-            
+            self.player.set_speed(speed)       
+            self._update_speed_display(speed)
+                
         except Exception as e:
             logger.error(f"Speed setting failed: {e}")
             messagebox.showerror(
@@ -874,18 +964,20 @@ class MusicApp:
     def _toggle_speed(self):
         try:
             self.speed_enabled = not self.speed_enabled
-            status = "enabled" if self.speed_enabled else "disabled"
-            self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get(status)}")
             
             if self.speed_enabled:
-                self.speed_frame.pack(pady=5, before=self.ramping_btn)
-                self.speed_preset_frame.pack(pady=(0, 8))
-                self.speed_label.pack(pady=(0, 8))
+                self.current_speed_value = self.last_speed_before_disable
+                self.player.current_speed = self.last_speed_before_disable
+                current_speed = int(self.current_speed_value)
+                self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
             else:
-                self.speed_frame.pack_forget()
+                self.last_speed_before_disable = self.current_speed_value
                 self.current_speed_value = 1000
-
-            self._adjust_window_size()
+                self.player.current_speed = 1000
+                self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}")
+                self.speed_changed_by_preset = False
+                
+            self._update_speed_ui_visibility()
         except Exception as e:
             logger.error(f"Speed toggle failed: {e}")
 
