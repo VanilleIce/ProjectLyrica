@@ -45,10 +45,8 @@ class ConfigManager:
                     "start_percentage": 50,
                     "end_percentage": 100
                 },
-                # NEU: Speed Change Ramping zu Timing Settings
                 "speed_change": {
-                    "steps": 8
-                    # enable_ramping ENTFERNT - wird von smooth_ramping gesteuert
+                    "steps": 12
                 }
             }
         },
@@ -65,20 +63,15 @@ class ConfigManager:
         "ramping_info_display_count": {
             "value": 0
         },
-        
-        # NEUE EINSTELLUNG: Dynamische Geschwindigkeitsänderung
+
         "speed_change_settings": {
             "enabled": False,
-            "mode": "preset",  # "preset" oder "incremental"
             "preset_mappings": [
                 {"key": "1", "speed": 600},
                 {"key": "2", "speed": 800},
                 {"key": "3", "speed": 1000},
                 {"key": "4", "speed": 1200}
-            ],
-            "increment_keys": ["up", "down"]
-            # step_size entfernt - wird durch speed_presets ersetzt
-            # ramping entfernt - wurde zu timing_settings verschoben
+            ]
         }
     }
 
@@ -239,22 +232,19 @@ class ConfigManager:
                         "end_percentage": 100
                     },
                     "speed_change": {
-                        "steps": 8
+                        "steps": 12
                     }
                 }
             }
             del config["timing_config"]
             upgraded = True
 
-        # NEU: Speed Change Settings hinzufügen/upgraden
         if "speed_change_settings" not in config:
             config["speed_change_settings"] = cls.DEFAULT_CONFIG["speed_change_settings"].copy()
             upgraded = True
         else:
-            # Alte Struktur zu neuer Struktur migrieren
             old_speed_change = config["speed_change_settings"]
             
-            # Wenn alte preset_keys Struktur vorhanden, zu preset_mappings konvertieren
             if "preset_keys" in old_speed_change and "preset_mappings" not in old_speed_change:
                 preset_keys = old_speed_change.get("preset_keys", ["1", "2", "3", "4"])
                 speed_presets = config.get("playback_settings", {}).get("speed_presets", [600, 800, 1000, 1200])
@@ -270,32 +260,27 @@ class ConfigManager:
                 old_speed_change["preset_mappings"] = preset_mappings
                 del old_speed_change["preset_keys"]
                 upgraded = True
-            
-            # Alte ramping Einstellungen zu timing_settings verschieben
+
             if "ramping" in old_speed_change and "timing_settings" in config:
                 timing_ramping = config["timing_settings"].get("ramping", {})
                 if "speed_change" not in timing_ramping:
                     timing_ramping["speed_change"] = {
                         "steps": old_speed_change["ramping"].get("steps", 8)
                     }
-                    # Alte Werte entfernen
                     if "ramping" in old_speed_change:
                         del old_speed_change["ramping"]
                     upgraded = True
-            
-            # step_size entfernen falls vorhanden
+
             if "step_size" in old_speed_change:
                 del old_speed_change["step_size"]
                 upgraded = True
-            
-            # Sicherstellen dass alle benötigten Felder vorhanden sind
+
             default_speed_change = cls.DEFAULT_CONFIG["speed_change_settings"]
             for key, default_value in default_speed_change.items():
                 if key not in old_speed_change:
                     old_speed_change[key] = default_value
                     upgraded = True
 
-        # Sicherstellen dass speed_change in timing_settings.ramping vorhanden ist
         if "timing_settings" in config and "ramping" in config["timing_settings"]:
             timing_ramping = config["timing_settings"]["ramping"]
             if "speed_change" not in timing_ramping:
@@ -321,7 +306,7 @@ class ConfigManager:
                     "begin": {"steps": 20, "start_percentage": 50, "end_percentage": 100},
                     "end": {"steps": 16, "start_percentage": 100, "end_percentage": 50},
                     "after_pause": {"steps": 12, "start_percentage": 50, "end_percentage": 100},
-                    "speed_change": {"steps": 8}
+                    "speed_change": {"steps": 12}
                 }
             },
             "ui_settings": {
@@ -334,14 +319,12 @@ class ConfigManager:
             "ramping_info_display_count": {"value": 0},
             "speed_change_settings": {
                 "enabled": False,
-                "mode": "preset",
                 "preset_mappings": [
                     {"key": "1", "speed": 600},
                     {"key": "2", "speed": 800},
                     {"key": "3", "speed": 1000},
                     {"key": "4", "speed": 1200}
-                ],
-                "increment_keys": ["up", "down"]
+                ]
             }
         }
 
@@ -499,7 +482,6 @@ class ConfigManager:
         
         lang_code = ui_settings.get("selected_language", "en_US")
         
-        # NEU: Korrekten Status berechnen basierend auf smooth_ramping
         smooth_ramping_enabled = playback_settings.get("enable_ramping", False)
         
         try:
@@ -551,10 +533,6 @@ class ConfigManager:
         timing_ramping = timing_settings.get("ramping", {})
         speed_change_ramping = timing_ramping.get("speed_change", {})
         
-        # NEUE INFO: Speed Change Settings
-        speed_change_mode = speed_change_settings.get("mode", "preset")
-        
-        # Preset Mappings anzeigen
         preset_mappings = speed_change_settings.get("preset_mappings", [])
         preset_info = []
         for mapping in preset_mappings:
@@ -583,10 +561,8 @@ class ConfigManager:
             "",
             "== Speed Change Settings ==",
             f"Speed Change Effectively Enabled: {smooth_ramping_enabled} (via Smooth Ramping)",
-            f"Speed Change Mode: {speed_change_mode}",
             f"Preset Mappings:",
             *preset_info,
-            f"Increment Keys: {speed_change_settings.get('increment_keys')}",
             "",
             "== Key Mapping ==",
             *key_map_details
