@@ -66,10 +66,10 @@ class ConfigManager:
 
         "speed_change_settings": {
             "preset_mappings": [
-                {"key": "1", "speed": 600},
-                {"key": "2", "speed": 800},
-                {"key": "3", "speed": 1000},
-                {"key": "4", "speed": 1200}
+                    {"key": "9", "speed": 600},
+                    {"key": "0", "speed": 800},
+                    {"key": "ß", "speed": 1000},
+                    {"key": "´", "speed": 1200}
             ]
         }
     }
@@ -318,10 +318,10 @@ class ConfigManager:
             "ramping_info_display_count": {"value": 0},
             "speed_change_settings": {
                 "preset_mappings": [
-                    {"key": "1", "speed": 600},
-                    {"key": "2", "speed": 800},
-                    {"key": "3", "speed": 1000},
-                    {"key": "4", "speed": 1200}
+                    {"key": "9", "speed": 600},
+                    {"key": "0", "speed": 800},
+                    {"key": "ß", "speed": 1000},
+                    {"key": "´", "speed": 1200}
                 ]
             }
         }
