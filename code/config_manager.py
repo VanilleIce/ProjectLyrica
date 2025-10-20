@@ -65,7 +65,6 @@ class ConfigManager:
         },
 
         "speed_change_settings": {
-            "enabled": False,
             "preset_mappings": [
                 {"key": "1", "speed": 600},
                 {"key": "2", "speed": 800},
@@ -271,15 +270,15 @@ class ConfigManager:
                         del old_speed_change["ramping"]
                     upgraded = True
 
-            if "step_size" in old_speed_change:
-                del old_speed_change["step_size"]
-                upgraded = True
-
-            default_speed_change = cls.DEFAULT_CONFIG["speed_change_settings"]
-            for key, default_value in default_speed_change.items():
-                if key not in old_speed_change:
-                    old_speed_change[key] = default_value
+            keys_to_remove = ["step_size", "enabled", "mode", "increment_keys"]
+            for key in keys_to_remove:
+                if key in old_speed_change:
+                    del old_speed_change[key]
                     upgraded = True
+
+            if "preset_mappings" not in old_speed_change:
+                old_speed_change["preset_mappings"] = cls.DEFAULT_CONFIG["speed_change_settings"]["preset_mappings"].copy()
+                upgraded = True
 
         if "timing_settings" in config and "ramping" in config["timing_settings"]:
             timing_ramping = config["timing_settings"]["ramping"]
@@ -318,7 +317,6 @@ class ConfigManager:
             "key_mapping": {},
             "ramping_info_display_count": {"value": 0},
             "speed_change_settings": {
-                "enabled": False,
                 "preset_mappings": [
                     {"key": "1", "speed": 600},
                     {"key": "2", "speed": 800},
