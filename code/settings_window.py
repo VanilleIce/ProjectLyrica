@@ -149,8 +149,7 @@ class SettingsWindow:
                 {"key": "2", "speed": 800},
                 {"key": "3", "speed": 1000},
                 {"key": "4", "speed": 1200}
-            ]),
-            "increment_keys": speed_change_settings.get("increment_keys", ["up", "down"])
+            ])
         }
 
     def _create_ui(self):
