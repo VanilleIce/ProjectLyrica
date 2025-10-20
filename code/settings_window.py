@@ -31,7 +31,7 @@ class SettingsWindow:
         self.parent = parent
         self.window = ctk.CTkToplevel(parent)
         self.window.title(LanguageManager.get('settings_window_title'))
-        self.window.geometry("620x680")
+        self.window.geometry("720x750")
         self.window.resizable(False, False)
 
         self.window.withdraw()
@@ -90,17 +90,15 @@ class SettingsWindow:
                 settings_y = main_y
                 
                 screen_width = self.window.winfo_screenwidth()
-                if settings_x + 620 > screen_width:
-                    settings_x = max(0, screen_width - 620 - 10)
+                if settings_x + 720 > screen_width:
+                    settings_x = max(0, screen_width - 720 - 10)
                 
-                self.window.geometry(f"620x680+{settings_x}+{settings_y}")
+                self.window.geometry(f"720x750+{settings_x}+{settings_y}")
                 
             except Exception:
-                # Fallback Position
-                self.window.geometry("620x680+100+100")
+                self.window.geometry("720x750+100+100")
         else:
-            # Fallback Position
-            self.window.geometry("620x680+100+100")
+            self.window.geometry("720x750+100+100")
 
     def _load_current_config(self):
         """Load current configuration"""
@@ -118,7 +116,8 @@ class SettingsWindow:
         self.current_ramping = {
             "begin_steps": ramping.get("begin", {}).get("steps", 20),
             "end_steps": ramping.get("end", {}).get("steps", 16), 
-            "after_pause_steps": ramping.get("after_pause", {}).get("steps", 12)
+            "after_pause_steps": ramping.get("after_pause", {}).get("steps", 12),
+            "speed_change_steps": ramping.get("speed_change", {}).get("steps", 8)
         }
         
         ui_settings = self.config.get("ui_settings", {})
@@ -140,20 +139,31 @@ class SettingsWindow:
             "speed_presets": playback_settings.get("speed_presets", [600, 800, 1000, 1200])
         }
 
+        speed_change_settings = self.config.get("speed_change_settings", {})
+        self.current_speed_change = {
+            "enabled": speed_change_settings.get("enabled", False),
+            "mode": speed_change_settings.get("mode", "preset"),
+            "preset_mappings": speed_change_settings.get("preset_mappings", [
+                {"key": "1", "speed": 600},
+                {"key": "2", "speed": 800},
+                {"key": "3", "speed": 1000},
+                {"key": "4", "speed": 1200}
+            ]),
+            "increment_keys": speed_change_settings.get("increment_keys", ["up", "down"])
+        }
+
     def _create_ui(self):
         """Create the user interface with scrollbar"""
         main_frame = ctk.CTkFrame(self.window)
         main_frame.pack(fill="both", expand=True, padx=0, pady=0)
         
-        # Scrollable frame
         self.scrollable_frame = ctk.CTkScrollableFrame(
             main_frame, 
-            width=480,
-            height=500
+            width=580,
+            height=550
         )
         self.scrollable_frame.pack(fill="both", expand=True, padx=10, pady=10)
         
-        # Title
         title_label = ctk.CTkLabel(
             self.scrollable_frame, 
             text=LanguageManager.get('settings_window_title'),
@@ -161,18 +171,16 @@ class SettingsWindow:
         )
         title_label.pack(pady=(0, 20))
         
-        # Sections
         self._create_game_section(self.scrollable_frame)
         self._create_playback_section(self.scrollable_frame)
+        self._create_speed_change_section(self.scrollable_frame)
         self._create_delays_section(self.scrollable_frame)
         self._create_ramping_section(self.scrollable_frame)
         self._create_interface_section(self.scrollable_frame)
         
-        # Buttons
         self._create_buttons_section(main_frame)
 
     def _create_game_section(self, parent):
-        """Create Game Settings section"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
@@ -183,7 +191,6 @@ class SettingsWindow:
         )
         title_label.pack(anchor="w", pady=(10, 15), padx=10)
         
-        # Sky.exe Path
         path_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
         path_frame.pack(fill="x", padx=10, pady=5)
         
@@ -197,7 +204,6 @@ class SettingsWindow:
         browse_btn.pack(side="left", padx=5)
 
     def _create_playback_section(self, parent):
-        """Create Playback Settings section"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
@@ -208,19 +214,16 @@ class SettingsWindow:
         )
         title_label.pack(anchor="w", pady=(10, 15), padx=10)
         
-        # Key Press Durations
         self._create_array_setting(
             section_frame, 'settings_key_durations', 'key_durations',
             [0.2, 0.248, 0.3, 0.5, 1.0], 'settings_key_durations_hint'
         )
         
-        # Speed Presets
         self._create_array_setting(
             section_frame, 'settings_speed_presets', 'speed_presets',
             [600, 800, 1000, 1200], 'settings_speed_presets_hint'
         )
         
-        # Custom Key Mapping
         custom_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
         custom_frame.pack(fill="x", padx=10, pady=10)
         
@@ -233,8 +236,153 @@ class SettingsWindow:
         )
         self.custom_keys_status.pack(side="left", padx=10)
 
+    def _create_speed_change_section(self, parent):
+        """NEUE SEKTION: Create speed change during playback section"""
+        section_frame = ctk.CTkFrame(parent)
+        section_frame.pack(fill="x", pady=(0, 15))
+        
+        title_label = ctk.CTkLabel(
+            section_frame, 
+            text=LanguageManager.get('settings_speed_change_title'),
+            font=("Arial", 16, "bold")
+        )
+        title_label.pack(anchor="w", pady=(10, 15), padx=10)
+        
+        # INFO: Keine Checkbox mehr - Funktion ist automatisch aktiv mit Smooth Ramping
+        info_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
+        info_frame.pack(fill="x", padx=10, pady=5)
+        
+        info_text = LanguageManager.get('settings_speed_change_enable')
+        ctk.CTkLabel(
+            info_frame, 
+            text=info_text,
+            font=("Arial", 11),
+            text_color="gray70",
+            wraplength=600
+        ).pack(side="left")
+        
+        # Mode Selection immer sichtbar
+        mode_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
+        mode_frame.pack(fill="x", padx=10, pady=5)
+        
+        ctk.CTkLabel(mode_frame, text=LanguageManager.get('settings_speed_change_mode'), width=150).pack(side="left")
+        
+        self.speed_change_mode_var = ctk.StringVar(value=self.current_speed_change.get('mode', 'preset'))
+        mode_dropdown = ctk.CTkComboBox(
+            mode_frame, 
+            values=["preset", "incremental"],
+            variable=self.speed_change_mode_var,
+            state="readonly",
+            width=120,
+            command=self._on_speed_change_mode_changed
+        )
+        mode_dropdown.pack(side="left", padx=5)
+        
+        self.preset_keys_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
+        self._create_preset_keys_ui()
+        
+        self.incremental_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
+        self._create_incremental_ui()
+        
+        # Immer die entsprechenden Einstellungen anzeigen
+        self._on_speed_change_mode_changed(self.speed_change_mode_var.get())
+
+    def _create_preset_keys_ui(self):
+        """Create UI for flexible preset key-speed mappings in 2x2 grid"""
+        for widget in self.preset_keys_frame.winfo_children():
+            widget.destroy()
+            
+        self.preset_keys_frame.pack(fill="x", padx=10, pady=5)
+        
+        ctk.CTkLabel(self.preset_keys_frame, text=LanguageManager.get('settings_speed_change_preset_keys'), width=150).pack(side="left")
+        
+        grid_frame = ctk.CTkFrame(self.preset_keys_frame, fg_color="transparent")
+        grid_frame.pack(side="left", padx=5, fill="x", expand=True)
+        
+        available_speeds = self.current_playback.get('speed_presets', [600, 800, 1000, 1200])
+        speed_display_values = [f"{speed}" for speed in available_speeds]
+        
+        current_mappings = self.current_speed_change.get('preset_mappings', [
+            {"key": "1", "speed": 600},
+            {"key": "2", "speed": 800},
+            {"key": "3", "speed": 1000},
+            {"key": "4", "speed": 1200}
+        ])
+        
+        self.preset_key_vars = []
+        self.preset_speed_vars = []
+        
+        for row in range(2):
+            row_frame = ctk.CTkFrame(grid_frame, fg_color="transparent")
+            row_frame.pack(fill="x", pady=2)
+            
+            for col in range(2):
+                preset_index = row * 2 + col
+                if preset_index >= len(current_mappings):
+                    break
+                    
+                preset_frame = ctk.CTkFrame(row_frame, fg_color="transparent")
+                preset_frame.pack(side="left", padx=15)
+                
+                ctk.CTkLabel(preset_frame, text=f"Preset {preset_index + 1}:").pack(side="left")
+                
+                key_var = ctk.StringVar(value=current_mappings[preset_index].get('key', f'{preset_index + 1}'))
+                key_entry = ctk.CTkEntry(preset_frame, textvariable=key_var, width=60)
+                key_entry.pack(side="left", padx=2)
+                
+                ctk.CTkLabel(preset_frame, text="→").pack(side="left", padx=5)
+                
+                current_speed = current_mappings[preset_index].get('speed', available_speeds[preset_index] if preset_index < len(available_speeds) else 600)
+                speed_var = ctk.StringVar(value=f"{current_speed}")
+                
+                speed_dropdown = ctk.CTkComboBox(
+                    preset_frame, 
+                    values=speed_display_values,
+                    variable=speed_var,
+                    state="readonly",
+                    width=80
+                )
+                speed_dropdown.pack(side="left", padx=2)
+                
+                self.preset_key_vars.append(key_var)
+                self.preset_speed_vars.append(speed_var)
+
+    def _create_incremental_ui(self):
+        """Create UI for incremental settings"""
+        for widget in self.incremental_frame.winfo_children():
+            widget.destroy()
+            
+        self.incremental_frame.pack(fill="x", padx=10, pady=5)
+        
+        keys_frame = ctk.CTkFrame(self.incremental_frame, fg_color="transparent")
+        keys_frame.pack(fill="x", pady=2)
+        
+        ctk.CTkLabel(keys_frame, text=LanguageManager.get('settings_speed_change_increment_keys'), width=150).pack(side="left")
+        
+        current_increment_keys = self.current_speed_change.get('increment_keys', ['up', 'down'])
+        
+        self.increment_up_var = ctk.StringVar(value=current_increment_keys[0] if len(current_increment_keys) > 0 else 'up')
+        self.increment_down_var = ctk.StringVar(value=current_increment_keys[1] if len(current_increment_keys) > 1 else 'down')
+        
+        keys_inner_frame = ctk.CTkFrame(keys_frame, fg_color="transparent")
+        keys_inner_frame.pack(side="left", padx=5)
+        
+        ctk.CTkLabel(keys_inner_frame, text="Hoch:").pack(side="left")
+        ctk.CTkEntry(keys_inner_frame, textvariable=self.increment_up_var, width=60).pack(side="left", padx=2)
+        
+        ctk.CTkLabel(keys_inner_frame, text="Runter:").pack(side="left", padx=(10, 0))
+        ctk.CTkEntry(keys_inner_frame, textvariable=self.increment_down_var, width=60).pack(side="left", padx=2)
+
+    def _on_speed_change_mode_changed(self, mode):
+        """Handle speed change mode change"""
+        if mode == "preset":
+            self.preset_keys_frame.pack(fill="x", padx=10, pady=5)
+            self.incremental_frame.pack_forget()
+        else:
+            self.preset_keys_frame.pack_forget()
+            self.incremental_frame.pack(fill="x", padx=10, pady=5)
+
     def _create_array_setting(self, parent, label_key, config_key, default_values, hint_key):
-        """Create an array setting (durations, presets)"""
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", padx=10, pady=5)
         
@@ -252,11 +400,9 @@ class SettingsWindow:
         ctk.CTkLabel(frame, text=LanguageManager.get(hint_key), font=("Arial", 10), text_color="gray60").pack(side="left", padx=10)
 
     def _browse_sky_exe(self):
-        """Open file dialogue for Sky.exe"""
         from tkinter import filedialog
         import os
         
-        # Standard Steam Pfade
         steam_paths = [
             "C:/Program Files (x86)/Steam/steamapps/common/Sky Children of the Light",
             "C:/Program Files/Steam/steamapps/common/Sky Children of the Light",
@@ -283,18 +429,15 @@ class SettingsWindow:
             self.sky_path_var.set(file)
 
     def _open_key_editor(self):
-        """Open the Key Mapping Editor"""
         from key_editor import KeyEditorWindow
         
         def refresh_settings():
-            """Update UI after key editor"""
             self._load_current_config()
             self._update_ui_after_custom_save()
         
         KeyEditorWindow(self.window, refresh_settings)
 
     def _update_ui_after_custom_save(self):
-        """Update the UI after custom changes"""
         self._load_current_config()
         
         custom_file = Path("resources/layouts/CUSTOM.xml")
@@ -317,7 +460,6 @@ class SettingsWindow:
         self.keyboard_layout_var.set(current_value)
 
     def _get_available_layouts(self):
-        """Determine available layouts"""
         available_layouts = []
         layouts_dir = Path("resources/layouts")
         
@@ -338,7 +480,6 @@ class SettingsWindow:
         return available_layouts
 
     def _get_fallback_layout(self):
-        """Determines fallback layout based on language"""
         lang_code = self.config.get("ui_settings", {}).get("selected_language", "en_US")
         lang_to_layout = {
             "ar": "Arabic", "da": "QWERTY", "de": "QWERTZ", "en": "QWERTY",
@@ -350,7 +491,6 @@ class SettingsWindow:
         return lang_to_layout.get(lang_code, "QWERTY")
 
     def _get_custom_keys_status(self):
-        """Get status of custom key mapping"""
         custom_file = Path("resources/layouts/CUSTOM.xml")
         
         if not custom_file.exists():
@@ -363,21 +503,16 @@ class SettingsWindow:
             return LanguageManager.get('settings_custom_available')
 
     def _create_delays_section(self, parent):
-        """Create Delays Section"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
         title_label = ctk.CTkLabel(section_frame, text=LanguageManager.get('settings_delays_title'), font=("Arial", 16, "bold"))
         title_label.pack(anchor="w", pady=(10, 15), padx=10)
         
-        # Initial Delay
         self._create_delay_entry(section_frame, 'settings_initial_delay', 'initial_delay')
-        
-        # Pause-Resume Delay
         self._create_delay_entry(section_frame, 'settings_pause_delay', 'pause_resume_delay')
 
     def _create_delay_entry(self, parent, label_key, config_key):
-        """Create a delay entry"""
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", padx=10, pady=5)
         
@@ -393,7 +528,7 @@ class SettingsWindow:
         setattr(self, f"{config_key}_var", var)
 
     def _create_ramping_section(self, parent):
-        """Create ramping section"""
+        """Create ramping section with speed change ramping"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
@@ -403,9 +538,21 @@ class SettingsWindow:
         self._create_ramping_entry(section_frame, 'settings_ramping_start', 'begin_steps', 'settings_ramping_start_hint')
         self._create_ramping_entry(section_frame, 'settings_ramping_end', 'end_steps', 'settings_ramping_end_hint')
         self._create_ramping_entry(section_frame, 'settings_ramping_after_pause', 'after_pause_steps', 'settings_ramping_pause_hint')
+        
+        # NEU: Speed Change Ramping Steps
+        ramp_steps_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
+        ramp_steps_frame.pack(fill="x", padx=10, pady=5)
+        
+        ctk.CTkLabel(ramp_steps_frame, text=LanguageManager.get('settings_speed_change_ramp_steps'), width=150).pack(side="left")
+        
+        self.speed_change_ramp_steps_var = ctk.StringVar(value=str(self.current_ramping.get('speed_change_steps', 8)))
+        ramp_steps_entry = ctk.CTkEntry(ramp_steps_frame, textvariable=self.speed_change_ramp_steps_var, width=80)
+        ramp_steps_entry.pack(side="left", padx=5)
+        
+        ctk.CTkLabel(ramp_steps_frame, text=LanguageManager.get('settings_speed_change_ramp_steps_hint'), 
+                    font=("Arial", 10), text_color="gray60").pack(side="left", padx=10)
 
     def _create_ramping_entry(self, parent, label_key, config_key, hint_key):
-        """Create a ramping entry"""
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", padx=10, pady=5)
         
@@ -422,22 +569,18 @@ class SettingsWindow:
         ctk.CTkLabel(frame, text=LanguageManager.get(hint_key), font=("Arial", 10), text_color="gray60").pack(side="left", padx=10)
 
     def _create_interface_section(self, parent):
-        """Create interface section"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
         title_label = ctk.CTkLabel(section_frame, text=LanguageManager.get('settings_interface_title'), font=("Arial", 16, "bold"))
         title_label.pack(anchor="w", pady=(10, 15), padx=10)
         
-        # Language
         self._create_dropdown(section_frame, 'settings_language', 'language', 
                              [name for _, name, _ in LanguageManager.get_languages()], 
                              self.current_ui['language'])
         
-        # Theme
         self._create_theme_selector(section_frame)
         
-        # Keyboard Layout
         available_layouts = self._get_available_layouts()
         current_layout = self.current_ui['keyboard_layout']
         if current_layout not in available_layouts:
@@ -446,7 +589,6 @@ class SettingsWindow:
         self._create_dropdown(section_frame, 'settings_keyboard_layout', 'keyboard_layout',
                              available_layouts, current_layout)
         
-        # Pause Key
         pause_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
         pause_frame.pack(fill="x", padx=10, pady=5)
         
@@ -455,13 +597,11 @@ class SettingsWindow:
         ctk.CTkEntry(pause_frame, textvariable=self.pause_key_var, width=50).pack(side="left")
 
     def _create_dropdown(self, parent, label_key, config_key, values, current_value):
-        """Create a drop-down menu"""
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", padx=10, pady=5)
         
         ctk.CTkLabel(frame, text=LanguageManager.get(label_key), width=150).pack(side="left")
         
-        # Find display value
         display_value = current_value
         if config_key == 'language':
             for code, name, _ in LanguageManager.get_languages():
@@ -480,7 +620,6 @@ class SettingsWindow:
         setattr(self, f"{config_key}_var", var)
 
     def _create_theme_selector(self, parent):
-        """Create theme selection"""
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", padx=10, pady=5)
         
@@ -499,7 +638,6 @@ class SettingsWindow:
             radio.pack(side="left", padx=10)
 
     def _create_buttons_section(self, parent):
-        """Create buttons section"""
         button_frame = ctk.CTkFrame(parent, fg_color="transparent")
         button_frame.pack(fill="x", pady=10, padx=10, side="bottom")
         
@@ -508,29 +646,32 @@ class SettingsWindow:
         ctk.CTkButton(button_frame, text=LanguageManager.get('settings_cancel'), command=self._on_close, width=120, height=35, fg_color="#666666", hover_color="#555555").pack(side="right", padx=5)
 
     def _setup_bindings(self):
-        """Setup Event Bindings"""
         self.window.bind('<Return>', lambda e: self._save_settings())
         self.window.bind('<Escape>', lambda e: self._on_close())
 
     def _validate_inputs(self):
-        """Validate all entries - numeric values only"""
         try:            
-            # Delays
             initial_delay = float(self.initial_delay_var.get().strip())
             pause_resume_delay = float(self.pause_resume_delay_var.get().strip())
             
             if initial_delay <= 0 or pause_resume_delay <= 0:
                 return False, LanguageManager.get('settings_error_positive')
             
-            # Ramping Steps
             begin_steps = int(self.begin_steps_var.get().strip())
             end_steps = int(self.end_steps_var.get().strip())
             after_pause_steps = int(self.after_pause_steps_var.get().strip())
             
             if begin_steps <= 0 or end_steps <= 0 or after_pause_steps <= 0:
                 return False, LanguageManager.get('settings_error_positive')
-                
-            # Pause Key
+            
+            # NEU: Speed Change Ramping validieren
+            try:
+                speed_change_steps = int(self.speed_change_ramp_steps_var.get().strip())
+                if speed_change_steps <= 0:
+                    return False, LanguageManager.get('settings_error_positive')
+            except ValueError:
+                return False, LanguageManager.get('settings_error_numbers')
+            
             pause_key = self.pause_key_var.get().strip()
             if len(pause_key) != 1:
                 return False, LanguageManager.get('settings_error_pause_key')
@@ -544,7 +685,6 @@ class SettingsWindow:
             return False, LanguageManager.get('settings_error_general')
 
     def _save_settings(self):
-        """Save settings"""
         valid, error_msg = self._validate_inputs()
         if not valid:
             messagebox.showerror(LanguageManager.get('error_title'), error_msg)
@@ -563,7 +703,10 @@ class SettingsWindow:
                 "ramping": {
                     "begin": {"steps": int(self.begin_steps_var.get())},
                     "end": {"steps": int(self.end_steps_var.get())},
-                    "after_pause": {"steps": int(self.after_pause_steps_var.get())}
+                    "after_pause": {"steps": int(self.after_pause_steps_var.get())},
+                    "speed_change": {
+                        "steps": int(self.speed_change_ramp_steps_var.get())
+                    }
                 }
             }
             
@@ -581,11 +724,53 @@ class SettingsWindow:
                 "sky_exe_path": self.sky_path_var.get()
             }
             
+            # NEU: Speed Change Einstellungen - enabled basierend auf smooth_ramping
+            playback_settings = self.config.get("playback_settings", {})
+            smooth_ramping_enabled = playback_settings.get("enable_ramping", False)
+            
+            speed_change_updates = {
+                "enabled": smooth_ramping_enabled,  # Aktiv nur wenn smooth_ramping aktiv ist
+                "mode": self.speed_change_mode_var.get()
+            }
+
+            if self.speed_change_mode_var.get() == "preset":
+                preset_mappings = []
+                available_speeds = self.current_playback.get('speed_presets', [600, 800, 1000, 1200])
+                
+                for i, (key_var, speed_var) in enumerate(zip(self.preset_key_vars, self.preset_speed_vars)):
+                    if i >= 4:
+                        break
+                    
+                    key = key_var.get().strip()
+                    speed_str = speed_var.get().strip()
+                    
+                    try:
+                        speed = int(speed_str)
+                        if speed not in available_speeds and available_speeds:
+                            speed = available_speeds[0]
+                    except (ValueError, TypeError):
+                        speed = available_speeds[i] if i < len(available_speeds) else 600
+                        
+                    preset_mappings.append({
+                        "key": key,
+                        "speed": speed
+                    })
+                
+                speed_change_updates["preset_mappings"] = preset_mappings
+                speed_change_updates["increment_keys"] = self.current_speed_change.get('increment_keys', ['up', 'down'])
+            else:
+                speed_change_updates["preset_mappings"] = self.current_speed_change.get('preset_mappings', [])
+                speed_change_updates["increment_keys"] = [
+                    self.increment_up_var.get().strip(),
+                    self.increment_down_var.get().strip()
+                ]
+            
             updates = {
                 "timing_settings": timing_updates,
                 "ui_settings": ui_updates,
                 "game_settings": game_updates,
-                "playback_settings": playback_updates
+                "playback_settings": playback_updates,
+                "speed_change_settings": speed_change_updates
             }
             
             new_lang_code = self._get_selected_lang_code()
@@ -601,17 +786,14 @@ class SettingsWindow:
                 if hasattr(self, 'pause_key_callback') and self.pause_key_callback:
                     self.pause_key_callback(new_pause_key)
                 
-                # Theme
                 new_theme = self.theme_var.get()
                 ctk.set_appearance_mode(new_theme)
                 if self.theme_callback:
                     self.theme_callback(new_theme)
                 
-                # Timing-settings
                 if self.timing_callback:
                     self.timing_callback(timing_updates)
                 
-                # Playback-settings  
                 if self.playback_callback:
                     self.playback_callback(playback_updates)
                 
@@ -635,7 +817,6 @@ class SettingsWindow:
             messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_save_error'))
 
     def _get_custom_file_hash(self):
-        """Creates hash of custom file contents"""
         try:
             custom_file = Path("resources/layouts/CUSTOM.xml")
             if custom_file.exists():
@@ -647,8 +828,6 @@ class SettingsWindow:
             return None
 
     def _restart_main_application(self):
-        """Restarts the main application"""
-        
         try:
             import subprocess
             import sys
@@ -671,7 +850,6 @@ class SettingsWindow:
             messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_restart_failed'))
 
     def _parse_array_setting(self, value_str, converter):
-        """Parse array settings from string"""
         try:
             if not value_str.strip():
                 return []
@@ -681,7 +859,6 @@ class SettingsWindow:
             raise ValueError(f"Invalid array format: {value_str}")
 
     def _get_selected_lang_code(self):
-        """Retrieves language code from selected name"""
         lang_name = self.language_var.get()
         for code, name, _ in LanguageManager.get_languages():
             if name == lang_name:
@@ -689,7 +866,6 @@ class SettingsWindow:
         return "en_US"
 
     def _reset_defaults(self):
-        """Reset default values"""
         if messagebox.askyesno(LanguageManager.get('warning_title'), LanguageManager.get('settings_reset_confirm')):
             if ConfigManager.reset_to_defaults():
                 messagebox.showinfo(LanguageManager.get('info_title'), LanguageManager.get('settings_reset_success'))
@@ -698,7 +874,6 @@ class SettingsWindow:
                 messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_reset_error'))
 
     def _on_close(self):
-        """Close the window and release all grabs"""
         try:
             try:
                 self.window.grab_release()
@@ -716,5 +891,4 @@ class SettingsWindow:
 
     @classmethod
     def is_open(cls):
-        """Check whether a settings window is open."""
         return len(cls._open_windows) > 0
