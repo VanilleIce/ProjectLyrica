@@ -139,11 +139,9 @@ class SettingsWindow:
             "key_durations": playback_settings.get("key_press_durations", [0.2, 0.248, 0.3, 0.5, 1.0]),
             "speed_presets": playback_settings.get("speed_presets", [600, 800, 1000, 1200])
         }
-
+        
         speed_change_settings = self.config.get("speed_change_settings", {})
         self.current_speed_change = {
-            "enabled": speed_change_settings.get("enabled", False),
-            "mode": speed_change_settings.get("mode", "preset"),
             "preset_mappings": speed_change_settings.get("preset_mappings", [
                 {"key": "1", "speed": 600},
                 {"key": "2", "speed": 800},
@@ -279,10 +277,10 @@ class SettingsWindow:
         speed_display_values = [f"{speed}" for speed in available_speeds]
         
         current_mappings = self.current_speed_change.get('preset_mappings', [
-            {"key": "1", "speed": 600},
-            {"key": "2", "speed": 800},
-            {"key": "3", "speed": 1000},
-            {"key": "4", "speed": 1200}
+                {"key": "9", "speed": 600},
+                {"key": "0", "speed": 800},
+                {"key": "ß", "speed": 1000},
+                {"key": "´", "speed": 1200}
         ])
         
         self.preset_key_vars = []
