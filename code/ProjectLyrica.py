@@ -689,11 +689,10 @@ class MusicApp:
                 self._handle_pause_key()
                 return
                 
-            if (self.player.playback_active and
-                self.smooth_ramping_enabled):
-                
-                self._handle_speed_change_key(key_char, key_name)
-                
+            # Speed change handling
+            if self.player.playback_active:
+                self._handle_preset_speed_change(key_char, key_name)
+                    
         except Exception as e:
             logger.error(f"Key handler error: {e}")
 
@@ -725,7 +724,7 @@ class MusicApp:
             self._handle_preset_speed_change(key_char, key_name)
 
     def _handle_preset_speed_change(self, key_char, key_name):
-        """Change to user-mapped preset speed - auch während Pause"""
+        """Change to user-mapped preset speed - immer verfügbar"""
         preset_mappings = self.speed_change_config.get('preset_mappings', [])
         
         for mapping in preset_mappings:
@@ -734,17 +733,12 @@ class MusicApp:
             
             # Check if pressed key matches preset key
             if (key_char and key_char == preset_key) or (key_name and key_name == preset_key):
-                if self.player.playback_active and not self.player.pause_flag.is_set():
-                    success = self.player.change_speed_during_playback(preset_speed)
-                    if success:
-                        self.current_speed_value = preset_speed
-                        logger.info(f"Speed change with ramping to {preset_speed}")
-                else:
+                success = self.player.change_speed_during_playback(preset_speed)
+                if success:
                     self.current_speed_value = preset_speed
-                    self.player.current_speed = preset_speed
-                    logger.info(f"Speed changed directly to {preset_speed} (paused: {self.player.pause_flag.is_set()})")
+                    logger.info(f"Speed changed to {preset_speed}")
                 
-                self.root.after(0, lambda: self._update_speed_display(preset_speed, force_ui_enable=True))
+                self.root.after(0, lambda: self._update_speed_display(preset_speed))
                 return
 
     def _update_speed_ui_visibility(self):
