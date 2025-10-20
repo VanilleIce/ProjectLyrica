@@ -16,7 +16,7 @@ logger = logging.getLogger("ProjectLyrica.SettingsWindow")
 class SettingsWindow:
     _open_windows = []
     
-    def __init__(self, parent=None, theme_callback=None, timing_callback=None, playback_callback=None, pause_key_callback=None):
+    def __init__(self, parent=None, theme_callback=None, timing_callback=None, playback_callback=None, pause_key_callback=None, speed_change_callback=None):
         for window in SettingsWindow._open_windows[:]:
             try:
                 if hasattr(window, 'window') and window.window.winfo_exists():
@@ -57,6 +57,7 @@ class SettingsWindow:
         self.timing_callback = timing_callback
         self.playback_callback = playback_callback
         self.pause_key_callback = pause_key_callback
+        self.speed_change_callback = speed_change_callback
         
         self._position_window()
 
@@ -237,7 +238,7 @@ class SettingsWindow:
         self.custom_keys_status.pack(side="left", padx=10)
 
     def _create_speed_change_section(self, parent):
-        """NEUE SEKTION: Create speed change during playback section"""
+        """Create speed change during playback section - nur Preset Mode"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
@@ -248,7 +249,6 @@ class SettingsWindow:
         )
         title_label.pack(anchor="w", pady=(10, 15), padx=10)
         
-        # INFO: Keine Checkbox mehr - Funktion ist automatisch aktiv mit Smooth Ramping
         info_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
         info_frame.pack(fill="x", padx=10, pady=5)
         
@@ -260,32 +260,9 @@ class SettingsWindow:
             text_color="gray70",
             wraplength=600
         ).pack(side="left")
-        
-        # Mode Selection immer sichtbar
-        mode_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
-        mode_frame.pack(fill="x", padx=10, pady=5)
-        
-        ctk.CTkLabel(mode_frame, text=LanguageManager.get('settings_speed_change_mode'), width=150).pack(side="left")
-        
-        self.speed_change_mode_var = ctk.StringVar(value=self.current_speed_change.get('mode', 'preset'))
-        mode_dropdown = ctk.CTkComboBox(
-            mode_frame, 
-            values=["preset", "incremental"],
-            variable=self.speed_change_mode_var,
-            state="readonly",
-            width=120,
-            command=self._on_speed_change_mode_changed
-        )
-        mode_dropdown.pack(side="left", padx=5)
-        
+
         self.preset_keys_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
         self._create_preset_keys_ui()
-        
-        self.incremental_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
-        self._create_incremental_ui()
-        
-        # Immer die entsprechenden Einstellungen anzeigen
-        self._on_speed_change_mode_changed(self.speed_change_mode_var.get())
 
     def _create_preset_keys_ui(self):
         """Create UI for flexible preset key-speed mappings in 2x2 grid"""
@@ -346,32 +323,6 @@ class SettingsWindow:
                 
                 self.preset_key_vars.append(key_var)
                 self.preset_speed_vars.append(speed_var)
-
-    def _create_incremental_ui(self):
-        """Create UI for incremental settings"""
-        for widget in self.incremental_frame.winfo_children():
-            widget.destroy()
-            
-        self.incremental_frame.pack(fill="x", padx=10, pady=5)
-        
-        keys_frame = ctk.CTkFrame(self.incremental_frame, fg_color="transparent")
-        keys_frame.pack(fill="x", pady=2)
-        
-        ctk.CTkLabel(keys_frame, text=LanguageManager.get('settings_speed_change_increment_keys'), width=150).pack(side="left")
-        
-        current_increment_keys = self.current_speed_change.get('increment_keys', ['up', 'down'])
-        
-        self.increment_up_var = ctk.StringVar(value=current_increment_keys[0] if len(current_increment_keys) > 0 else 'up')
-        self.increment_down_var = ctk.StringVar(value=current_increment_keys[1] if len(current_increment_keys) > 1 else 'down')
-        
-        keys_inner_frame = ctk.CTkFrame(keys_frame, fg_color="transparent")
-        keys_inner_frame.pack(side="left", padx=5)
-        
-        ctk.CTkLabel(keys_inner_frame, text="Hoch:").pack(side="left")
-        ctk.CTkEntry(keys_inner_frame, textvariable=self.increment_up_var, width=60).pack(side="left", padx=2)
-        
-        ctk.CTkLabel(keys_inner_frame, text="Runter:").pack(side="left", padx=(10, 0))
-        ctk.CTkEntry(keys_inner_frame, textvariable=self.increment_down_var, width=60).pack(side="left", padx=2)
 
     def _on_speed_change_mode_changed(self, mode):
         """Handle speed change mode change"""
@@ -525,7 +476,12 @@ class SettingsWindow:
         entry.pack(side="left", padx=5)
         ctk.CTkLabel(frame, text="s").pack(side="left")
         
-        setattr(self, f"{config_key}_var", var)
+        if config_key == 'initial_delay':
+            self.initial_delay_var = var
+        elif config_key == 'pause_resume_delay':
+            self.pause_resume_delay_var = var
+        
+        logger.debug(f"Created delay entry: {config_key} = {current_value}")
 
     def _create_ramping_section(self, parent):
         """Create ramping section with speed change ramping"""
@@ -539,18 +495,23 @@ class SettingsWindow:
         self._create_ramping_entry(section_frame, 'settings_ramping_end', 'end_steps', 'settings_ramping_end_hint')
         self._create_ramping_entry(section_frame, 'settings_ramping_after_pause', 'after_pause_steps', 'settings_ramping_pause_hint')
         
-        # NEU: Speed Change Ramping Steps
         ramp_steps_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
         ramp_steps_frame.pack(fill="x", padx=10, pady=5)
         
         ctk.CTkLabel(ramp_steps_frame, text=LanguageManager.get('settings_speed_change_ramp_steps'), width=150).pack(side="left")
         
-        self.speed_change_ramp_steps_var = ctk.StringVar(value=str(self.current_ramping.get('speed_change_steps', 8)))
-        ramp_steps_entry = ctk.CTkEntry(ramp_steps_frame, textvariable=self.speed_change_ramp_steps_var, width=80)
-        ramp_steps_entry.pack(side="left", padx=5)
+        step_options = ["2", "4", "6", "8", "12", "16", "20"]
+        current_steps = str(self.current_ramping.get('speed_change_steps', 8))
         
-        ctk.CTkLabel(ramp_steps_frame, text=LanguageManager.get('settings_speed_change_ramp_steps_hint'), 
-                    font=("Arial", 10), text_color="gray60").pack(side="left", padx=10)
+        self.speed_change_ramp_steps_var = ctk.StringVar(value=current_steps)
+        steps_dropdown = ctk.CTkComboBox(
+            ramp_steps_frame, 
+            values=step_options,
+            variable=self.speed_change_ramp_steps_var,
+            state="readonly",
+            width=80
+        )
+        steps_dropdown.pack(side="left", padx=5)
 
     def _create_ramping_entry(self, parent, label_key, config_key, hint_key):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
@@ -563,8 +524,13 @@ class SettingsWindow:
         
         entry = ctk.CTkEntry(frame, textvariable=var, width=80, placeholder_text="20")
         entry.pack(side="left", padx=5)
-        
-        setattr(self, f"{config_key}_var", var)
+
+        if config_key == 'begin_steps':
+            self.begin_steps_var = var
+        elif config_key == 'end_steps':
+            self.end_steps_var = var
+        elif config_key == 'after_pause_steps':
+            self.after_pause_steps_var = var
         
         ctk.CTkLabel(frame, text=LanguageManager.get(hint_key), font=("Arial", 10), text_color="gray60").pack(side="left", padx=10)
 
@@ -618,6 +584,7 @@ class SettingsWindow:
             self.keyboard_layout_var = var
         
         setattr(self, f"{config_key}_var", var)
+        return dropdown
 
     def _create_theme_selector(self, parent):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
@@ -664,7 +631,6 @@ class SettingsWindow:
             if begin_steps <= 0 or end_steps <= 0 or after_pause_steps <= 0:
                 return False, LanguageManager.get('settings_error_positive')
             
-            # NEU: Speed Change Ramping validieren
             try:
                 speed_change_steps = int(self.speed_change_ramp_steps_var.get().strip())
                 if speed_change_steps <= 0:
@@ -694,126 +660,182 @@ class SettingsWindow:
             original_lang = self.current_ui['language']
             original_layout = self.current_ui['keyboard_layout']
             original_theme = self.current_ui['theme']
+            original_pause_key = self.current_ui['pause_key']
             
-            timing_updates = {
-                "delays": {
-                    "initial_delay": float(self.initial_delay_var.get()),
-                    "pause_resume_delay": float(self.pause_resume_delay_var.get())
-                },
-                "ramping": {
-                    "begin": {"steps": int(self.begin_steps_var.get())},
-                    "end": {"steps": int(self.end_steps_var.get())},
-                    "after_pause": {"steps": int(self.after_pause_steps_var.get())},
-                    "speed_change": {
-                        "steps": int(self.speed_change_ramp_steps_var.get())
+            updates = {}
+            
+            new_initial_delay = float(self.initial_delay_var.get())
+            new_pause_delay = float(self.pause_resume_delay_var.get())
+            new_begin_steps = int(self.begin_steps_var.get())
+            new_end_steps = int(self.end_steps_var.get())
+            new_after_pause_steps = int(self.after_pause_steps_var.get())
+            new_speed_change_steps = int(self.speed_change_ramp_steps_var.get())
+            
+            timing_changed = (
+                new_initial_delay != self.current_delays["initial_delay"] or
+                new_pause_delay != self.current_delays["pause_resume_delay"] or
+                new_begin_steps != self.current_ramping["begin_steps"] or
+                new_end_steps != self.current_ramping["end_steps"] or
+                new_after_pause_steps != self.current_ramping["after_pause_steps"] or
+                new_speed_change_steps != self.current_ramping["speed_change_steps"]
+            )
+            
+            if timing_changed:
+                updates["timing_settings"] = {
+                    "delays": {
+                        "initial_delay": new_initial_delay,
+                        "pause_resume_delay": new_pause_delay
+                    },
+                    "ramping": {
+                        "begin": {"steps": new_begin_steps},
+                        "end": {"steps": new_end_steps},
+                        "after_pause": {"steps": new_after_pause_steps},
+                        "speed_change": {"steps": new_speed_change_steps}
                     }
                 }
-            }
             
-            playback_updates = {
-                "key_press_durations": self._parse_array_setting(self.key_durations_var.get(), float),
-                "speed_presets": self._parse_array_setting(self.speed_presets_var.get(), int)
-            }
+            new_pause_key = self.pause_key_var.get()
+            new_theme = self.theme_var.get()
             
-            ui_updates = {
-                "pause_key": self.pause_key_var.get(),
-                "theme": self.theme_var.get()
-            }
+            if new_pause_key != original_pause_key:
+                if "ui_settings" not in updates:
+                    updates["ui_settings"] = {}
+                updates["ui_settings"]["pause_key"] = new_pause_key
             
-            game_updates = {
-                "sky_exe_path": self.sky_path_var.get()
-            }
+            if new_theme != original_theme:
+                if "ui_settings" not in updates:
+                    updates["ui_settings"] = {}
+                updates["ui_settings"]["theme"] = new_theme
             
-            # NEU: Speed Change Einstellungen - enabled basierend auf smooth_ramping
-            playback_settings = self.config.get("playback_settings", {})
-            smooth_ramping_enabled = playback_settings.get("enable_ramping", False)
-            
-            speed_change_updates = {
-                "enabled": smooth_ramping_enabled,  # Aktiv nur wenn smooth_ramping aktiv ist
-                "mode": self.speed_change_mode_var.get()
-            }
+            new_sky_path = self.sky_path_var.get()
+            if new_sky_path != self.current_game['sky_exe_path']:
+                updates["game_settings"] = {
+                    "sky_exe_path": new_sky_path
+                }
 
-            if self.speed_change_mode_var.get() == "preset":
-                preset_mappings = []
-                available_speeds = self.current_playback.get('speed_presets', [600, 800, 1000, 1200])
-                
-                for i, (key_var, speed_var) in enumerate(zip(self.preset_key_vars, self.preset_speed_vars)):
-                    if i >= 4:
-                        break
-                    
-                    key = key_var.get().strip()
-                    speed_str = speed_var.get().strip()
-                    
-                    try:
-                        speed = int(speed_str)
-                        if speed not in available_speeds and available_speeds:
-                            speed = available_speeds[0]
-                    except (ValueError, TypeError):
-                        speed = available_speeds[i] if i < len(available_speeds) else 600
-                        
-                    preset_mappings.append({
-                        "key": key,
-                        "speed": speed
-                    })
-                
-                speed_change_updates["preset_mappings"] = preset_mappings
-                speed_change_updates["increment_keys"] = self.current_speed_change.get('increment_keys', ['up', 'down'])
-            else:
-                speed_change_updates["preset_mappings"] = self.current_speed_change.get('preset_mappings', [])
-                speed_change_updates["increment_keys"] = [
-                    self.increment_up_var.get().strip(),
-                    self.increment_down_var.get().strip()
-                ]
+            new_key_durations = self._parse_array_setting(self.key_durations_var.get(), float)
+            new_speed_presets = self._parse_array_setting(self.speed_presets_var.get(), int)
             
-            updates = {
-                "timing_settings": timing_updates,
-                "ui_settings": ui_updates,
-                "game_settings": game_updates,
-                "playback_settings": playback_updates,
-                "speed_change_settings": speed_change_updates
-            }
+            playback_changed = (
+                new_key_durations != self.current_playback['key_durations'] or
+                new_speed_presets != self.current_playback['speed_presets']
+            )
             
+            if playback_changed:
+                updates["playback_settings"] = {
+                    "key_press_durations": new_key_durations,
+                    "speed_presets": new_speed_presets
+                }
+
+            new_preset_mappings = []
+            available_speeds = self.current_playback.get('speed_presets', [600, 800, 1000, 1200])
+
+            for i, (key_var, speed_var) in enumerate(zip(self.preset_key_vars, self.preset_speed_vars)):
+                if i >= 4:
+                    break
+                
+                key = key_var.get().strip()
+                speed_str = speed_var.get().strip()
+                
+                try:
+                    speed = int(speed_str)
+                    if speed not in available_speeds and available_speeds:
+                        speed = available_speeds[0]
+                except (ValueError, TypeError):
+                    speed = available_speeds[i] if i < len(available_speeds) else 600
+                    
+                new_preset_mappings.append({
+                    "key": key,
+                    "speed": speed
+                })
+
+            current_mappings = self.current_speed_change.get('preset_mappings', [])
+            speed_change_changed = new_preset_mappings != current_mappings
+
+            speed_change_updates = {}
+            if speed_change_changed:
+                speed_change_updates["preset_mappings"] = new_preset_mappings
+                if "speed_change_settings" not in updates:
+                    updates["speed_change_settings"] = {}
+                updates["speed_change_settings"]["preset_mappings"] = new_preset_mappings
+
             new_lang_code = self._get_selected_lang_code()
-            updates["ui_settings"]["selected_language"] = new_lang_code
-            
             layout_name = self.keyboard_layout_var.get()
-            updates["ui_settings"]["keyboard_layout"] = layout_name
             
-            needs_restart = (original_layout != layout_name) or (original_lang != new_lang_code)
-            
-            if ConfigManager.save(updates):
-                new_pause_key = self.pause_key_var.get()
-                if hasattr(self, 'pause_key_callback') and self.pause_key_callback:
-                    self.pause_key_callback(new_pause_key)
-                
-                new_theme = self.theme_var.get()
-                ctk.set_appearance_mode(new_theme)
-                if self.theme_callback:
-                    self.theme_callback(new_theme)
-                
-                if self.timing_callback:
-                    self.timing_callback(timing_updates)
-                
-                if self.playback_callback:
-                    self.playback_callback(playback_updates)
-                
-                if needs_restart:
-                    if messagebox.askyesno(
-                        LanguageManager.get('info_title'),
-                        LanguageManager.get('settings_restart_required') + "\n\n" + LanguageManager.get('settings_restart_now')
-                    ):
-                        self._restart_main_application()
-                        return
-                    else:
-                        messagebox.showinfo(LanguageManager.get('info_title'), LanguageManager.get('settings_restart_later'))
-                else:
-                    messagebox.showinfo(LanguageManager.get('info_title'), LanguageManager.get('settings_saved'))
+            if new_lang_code != original_lang or layout_name != original_layout:
+                if "ui_settings" not in updates:
+                    updates["ui_settings"] = {}
+                updates["ui_settings"]["selected_language"] = new_lang_code
+                updates["ui_settings"]["keyboard_layout"] = layout_name
+
+            if updates:
+                if ConfigManager.save(updates):
+                    if "timing_settings" in updates:
+                        timing_updates = updates["timing_settings"]
+                        if "delays" in timing_updates:
+                            self.current_delays["initial_delay"] = timing_updates["delays"]["initial_delay"]
+                            self.current_delays["pause_resume_delay"] = timing_updates["delays"]["pause_resume_delay"]
+                        if "ramping" in timing_updates:
+                            ramping = timing_updates["ramping"]
+                            self.current_ramping["begin_steps"] = ramping["begin"]["steps"]
+                            self.current_ramping["end_steps"] = ramping["end"]["steps"]
+                            self.current_ramping["after_pause_steps"] = ramping["after_pause"]["steps"]
+                            self.current_ramping["speed_change_steps"] = ramping["speed_change"]["steps"]
+
+                    if "playback_settings" in updates:
+                        playback = updates["playback_settings"]
+                        self.current_playback["key_durations"] = playback["key_press_durations"]
+                        self.current_playback["speed_presets"] = playback["speed_presets"]
+
+                    if "speed_change_settings" in updates:
+                        speed_change = updates["speed_change_settings"]
+                        if "preset_mappings" in speed_change:
+                            self.current_speed_change["preset_mappings"] = speed_change["preset_mappings"]
                     
+                    logger.debug("Current config updated after successful save")
+
+                    if new_pause_key != original_pause_key and hasattr(self, 'pause_key_callback'):
+                        self.pause_key_callback(new_pause_key)
+                    
+                    if new_theme != original_theme and self.theme_callback:
+                        self.theme_callback(new_theme)
+                        ctk.set_appearance_mode(new_theme)
+
+                    if "timing_settings" in updates and self.timing_callback:
+                        timing_updates = updates["timing_settings"]
+                        if "delays" not in timing_updates:
+                            timing_updates["delays"] = {
+                                "initial_delay": self.current_delays["initial_delay"],
+                                "pause_resume_delay": self.current_delays["pause_resume_delay"]
+                            }
+                        self.timing_callback(timing_updates)
+                    
+                    if "playback_settings" in updates and self.playback_callback:
+                        self.playback_callback(updates["playback_settings"])
+                    
+                    if speed_change_changed and hasattr(self, 'speed_change_callback'):
+                        self.speed_change_callback(speed_change_updates)
+                    
+                    needs_restart = (original_layout != layout_name) or (original_lang != new_lang_code)
+                    
+                    if needs_restart:
+                        if messagebox.askyesno(
+                            LanguageManager.get('info_title'),
+                            LanguageManager.get('settings_restart_required') + "\n\n" + LanguageManager.get('settings_restart_now')
+                        ):
+                            self._restart_main_application()
+                            return
+                        else:
+                            messagebox.showinfo(LanguageManager.get('info_title'), LanguageManager.get('settings_restart_later'))
+                    else:
+                        messagebox.showinfo(LanguageManager.get('info_title'), LanguageManager.get('settings_saved'))
+                else:
+                    messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_save_error'))
             else:
-                messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_save_error'))
-                
+                messagebox.showinfo(LanguageManager.get('info_title'), LanguageManager.get('settings_no_changes'))
+                    
         except Exception as e:
-            logger.error(f"Error saving settings: {e}")
+            logger.error(f"Error saving settings: {e}", exc_info=True)
             messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_save_error'))
 
     def _get_custom_file_hash(self):
