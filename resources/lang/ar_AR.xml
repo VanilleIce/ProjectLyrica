@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">تخطيط لوحة المفاتيح</translation>
     <translation key="settings_pause_key">مفتاح الإيقاف المؤقت</translation>
 
+    <translation key="settings_speed_change_title">تغيير السرعة أثناء التشغيل</translation>
+    <translation key="settings_speed_change_enable_hint">تمكين تغيير السرعة أثناء التشغيل باستخدام اختصارات لوحة المفاتيح</translation>
+    <translation key="settings_speed_change_preset_keys">مفاتيح الإعداد المسبق</translation>
+    <translation key="settings_speed_change_ramp_steps">خطوات انتقال السرعة</translation>
+
     <!-- ================= -->
     <!-- الأزرار -->
     <!-- ================= -->

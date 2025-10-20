@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Tata Letak Keyboard</translation>
     <translation key="settings_pause_key">Tombol Jeda</translation>
 
+    <translation key="settings_speed_change_title">Perubahan Kecepatan Selama Pemutaran</translation>
+    <translation key="settings_speed_change_enable_hint">Aktifkan perubahan kecepatan selama pemutaran menggunakan pintasan keyboard</translation>
+    <translation key="settings_speed_change_preset_keys">Tombol Preset</translation>
+    <translation key="settings_speed_change_ramp_steps">Langkah Transisi Kecepatan</translation>
+
     <!-- ================= -->
     <!-- Buttons -->
     <!-- ================= -->

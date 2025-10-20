@@ -132,6 +132,11 @@
     <translation key="settings_keyboard_layout">Tastatur Layout</translation>
     <translation key="settings_pause_key">Pause Taste</translation>
 
+    <translation key="settings_speed_change_title">Hastighedsændring Under Afspilning</translation>
+    <translation key="settings_speed_change_enable_hint">Aktiver hastighedsændring under afspilning ved hjælp af tastaturgenveje</translation>
+    <translation key="settings_speed_change_preset_keys">Forudindstillingstaster</translation>
+    <translation key="settings_speed_change_ramp_steps">Hastighedsovergangstrin</translation>
+
     <!-- ================= -->
     <!-- Knapper -->
     <!-- ================= -->
