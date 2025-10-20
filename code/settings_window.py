@@ -251,12 +251,12 @@ class SettingsWindow:
         info_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
         info_frame.pack(fill="x", padx=10, pady=5)
         
-        info_text = LanguageManager.get('settings_speed_change_enable')
+        hint_text = LanguageManager.get('settings_speed_change_enable_hint')
         ctk.CTkLabel(
             info_frame, 
-            text=info_text,
-            font=("Arial", 11),
-            text_color="gray70",
+            text=hint_text,
+            font=("Arial", 11, "italic"),
+            text_color="gray60",
             wraplength=600
         ).pack(side="left")
 
