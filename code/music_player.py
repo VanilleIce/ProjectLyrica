@@ -432,31 +432,44 @@ class MusicPlayer:
         logger.info(f"Speed change with ramping: {self.current_speed} → {new_speed}")
         return True
 
+    # Init
     def _init_speed_ramping(self, target_speed):
         """Initialize with combined adaptive ramping"""
+        # Ramping-State aktivieren und Startwerte setzen
         self.speed_ramping_active = True
         self.speed_ramp_start_speed = self.current_speed
         self.speed_ramp_target_speed = target_speed
         self.speed_ramp_start_time = time.time()
         
+        # 1. Prozentuale Geschwindigkeitsänderung berechnen
+        # Beispiel: 800 → 600 = (800-600)/800 = 0.25 (25% Reduktion)
         speed_change_ratio = abs(target_speed - self.current_speed) / self.current_speed
-        if speed_change_ratio <= 0.2:
-            base_duration = 1.8
-        elif speed_change_ratio <= 0.5:
-            base_duration = 2.8
-        else:
-            base_duration = 4.0
-
-        if target_speed < self.current_speed:
-            base_duration *= 1.5
-        else:
-            base_duration *= 1.3
-
+        
+        # 2. Basisdauer basierend auf Änderungsstärke - größere Änderungen brauchen mehr Zeit
+        if speed_change_ratio <= 0.2:    # Kleine Änderung: (z.B. 1000→800, 800→600)
+            base_duration = 1.8          # Schneller Übergang (kleinere Zahl = schneller)
+        elif speed_change_ratio <= 0.5:  # Mittlere Änderung: (z.B. 800→600, 1000→500)  
+            base_duration = 2.4          # Standard Übergang
+        else:                            # Große Änderung: (z.B. 600→1200, 800→1600)
+            base_duration = 4.0          # Langer, sanfter Übergang (größere Zahl = langsamer)
+        
+        # 3. Richtungsanpassung - Verlangsamen braucht mehr Zeit für natürlichen Übergang
+        # Psychoakustik
+        if target_speed < self.current_speed:  # VERLANGSAMEN (z.B. 800→600)
+            base_duration *= 1.5  # (größere Zahl = langsamer)
+        else:  # BESCHLEUNIGEN (z.B. 600→800)
+            base_duration *= 1.3  # (größere Zahl = langsamer)
+        
+        # 4. Steps-Feinabstimmung - benutzerkonfigurierbare Steps skalieren die Gesamtdauer
+        # 8 Steps = 0.67x kürzer/schneller | 12 Steps = 1.0x Standard | 16 Steps = 1.33x länger/sanfter
+        # KLEINERE Steps-Zahl = SCHNELLER | GRÖSSERE Steps-Zahl = LANGSAMER
         steps_multiplier = self.speed_change_ramp_steps / 12.0
         self.speed_ramp_duration = base_duration * steps_multiplier
-
-        self.speed_ramp_duration = max(1.5, min(6.0, self.speed_ramp_duration))
         
+        # 5. Stabilitätsgrenzen - verhindern extreme Werte für konsistente Performance
+        self.speed_ramp_duration = max(1.5, min(6.0, self.speed_ramp_duration))  # Min 1.5s, Max 6.0s
+        
+        # Debug-Logging
         logger.info(f"Smart ramping: {self.current_speed} → {target_speed} over {self.speed_ramp_duration:.1f}s (ratio: {speed_change_ratio:.2f})")
 
     def _wait_with_pause_check(self, wait_time, timer_func):
