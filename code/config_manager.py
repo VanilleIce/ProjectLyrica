@@ -480,8 +480,6 @@ class ConfigManager:
         
         lang_code = ui_settings.get("selected_language", "en_US")
         
-        smooth_ramping_enabled = playback_settings.get("enable_ramping", False)
-        
         try:
             from language_manager import LanguageManager, KeyboardLayoutManager
             
@@ -558,7 +556,6 @@ class ConfigManager:
             f"Ramping Info Display Count: {config.get('ramping_info_display_count', {}).get('value')}",
             "",
             "== Speed Change Settings ==",
-            f"Speed Change Effectively Enabled: {smooth_ramping_enabled} (via Smooth Ramping)",
             f"Preset Mappings:",
             *preset_info,
             "",
