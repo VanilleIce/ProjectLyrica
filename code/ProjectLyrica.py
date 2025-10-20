@@ -63,8 +63,10 @@ class MusicApp:
         self._init_gui()
 
         self.current_play_state = "ready"
+        
+        self.speed_changed_by_preset = False
+        
         self._start_sky_check()
-
         self._setup_key_listener()
 
         ConfigManager.log_system_info(VERSION)
@@ -731,12 +733,17 @@ class MusicApp:
             preset_key = mapping.get('key', '')
             preset_speed = mapping.get('speed', 600)
             
-            # Check if pressed key matches preset key
             if (key_char and key_char == preset_key) or (key_name and key_name == preset_key):
-                success = self.player.change_speed_during_playback(preset_speed)
-                if success:
-                    self.current_speed_value = preset_speed
-                    logger.info(f"Speed changed to {preset_speed}")
+                self.speed_changed_by_preset = True
+                self.current_speed_value = preset_speed
+                    
+                if self.player.playback_active and not self.player.pause_flag.is_set():
+                    success = self.player.change_speed_during_playback(preset_speed)
+                    if success:
+                        logger.info(f"Speed change with ramping to {preset_speed}")
+                else:
+                    self.player.current_speed = preset_speed
+                    logger.info(f"Speed changed directly to {preset_speed} (paused: {self.player.pause_flag.is_set()})")
                 
                 self.root.after(0, lambda: self._update_speed_display(preset_speed))
                 return
@@ -744,7 +751,7 @@ class MusicApp:
     def _update_speed_ui_visibility(self):
         """Aktualisiert die Sichtbarkeit der Speed-UI"""
         if self.speed_enabled:
-            current_speed = self.current_speed_value
+            current_speed = int(self.current_speed_value)
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
             self.speed_frame.pack(pady=5, before=self.ramping_btn)
             self.speed_preset_frame.pack(pady=(0, 8))
@@ -757,23 +764,19 @@ class MusicApp:
         
         self._adjust_window_size()
 
-    def _update_speed_display(self, new_speed, force_ui_enable=False):
+    def _update_speed_display(self, new_speed):
         """Aktualisiert die Geschwindigkeits-Anzeige in der GUI - auch während Pause"""
         self.current_speed_value = new_speed
         self.player.current_speed = new_speed
-        
+
         display_speed = int(new_speed)
+
+        self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {display_speed}")
         
-        if force_ui_enable and not self.speed_enabled:
-            self.speed_enabled = True
-            self._update_speed_ui_visibility()
+        if self.speed_enabled and hasattr(self, 'speed_label') and self.speed_label.winfo_exists():
+            self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {display_speed}")
         
-        if self.speed_enabled:
-            self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {display_speed}")
-            if hasattr(self, 'speed_label') and self.speed_label.winfo_exists():
-                self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {display_speed}")
-            
-            self.root.update_idletasks()
+        self.root.update_idletasks()
 
     def _select_file(self):
         try:
@@ -927,10 +930,9 @@ class MusicApp:
                 speed = MAX_SPEED
                 
             self.current_speed_value = speed
-            self.player.set_speed(speed)
-            
-            self._update_speed_display(speed, force_ui_enable=False)
-            
+            self.player.set_speed(speed)       
+            self._update_speed_display(speed)
+                
         except Exception as e:
             logger.error(f"Speed setting failed: {e}")
             messagebox.showerror(
@@ -960,6 +962,16 @@ class MusicApp:
     def _toggle_speed(self):
         try:
             self.speed_enabled = not self.speed_enabled
+            
+            if self.speed_enabled:
+                current_speed = int(self.current_speed_value)
+                self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
+            else:
+                self.current_speed_value = 1000
+                self.player.current_speed = 1000
+                self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}")
+                self.speed_changed_by_preset = False
+                
             self._update_speed_ui_visibility()
         except Exception as e:
             logger.error(f"Speed toggle failed: {e}")
