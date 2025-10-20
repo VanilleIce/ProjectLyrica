@@ -118,7 +118,6 @@ class MusicPlayer:
             self.ramp_end_config = ramping.get("end", {})
             self.ramp_after_pause_config = ramping.get("after_pause", {})
             
-            # SPEED CHANGE RAMPING aus timing_settings
             self.speed_change_ramping_config = ramping.get("speed_change", {})
             self.speed_change_ramp_steps = self.speed_change_ramping_config.get("steps", 8)
 
@@ -150,8 +149,6 @@ class MusicPlayer:
         self.pause_count = 0
         self.pause_start = 0
         self.total_pause_time = 0
-        
-        # NEUE VARIABLEN: Speed Change State
         self.speed_ramping_active = False
         self.speed_ramp_start_speed = 0
         self.speed_ramp_target_speed = 0
@@ -275,8 +272,6 @@ class MusicPlayer:
         self.ramp_begin_completed = False
         self.pause_count = 0
         self.total_pause_time = 0
-        
-        # NEU: Speed Change State zurücksetzen
         self.speed_ramping_active = False
         self.speed_ramp_start_speed = 0
         self.speed_ramp_target_speed = 0
@@ -334,18 +329,17 @@ class MusicPlayer:
     def _calculate_current_speed(self, note_index, total_notes):
         """Calculate current speed with intelligent ramping priorities"""
         base_speed = self.current_speed
-        
-        # SPEED-RAMPING: Hat Priorität wenn aktiv
+
         if self.speed_ramping_active:
             base_speed = self._calculate_speed_with_ramping()
-            # Debug-Logging für Speed-Ramping
-            if note_index % 5 == 0:  # Nur jede 5. Note loggen um Spam zu vermeiden
-                logger.debug(f"Speed ramping: {base_speed:.0f} (progress: {self.speed_ramp_counter}/{self.speed_change_ramp_steps})")
+
+            if note_index % 5 == 0:
+                elapsed = time.time() - self.speed_ramp_start_time
+                progress = min(1.0, elapsed / self.speed_ramp_duration)
+                logger.debug(f"Speed ramping: {base_speed:.0f} (progress: {progress:.2f})")
         
-        # Restliche Ramping-Logik (Start, Pause, End) wie bisher...
         ramp_factor = 1.0
         
-        # Start-Ramping 
         if self.is_ramping_begin and not self.ramp_begin_completed:
             begin_config = self.ramp_begin_config
             steps = begin_config.get('steps', 20)
@@ -361,7 +355,6 @@ class MusicPlayer:
                 self.ramp_begin_completed = True
                 logger.info("Start ramping completed")
 
-        # Pause-Ramping (nach Pause fortsetzen)
         elif self.is_ramping_after_pause:
             after_pause_config = self.ramp_after_pause_config
             steps = after_pause_config.get('steps', 12)
@@ -376,7 +369,6 @@ class MusicPlayer:
                 self.is_ramping_after_pause = False
                 logger.info("Pause ramping completed")
 
-        # End-Ramping (letzte Noten verlangsamen)
         elif note_index >= total_notes - self.ramp_end_config.get('steps', 16):
             if not self.is_ramping_end:
                 self.is_ramping_end = True
@@ -392,37 +384,23 @@ class MusicPlayer:
             progress = max(0.0, min(1.0, (steps - notes_remaining) / steps))
             ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
 
-        # Finale Geschwindigkeit berechnen
         final_speed = base_speed * ramp_factor
         
         return max(100, min(1500, final_speed))
 
     def _calculate_speed_with_ramping(self):
-        """Calculate current speed during speed change ramping - universal for any step count"""
+        """Calculate current speed with time-based ramping"""
         if not self.speed_ramping_active:
             return self.current_speed
         
-        progress = min(1.0, self.speed_ramp_counter / self.speed_change_ramp_steps)
+        elapsed = time.time() - self.speed_ramp_start_time
+        progress = min(1.0, elapsed / self.speed_ramp_duration)
+        
+        eased_progress = 1 - (1 - progress) ** 3  # Kubisches Easing
         
         start_speed = self.speed_ramp_start_speed
         target_speed = self.speed_ramp_target_speed
-        speed_ratio = target_speed / start_speed
         
-        # UNIVERSAL SMOOTH EASING - passt sich automatisch an Step-Zahl an
-        if speed_ratio < 0.7:  # Große Verringerung (z.B. 1200 → 600)
-            # Für wenige Steps: stärkeres Easing, für viele Steps: sanfteres Easing
-            easing_power = max(0.3, 0.7 - (self.speed_change_ramp_steps / 50))  # Dynamisch basierend auf Steps
-            eased_progress = 1 - (1 - progress) ** easing_power
-            
-        elif speed_ratio > 1.5:  # Große Erhöhung (z.B. 600 → 1200)
-            easing_power = max(0.3, 0.7 - (self.speed_change_ramp_steps / 50))
-            eased_progress = progress ** easing_power
-            
-        else:  # Moderate Änderungen
-            # Standard S-Curve für alle Step-Zahlen
-            eased_progress = progress ** 2 * (3 - 2 * progress)
-        
-        # Prozentuales Ramping
         if start_speed < target_speed:
             factor = target_speed / start_speed
             current_factor = 1 + (factor - 1) * eased_progress
@@ -431,14 +409,11 @@ class MusicPlayer:
             factor = target_speed / start_speed
             current_factor = 1 + (factor - 1) * eased_progress
             current_speed = start_speed * current_factor
-        
-        self.speed_ramp_counter += 1
-        
-        # Ramping beenden wenn fertig
+
         if progress >= 1.0:
             self.speed_ramping_active = False
             self.current_speed = target_speed
-            logger.info(f"Speed ramping completed in {self.speed_ramp_counter} notes")
+            logger.info(f"Time-based speed ramping completed: {self.current_speed}")
             
         return current_speed
 
@@ -446,27 +421,43 @@ class MusicPlayer:
         """Change speed during playback - MIT RAMPING"""
         if not self.playback_active:
             return False
-        
-        # Geschwindigkeitsgrenzen prüfen
+
         new_speed = max(100, min(1500, new_speed))
         
         if new_speed == self.current_speed:
             return True
-        
-        # RAMPING für Geschwindigkeitsänderung initialisieren
+
         self._init_speed_ramping(new_speed)
         
         logger.info(f"Speed change with ramping: {self.current_speed} → {new_speed}")
         return True
 
     def _init_speed_ramping(self, target_speed):
-        """Initialize speed ramping to target speed"""
+        """Initialize with combined adaptive ramping"""
         self.speed_ramping_active = True
         self.speed_ramp_start_speed = self.current_speed
         self.speed_ramp_target_speed = target_speed
-        self.speed_ramp_counter = 0
+        self.speed_ramp_start_time = time.time()
         
-        logger.info(f"Speed ramping started: {self.speed_ramp_start_speed} → {self.speed_ramp_target_speed} over {self.speed_change_ramp_steps} notes")
+        speed_change_ratio = abs(target_speed - self.current_speed) / self.current_speed
+        if speed_change_ratio <= 0.2:
+            base_duration = 1.8
+        elif speed_change_ratio <= 0.5:
+            base_duration = 2.8
+        else:
+            base_duration = 4.0
+
+        if target_speed < self.current_speed:
+            base_duration *= 1.5
+        else:
+            base_duration *= 1.3
+
+        steps_multiplier = self.speed_change_ramp_steps / 12.0
+        self.speed_ramp_duration = base_duration * steps_multiplier
+
+        self.speed_ramp_duration = max(1.5, min(6.0, self.speed_ramp_duration))
+        
+        logger.info(f"Smart ramping: {self.current_speed} → {target_speed} over {self.speed_ramp_duration:.1f}s (ratio: {speed_change_ratio:.2f})")
 
     def _wait_with_pause_check(self, wait_time, timer_func):
         """Wait with pause support"""
@@ -499,10 +490,8 @@ class MusicPlayer:
         self.pause_start = timer_func()
         self._release_all()
 
-        # WICHTIG: Während der Pause regelmäßig GUI-Updates erlauben
         while self.pause_flag.is_set() and not self.stop_event.is_set():
-            time.sleep(0.05)  # Kurze Pause damit GUI-Updates möglich sind
-            # Hier könnten wir periodisch GUI-Updates triggern falls nötig
+            time.sleep(0.05)
             
         if self.stop_event.is_set():
             return False
@@ -543,8 +532,6 @@ class MusicPlayer:
         self.is_ramping_after_pause = state['after_pause']
         self.ramp_counter = state['counter']
         self.ramp_begin_completed = state['begin_completed']
-        
-        # NEU: Speed Ramping State wiederherstellen
         self.speed_ramping_active = state['speed_ramping']
         self.speed_ramp_counter = state['speed_ramp_counter']
         self.speed_ramp_target_speed = state['speed_ramp_target']
@@ -558,7 +545,6 @@ class MusicPlayer:
         self._release_all()
         self.playback_active = False
         
-        # NEU: Speed Ramping zurücksetzen
         self.speed_ramping_active = False
         
         logger.info(f"Playback finished - Total notes: {self.note_count}, "
@@ -574,8 +560,6 @@ class MusicPlayer:
         self.pause_flag.clear()
         self._release_all()
         self.playback_active = False
-        
-        # NEU: Speed Ramping zurücksetzen
         self.speed_ramping_active = False
 
     def set_speed(self, speed):
@@ -586,7 +570,6 @@ class MusicPlayer:
         else:
             self.current_speed = speed
             
-        # NEU: Wenn während Wiedergabe, sofort anwenden (ohne Ramping)
         if self.playback_active and not self.pause_flag.is_set():
             logger.info(f"Speed changed to {speed} during playback (instant)")
 
