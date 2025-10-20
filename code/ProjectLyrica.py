@@ -749,7 +749,6 @@ class MusicApp:
                 return
 
     def _update_speed_ui_visibility(self):
-        """Aktualisiert die Sichtbarkeit der Speed-UI"""
         if self.speed_enabled:
             current_speed = int(self.current_speed_value)
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
@@ -765,7 +764,6 @@ class MusicApp:
         self._adjust_window_size()
 
     def _update_speed_display(self, new_speed):
-        """Aktualisiert die Geschwindigkeits-Anzeige in der GUI - auch während Pause"""
         self.current_speed_value = new_speed
         self.player.current_speed = new_speed
 
