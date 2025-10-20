@@ -577,7 +577,7 @@ class MusicPlayer:
         self.speed_ramping_active = False
 
     def set_speed(self, speed):
-        """Sets speed - WIRD AUCH WÄHREND WIEDERGABE ANGEWENDET"""
+        """Sets speed"""
         if speed <= 0:
             logger.warning(f"Invalid speed {speed}, resetting to 1000")
             self.current_speed = 1000
@@ -588,7 +588,7 @@ class MusicPlayer:
             logger.info(f"Speed changed to {speed} during playback (instant)")
 
     def get_current_speed(self):
-        """Get current speed value - NEUE METHODE FÜR GUI"""
+        """Get current speed value"""
         return self.current_speed
 
     def _release_all(self):
