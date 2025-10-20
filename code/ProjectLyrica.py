@@ -65,6 +65,7 @@ class MusicApp:
         self.current_play_state = "ready"
         
         self.speed_changed_by_preset = False
+        self.last_speed_before_disable = 1000
         
         self._start_sky_check()
         self._setup_key_listener()
@@ -733,9 +734,12 @@ class MusicApp:
             preset_key = mapping.get('key', '')
             preset_speed = mapping.get('speed', 600)
             
+            # Check if pressed key matches preset key
             if (key_char and key_char == preset_key) or (key_name and key_name == preset_key):
                 self.speed_changed_by_preset = True
                 self.current_speed_value = preset_speed
+
+                self.last_speed_before_disable = preset_speed
                     
                 if self.player.playback_active and not self.player.pause_flag.is_set():
                     success = self.player.change_speed_during_playback(preset_speed)
@@ -962,9 +966,12 @@ class MusicApp:
             self.speed_enabled = not self.speed_enabled
             
             if self.speed_enabled:
+                self.current_speed_value = self.last_speed_before_disable
+                self.player.current_speed = self.last_speed_before_disable
                 current_speed = int(self.current_speed_value)
                 self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
             else:
+                self.last_speed_before_disable = self.current_speed_value
                 self.current_speed_value = 1000
                 self.player.current_speed = 1000
                 self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}")
