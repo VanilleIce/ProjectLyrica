@@ -448,7 +448,7 @@ class MusicPlayer:
         
         # 2. Basisdauer basierend auf Änderungsstärke - größere Änderungen brauchen mehr Zeit
         if speed_change_ratio <= 0.2:    # Kleine Änderung: (z.B. 1000→800, 800→600)
-            base_duration = 1.8          # Schneller Übergang (kleinere Zahl = schneller)
+            base_duration = 2.6          # Schneller Übergang (kleinere Zahl = schneller)
         elif speed_change_ratio <= 0.5:  # Mittlere Änderung: (z.B. 800→600, 1000→500)  
             base_duration = 2.4          # Standard Übergang
         else:                            # Große Änderung: (z.B. 600→1200, 800→1600)
@@ -459,7 +459,7 @@ class MusicPlayer:
         if target_speed < self.current_speed:  # VERLANGSAMEN (z.B. 800→600)
             base_duration *= 1.5  # (größere Zahl = langsamer)
         else:  # BESCHLEUNIGEN (z.B. 600→800)
-            base_duration *= 1.3  # (größere Zahl = langsamer)
+            base_duration *= 1.6  # (größere Zahl = langsamer)
         
         # 4. Steps-Feinabstimmung - benutzerkonfigurierbare Steps skalieren die Gesamtdauer
         # 8 Steps = 0.67x kürzer/schneller | 12 Steps = 1.0x Standard | 16 Steps = 1.33x länger/sanfter
@@ -562,8 +562,8 @@ class MusicPlayer:
         self.speed_ramping_active = False
         
         logger.info(f"Playback finished - Total notes: {self.note_count}, "
-                  f"Pauses: {self.pause_count}, "
-                  f"Total pause time: {self.total_pause_time:.2f}s")
+                f"Pauses: {self.pause_count}, "
+                f"Total pause time: {self.total_pause_time:.2f}s")
 
     def stop(self):
         """Stoppt Playback"""
