@@ -44,9 +44,6 @@ class ConfigManager:
                     "steps": 12,
                     "start_percentage": 50,
                     "end_percentage": 100
-                },
-                "speed_change": {
-                    "steps": 12
                 }
             }
         },
@@ -229,9 +226,6 @@ class ConfigManager:
                         "steps": old_timing.get("ramp_steps_after_pause", 12),
                         "start_percentage": 50,
                         "end_percentage": 100
-                    },
-                    "speed_change": {
-                        "steps": 12
                     }
                 }
             }
@@ -260,15 +254,9 @@ class ConfigManager:
                 del old_speed_change["preset_keys"]
                 upgraded = True
 
-            if "ramping" in old_speed_change and "timing_settings" in config:
-                timing_ramping = config["timing_settings"].get("ramping", {})
-                if "speed_change" not in timing_ramping:
-                    timing_ramping["speed_change"] = {
-                        "steps": old_speed_change["ramping"].get("steps", 8)
-                    }
-                    if "ramping" in old_speed_change:
-                        del old_speed_change["ramping"]
-                    upgraded = True
+            if "ramping" in old_speed_change:
+                del old_speed_change["ramping"]
+                upgraded = True
 
             keys_to_remove = ["step_size", "enabled", "mode", "increment_keys"]
             for key in keys_to_remove:
@@ -282,8 +270,8 @@ class ConfigManager:
 
         if "timing_settings" in config and "ramping" in config["timing_settings"]:
             timing_ramping = config["timing_settings"]["ramping"]
-            if "speed_change" not in timing_ramping:
-                timing_ramping["speed_change"] = cls.DEFAULT_CONFIG["timing_settings"]["ramping"]["speed_change"].copy()
+            if "speed_change" in timing_ramping:
+                del timing_ramping["speed_change"]
                 upgraded = True
 
         # Ensure all required sections exist
@@ -304,8 +292,7 @@ class ConfigManager:
                 "ramping": {
                     "begin": {"steps": 20, "start_percentage": 50, "end_percentage": 100},
                     "end": {"steps": 16, "start_percentage": 100, "end_percentage": 50},
-                    "after_pause": {"steps": 12, "start_percentage": 50, "end_percentage": 100},
-                    "speed_change": {"steps": 12}
+                    "after_pause": {"steps": 12, "start_percentage": 50, "end_percentage": 100}
                 }
             },
             "ui_settings": {
@@ -527,7 +514,6 @@ class ConfigManager:
 
         timing_delays = timing_settings.get("delays", {})
         timing_ramping = timing_settings.get("ramping", {})
-        speed_change_ramping = timing_ramping.get("speed_change", {})
         
         preset_mappings = speed_change_settings.get("preset_mappings", [])
         preset_info = []
@@ -546,7 +532,6 @@ class ConfigManager:
             f"Ramp Steps Begin: {timing_ramping.get('begin', {}).get('steps')}",
             f"Ramp Steps End: {timing_ramping.get('end', {}).get('steps')}",
             f"Ramp Steps Pause: {timing_ramping.get('after_pause', {}).get('steps')}",
-            f"Speed Change Ramp Steps: {speed_change_ramping.get('steps')}",
             "",
             "== Player Settings ==",
             f"Pause Key: '{ui_settings.get('pause_key')}'",

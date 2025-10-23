@@ -1,6 +1,10 @@
 @echo off
 title Project Lyrica Launcher
 color 0A
+
+:: Set CMD window size (columns x rows)
+mode con: cols=60 lines=10
+
 echo Starting Project Lyrica...
 
 :: Check if Python is installed

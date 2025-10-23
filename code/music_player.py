@@ -117,9 +117,6 @@ class MusicPlayer:
             self.ramp_begin_config = ramping.get("begin", {})
             self.ramp_end_config = ramping.get("end", {})
             self.ramp_after_pause_config = ramping.get("after_pause", {})
-            
-            self.speed_change_ramping_config = ramping.get("speed_change", {})
-            self.speed_change_ramp_steps = self.speed_change_ramping_config.get("steps", 8)
 
             playback = config.get("playback_settings", {})
             self.enable_ramping = playback.get("enable_ramping", False)
@@ -134,7 +131,6 @@ class MusicPlayer:
             self.enable_ramping = False
             self.current_speed = 1000
             self.press_duration = 0.1
-            self.speed_change_ramp_steps = 8
 
     def _initialize_playback_state(self):
         """Initialize playback state variables"""
@@ -142,17 +138,17 @@ class MusicPlayer:
         self.is_ramping_begin = False
         self.is_ramping_end = False
         self.is_ramping_after_pause = False
-        self.ramp_counter = 0
         self.ramp_begin_completed = False
-        self.start_time = 0
-        self.note_count = 0
+        
+        self.ramp_begin_counter = 0
+        self.ramp_end_counter = 0  
+        self.ramp_after_pause_counter = 0
+        
         self.pause_count = 0
-        self.pause_start = 0
         self.total_pause_time = 0
         self.speed_ramping_active = False
         self.speed_ramp_start_speed = 0
         self.speed_ramp_target_speed = 0
-        self.speed_ramp_counter = 0
 
     def parse_song(self, path):
         """Parse song file with caching"""
@@ -239,7 +235,7 @@ class MusicPlayer:
             
             if self.enable_ramping:
                 self.is_ramping_begin = True
-                self.ramp_counter = 0
+                self.ramp_begin_counter = 0
                 self.ramp_begin_completed = False
                 begin_config = self.ramp_begin_config
                 self.logger.info(f"Ramping ENABLED - begin: {begin_config.get('steps', 20)} notes")
@@ -268,14 +264,17 @@ class MusicPlayer:
         self.is_ramping_begin = False
         self.is_ramping_end = False
         self.is_ramping_after_pause = False
-        self.ramp_counter = 0
         self.ramp_begin_completed = False
+
+        self.ramp_begin_counter = 0
+        self.ramp_end_counter = 0  
+        self.ramp_after_pause_counter = 0
+        
         self.pause_count = 0
         self.total_pause_time = 0
         self.speed_ramping_active = False
         self.speed_ramp_start_speed = 0
         self.speed_ramp_target_speed = 0
-        self.speed_ramp_counter = 0
 
     def _play_notes(self, notes, timer_func):
         """Main loop for note playback"""
@@ -327,52 +326,56 @@ class MusicPlayer:
             self._cleanup_playback()
 
     def _calculate_current_speed(self, note_index, total_notes):
-        """Calculate current speed with intelligent ramping priorities"""
         base_speed = self.current_speed
 
         if self.speed_ramping_active:
             base_speed = self._calculate_speed_with_ramping()
 
-            if note_index % 5 == 0:
-                elapsed = time.time() - self.speed_ramp_start_time
-                progress = min(1.0, elapsed / self.speed_ramp_duration)
-                logger.debug(f"Speed ramping: {base_speed:.0f} (progress: {progress:.2f})")
-        
         ramp_factor = 1.0
         
+        # Start-Ramping
         if self.is_ramping_begin and not self.ramp_begin_completed:
             begin_config = self.ramp_begin_config
             steps = begin_config.get('steps', 20)
-            start_pct = begin_config.get('start_percentage', 50)
-            end_pct = begin_config.get('end_percentage', 100)
             
-            progress = min(1.0, self.ramp_counter / steps)
-            ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+            progress = min(1.0, self.ramp_begin_counter / steps)
+
+            if self.speed_ramping_active:
+                start_factor = 0.8 + (0.2 * progress)
+            else:
+                start_pct = begin_config.get('start_percentage', 50)
+                end_pct = begin_config.get('end_percentage', 100)
+                start_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+                
+            ramp_factor *= start_factor
             
-            self.ramp_counter += 1
-            if self.ramp_counter >= steps:
+            self.ramp_begin_counter += 1
+            if self.ramp_begin_counter >= steps:
                 self.is_ramping_begin = False
                 self.ramp_begin_completed = True
-                logger.info("Start ramping completed")
+                logger.info("🎵 Start ramping completed")
 
-        elif self.is_ramping_after_pause:
+        # PAUSE-RAMPING
+        if self.is_ramping_after_pause:
             after_pause_config = self.ramp_after_pause_config
             steps = after_pause_config.get('steps', 12)
             start_pct = after_pause_config.get('start_percentage', 50)
             end_pct = after_pause_config.get('end_percentage', 100)
             
-            progress = min(1.0, self.ramp_counter / steps)
-            ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+            progress = min(1.0, self.ramp_after_pause_counter / steps)
+            pause_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+            ramp_factor *= pause_factor
             
-            self.ramp_counter += 1
-            if self.ramp_counter >= steps:
+            self.ramp_after_pause_counter += 1
+            if self.ramp_after_pause_counter >= steps:
                 self.is_ramping_after_pause = False
                 logger.info("Pause ramping completed")
 
-        elif note_index >= total_notes - self.ramp_end_config.get('steps', 16):
+        # END-RAMPING
+        if note_index >= total_notes - self.ramp_end_config.get('steps', 16):
             if not self.is_ramping_end:
                 self.is_ramping_end = True
-                self.ramp_counter = 0
+                self.ramp_end_counter = 0
                 logger.info("End ramping started")
             
             end_config = self.ramp_end_config
@@ -382,96 +385,85 @@ class MusicPlayer:
             
             notes_remaining = total_notes - note_index
             progress = max(0.0, min(1.0, (steps - notes_remaining) / steps))
-            ramp_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+            end_factor = (start_pct + (end_pct - start_pct) * progress) / 100.0
+            ramp_factor *= end_factor
 
+        # 3. Finale Speed
         final_speed = base_speed * ramp_factor
+        final_speed = max(100, min(1500, final_speed))
         
-        return max(100, min(1500, final_speed))
+        return final_speed
+
+    def _init_speed_ramping(self, target_speed, current_speed=None):
+        try:
+            if current_speed is None:
+                current_speed = self.current_speed
+            
+            current_actual_speed = self._get_current_actual_speed()
+            
+            self.speed_ramping_active = True
+            self.speed_ramp_start_speed = current_actual_speed
+            self.speed_ramp_target_speed = target_speed
+            self.speed_ramp_start_time = time.time()
+            
+            # Geschwindigkeitsdifferenz berechnen
+            speed_diff = abs(target_speed - current_actual_speed)
+            
+            # VERBESSERTE Zeitberechnung für verschiedene Änderungsgrößen
+            base_duration = 6.0  # Basiszeit für kleine Änderungen
+            
+            if speed_diff <= 100:      # Sehr kleine Änderung (z.B. 1000→1100)
+                self.ramp_duration = base_duration * 1.2
+            elif speed_diff <= 200:    # Kleine Änderung (z.B. 800→1000)
+                self.ramp_duration = base_duration * 1.5
+            elif speed_diff <= 400:    # Mittlere Änderung (z.B. 600→1000)
+                self.ramp_duration = base_duration * 2.0
+            elif speed_diff <= 600:    # Große Änderung (z.B. 600→1200)
+                self.ramp_duration = base_duration * 2.8
+            elif speed_diff <= 800:    # Sehr große Änderung (z.B. 400→1200)
+                self.ramp_duration = base_duration * 3.5
+            else:                      # Extreme Änderung (z.B. 200→1500)
+                self.ramp_duration = base_duration * 4.5
+            
+            self.ramp_duration = max(6.0, min(60.0, self.ramp_duration))
+            
+        except Exception as e:
+            logger.error(f"Speed ramping init error: {e}")
+            self.current_speed = target_speed
+            self.speed_ramping_active = False
+
+    def _get_current_actual_speed(self):
+        if self.speed_ramping_active:
+            elapsed_time = time.time() - self.speed_ramp_start_time
+            time_progress = min(1.0, elapsed_time / self.ramp_duration)
+            eased_progress = 1 - (1 - time_progress) ** 2
+            
+            current_actual = self.speed_ramp_start_speed + (self.speed_ramp_target_speed - self.speed_ramp_start_speed) * eased_progress
+            return current_actual
+        else:
+            return self.current_speed
 
     def _calculate_speed_with_ramping(self):
-        """Calculate current speed with time-based ramping"""
         if not self.speed_ramping_active:
             return self.current_speed
         
-        elapsed = time.time() - self.speed_ramp_start_time
-        progress = min(1.0, elapsed / self.speed_ramp_duration)
+        elapsed_time = time.time() - self.speed_ramp_start_time
+        time_progress = min(1.0, elapsed_time / self.ramp_duration)
         
-        eased_progress = 1 - (1 - progress) ** 3  # Kubisches Easing
+        eased_progress = 1 - (1 - time_progress) ** 2
         
         start_speed = self.speed_ramp_start_speed
         target_speed = self.speed_ramp_target_speed
         
-        if start_speed < target_speed:
-            factor = target_speed / start_speed
-            current_factor = 1 + (factor - 1) * eased_progress
-            current_speed = start_speed * current_factor
-        else:
-            factor = target_speed / start_speed
-            current_factor = 1 + (factor - 1) * eased_progress
-            current_speed = start_speed * current_factor
-
-        if progress >= 1.0:
+        current_speed = start_speed + (target_speed - start_speed) * eased_progress
+        
+        if time_progress >= 1.0:
             self.speed_ramping_active = False
             self.current_speed = target_speed
-            logger.info(f"Time-based speed ramping completed: {self.current_speed}")
-            
+            actual_duration = time.time() - self.speed_ramp_start_time
+            logger.info(f"Speed ramping completed: {self.current_speed} (duration: {actual_duration:.1f}s)")
+        
         return current_speed
-
-    def change_speed_during_playback(self, new_speed):
-        """Change speed during playback with ramping"""
-        try:
-            if not self.playback_active:
-                return False
-                
-            logger.info(f"Changing speed to {new_speed}")
-
-            self._init_speed_ramping(new_speed)
-            
-            return True
-            
-        except Exception as e:
-            logger.error(f"Speed change error: {e}")
-            return False
-
-    # Init
-    def _init_speed_ramping(self, target_speed):
-        """Initialize with combined adaptive ramping"""
-        # Ramping-State aktivieren und Startwerte setzen
-        self.speed_ramping_active = True
-        self.speed_ramp_start_speed = self.current_speed
-        self.speed_ramp_target_speed = target_speed
-        self.speed_ramp_start_time = time.time()
-        
-        # 1. Prozentuale Geschwindigkeitsänderung berechnen
-        # Beispiel: 800 → 600 = (800-600)/800 = 0.25 (25% Reduktion)
-        speed_change_ratio = abs(target_speed - self.current_speed) / self.current_speed
-        
-        # 2. Basisdauer basierend auf Änderungsstärke - größere Änderungen brauchen mehr Zeit
-        if speed_change_ratio <= 0.2:    # Kleine Änderung: (z.B. 1000→800, 800→600)
-            base_duration = 2.6          # Schneller Übergang (kleinere Zahl = schneller)
-        elif speed_change_ratio <= 0.5:  # Mittlere Änderung: (z.B. 800→600, 1000→500)  
-            base_duration = 2.4          # Standard Übergang
-        else:                            # Große Änderung: (z.B. 600→1200, 800→1600)
-            base_duration = 4.0          # Langer, sanfter Übergang (größere Zahl = langsamer)
-        
-        # 3. Richtungsanpassung - Verlangsamen braucht mehr Zeit für natürlichen Übergang
-        # Psychoakustik
-        if target_speed < self.current_speed:  # VERLANGSAMEN (z.B. 800→600)
-            base_duration *= 1.5  # (größere Zahl = langsamer)
-        else:  # BESCHLEUNIGEN (z.B. 600→800)
-            base_duration *= 1.6  # (größere Zahl = langsamer)
-        
-        # 4. Steps-Feinabstimmung - benutzerkonfigurierbare Steps skalieren die Gesamtdauer
-        # 8 Steps = 0.67x kürzer/schneller | 12 Steps = 1.0x Standard | 16 Steps = 1.33x länger/sanfter
-        # KLEINERE Steps-Zahl = SCHNELLER | GRÖSSERE Steps-Zahl = LANGSAMER
-        steps_multiplier = self.speed_change_ramp_steps / 12.0
-        self.speed_ramp_duration = base_duration * steps_multiplier
-        
-        # 5. Stabilitätsgrenzen - verhindern extreme Werte für konsistente Performance
-        self.speed_ramp_duration = max(1.5, min(6.0, self.speed_ramp_duration))  # Min 1.5s, Max 6.0s
-        
-        # Debug-Logging
-        logger.info(f"Smart ramping: {self.current_speed} → {target_speed} over {self.speed_ramp_duration:.1f}s (ratio: {speed_change_ratio:.2f})")
 
     def _wait_with_pause_check(self, wait_time, timer_func):
         """Wait with pause support"""
@@ -521,8 +513,12 @@ class MusicPlayer:
                     return False
                 time.sleep(0.01)
 
-        # Ramping-State
         self._restore_ramping_state(ramping_state)
+
+        if self.enable_ramping:
+            self.is_ramping_after_pause = True
+            self.ramp_after_pause_counter = 0
+            logger.info("Starting pause ramping after resume")
         
         return True
 
@@ -532,10 +528,11 @@ class MusicPlayer:
             'begin': self.is_ramping_begin,
             'end': self.is_ramping_end,
             'after_pause': self.is_ramping_after_pause,
-            'counter': self.ramp_counter,
+            'begin_counter': self.ramp_begin_counter,
+            'end_counter': self.ramp_end_counter,
+            'after_pause_counter': self.ramp_after_pause_counter,
             'begin_completed': self.ramp_begin_completed,
             'speed_ramping': self.speed_ramping_active,
-            'speed_ramp_counter': self.speed_ramp_counter,
             'speed_ramp_target': self.speed_ramp_target_speed
         }
 
@@ -544,15 +541,16 @@ class MusicPlayer:
         self.is_ramping_begin = state['begin']
         self.is_ramping_end = state['end'] 
         self.is_ramping_after_pause = state['after_pause']
-        self.ramp_counter = state['counter']
+        self.ramp_begin_counter = state['begin_counter']
+        self.ramp_end_counter = state['end_counter']
+        self.ramp_after_pause_counter = state['after_pause_counter']
         self.ramp_begin_completed = state['begin_completed']
         self.speed_ramping_active = state['speed_ramping']
-        self.speed_ramp_counter = state['speed_ramp_counter']
         self.speed_ramp_target_speed = state['speed_ramp_target']
 
         if self.enable_ramping and not any([state['begin'], state['end'], state['after_pause']]):
             self.is_ramping_after_pause = True
-            self.ramp_counter = 0
+            self.ramp_after_pause_counter = 0
 
     def _cleanup_playback(self):
         """Tidy up after playback"""
@@ -566,7 +564,7 @@ class MusicPlayer:
                 f"Total pause time: {self.total_pause_time:.2f}s")
 
     def stop(self):
-        """Stoppt Playback"""
+        """Stop Playback"""
         if not self.playback_active:
             return
             

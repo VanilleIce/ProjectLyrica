@@ -117,8 +117,7 @@ class SettingsWindow:
         self.current_ramping = {
             "begin_steps": ramping.get("begin", {}).get("steps", 20),
             "end_steps": ramping.get("end", {}).get("steps", 16), 
-            "after_pause_steps": ramping.get("after_pause", {}).get("steps", 12),
-            "speed_change_steps": ramping.get("speed_change", {}).get("steps", 8)
+            "after_pause_steps": ramping.get("after_pause", {}).get("steps", 12)
         }
         
         ui_settings = self.config.get("ui_settings", {})
@@ -235,7 +234,7 @@ class SettingsWindow:
         self.custom_keys_status.pack(side="left", padx=10)
 
     def _create_speed_change_section(self, parent):
-        """Create speed change during playback section - nur Preset Mode"""
+        """Create speed change during playback section"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
@@ -491,24 +490,6 @@ class SettingsWindow:
         self._create_ramping_entry(section_frame, 'settings_ramping_start', 'begin_steps', 'settings_ramping_start_hint')
         self._create_ramping_entry(section_frame, 'settings_ramping_end', 'end_steps', 'settings_ramping_end_hint')
         self._create_ramping_entry(section_frame, 'settings_ramping_after_pause', 'after_pause_steps', 'settings_ramping_pause_hint')
-        
-        ramp_steps_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
-        ramp_steps_frame.pack(fill="x", padx=10, pady=5)
-        
-        ctk.CTkLabel(ramp_steps_frame, text=LanguageManager.get('settings_speed_change_ramp_steps'), width=150).pack(side="left")
-        
-        step_options = ["2", "4", "6", "8", "12", "16", "20"]
-        current_steps = str(self.current_ramping.get('speed_change_steps', 8))
-        
-        self.speed_change_ramp_steps_var = ctk.StringVar(value=current_steps)
-        steps_dropdown = ctk.CTkComboBox(
-            ramp_steps_frame, 
-            values=step_options,
-            variable=self.speed_change_ramp_steps_var,
-            state="readonly",
-            width=80
-        )
-        steps_dropdown.pack(side="left", padx=5)
 
     def _create_ramping_entry(self, parent, label_key, config_key, hint_key):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
@@ -628,13 +609,6 @@ class SettingsWindow:
             if begin_steps <= 0 or end_steps <= 0 or after_pause_steps <= 0:
                 return False, LanguageManager.get('settings_error_positive')
             
-            try:
-                speed_change_steps = int(self.speed_change_ramp_steps_var.get().strip())
-                if speed_change_steps <= 0:
-                    return False, LanguageManager.get('settings_error_positive')
-            except ValueError:
-                return False, LanguageManager.get('settings_error_numbers')
-            
             pause_key = self.pause_key_var.get().strip()
             if len(pause_key) != 1:
                 return False, LanguageManager.get('settings_error_pause_key')
@@ -666,15 +640,13 @@ class SettingsWindow:
             new_begin_steps = int(self.begin_steps_var.get())
             new_end_steps = int(self.end_steps_var.get())
             new_after_pause_steps = int(self.after_pause_steps_var.get())
-            new_speed_change_steps = int(self.speed_change_ramp_steps_var.get())
             
             timing_changed = (
                 new_initial_delay != self.current_delays["initial_delay"] or
                 new_pause_delay != self.current_delays["pause_resume_delay"] or
                 new_begin_steps != self.current_ramping["begin_steps"] or
                 new_end_steps != self.current_ramping["end_steps"] or
-                new_after_pause_steps != self.current_ramping["after_pause_steps"] or
-                new_speed_change_steps != self.current_ramping["speed_change_steps"]
+                new_after_pause_steps != self.current_ramping["after_pause_steps"]
             )
             
             if timing_changed:
@@ -686,8 +658,7 @@ class SettingsWindow:
                     "ramping": {
                         "begin": {"steps": new_begin_steps},
                         "end": {"steps": new_end_steps},
-                        "after_pause": {"steps": new_after_pause_steps},
-                        "speed_change": {"steps": new_speed_change_steps}
+                        "after_pause": {"steps": new_after_pause_steps}
                     }
                 }
             
@@ -777,7 +748,6 @@ class SettingsWindow:
                             self.current_ramping["begin_steps"] = ramping["begin"]["steps"]
                             self.current_ramping["end_steps"] = ramping["end"]["steps"]
                             self.current_ramping["after_pause_steps"] = ramping["after_pause"]["steps"]
-                            self.current_ramping["speed_change_steps"] = ramping["speed_change"]["steps"]
 
                     if "playback_settings" in updates:
                         playback = updates["playback_settings"]
