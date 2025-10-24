@@ -56,39 +56,31 @@ class KeyEditorWindow:
 
     def _load_default_mapping(self) -> Dict[str, str]:
         """Load the default key mapping based on the current layout setting"""
-        try:
-            from config_manager import ConfigManager
-            config = ConfigManager.get_config()
-            layout = config.get("ui_settings", {}).get("keyboard_layout", "QWERTY")
-            
-            from language_manager import KeyboardLayoutManager
-            return KeyboardLayoutManager.load_layout_silently(layout)
-        except Exception as e:
-            logger.error(f"Error loading default mapping: {e}")
-            return {}
+        from config_manager import ConfigManager
+        config = ConfigManager.get_config()
+        layout = config.get("ui_settings", {}).get("keyboard_layout", "QWERTY")
+        
+        from language_manager import KeyboardLayoutManager
+        return KeyboardLayoutManager.load_layout_silently(layout)
 
     def _load_current_mapping(self) -> Dict[str, str]:
         """Load custom mapping or fallback to default basic layout"""
-        try:
-            custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
-            if custom_file.exists():
-                tree = ET.parse(custom_file)
-                mapping = {}
-                
-                root = tree.getroot()
-                base_layout = root.get('base_layout', 'QWERTY')
-                self.base_layout = base_layout
-                
-                for key in tree.findall('key'):
-                    key_id = key.get('id')
-                    key_text = key.text.strip() if key.text else ""
-                    if key_id:
-                        mapping[key_id] = key_text
-                        
-                logger.info(f"Loaded custom mapping with {len(mapping)} keys (base: {base_layout})")
-                return mapping
-        except Exception as e:
-            logger.error(f"Error loading custom mapping: {e}")
+        custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
+        if custom_file.exists():
+            tree = ET.parse(custom_file)
+            mapping = {}
+            
+            root = tree.getroot()
+            self.base_layout = root.get('base_layout', 'QWERTY')
+            
+            for key in tree.findall('key'):
+                key_id = key.get('id')
+                key_text = key.text.strip() if key.text else ""
+                if key_id:
+                    mapping[key_id] = key_text
+                    
+            logger.info(f"Loaded custom mapping with {len(mapping)} keys (base: {self.base_layout})")
+            return mapping
         
         # Fallback to default
         self.base_layout = "QWERTY"
@@ -394,45 +386,35 @@ class KeyEditorWindow:
             LanguageManager.get('warning_title'),
             LanguageManager.get('key_editor_delete_custom_layout_confirm')
         ):
-            try:
-                custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
-                if custom_file.exists():
-                    custom_file.unlink()
-                    logger.info("Custom layout file deleted")
+            custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
+            if custom_file.exists():
+                custom_file.unlink()
+            
+            from config_manager import ConfigManager
+            config = ConfigManager.get_config()
+            lang_code = config.get("ui_settings", {}).get("selected_language", "en_US")
+            
+            lang_to_layout = {
+                "ar": "Arabic", "da": "QWERTY", "de": "QWERTZ", "en": "QWERTY",
+                "en_US": "QWERTY", "es": "QWERTY", "fr": "AZERTY", "id": "QWERTY",
+                "it": "QWERTY", "ja": "JIS", "ko_KR": "QWERTY", "mg_MG": "QWERTY",
+                "nl": "QWERTY", "pl": "QWERTY", "pt": "QWERTY", "ru": "йцукен",
+                "zh": "QWERTY",
+            }
+            fallback_layout = lang_to_layout.get(lang_code, "QWERTY")
+            
+            updates = {"ui_settings": {"keyboard_layout": fallback_layout}}
+            ConfigManager.save(updates)
+            
+            messagebox.showinfo(
+                LanguageManager.get('info_title'),
+                f"Custom layout deleted. Switched to {fallback_layout}."
+            )
+            
+            if self.callback:
+                self.callback()
                 
-                from config_manager import ConfigManager
-                config = ConfigManager.get_config()
-                lang_code = config.get("ui_settings", {}).get("selected_language", "en_US")
-                
-                lang_to_layout = {
-                    "ar": "Arabic", "da": "QWERTY", "de": "QWERTZ", "en": "QWERTY",
-                    "en_US": "QWERTY", "es": "QWERTY", "fr": "AZERTY", "id": "QWERTY",
-                    "it": "QWERTY", "ja": "JIS", "ko_KR": "QWERTY", "mg_MG": "QWERTY",
-                    "nl": "QWERTY", "pl": "QWERTY", "pt": "QWERTY", "ru": "йцукен",
-                    "zh": "QWERTY",
-                }
-                fallback_layout = lang_to_layout.get(lang_code, "QWERTY")
-                
-                updates = {"ui_settings": {"keyboard_layout": fallback_layout}}
-                ConfigManager.save(updates)
-                logger.info(f"Layout reset to {fallback_layout} after custom deletion")
-                
-                messagebox.showinfo(
-                    LanguageManager.get('info_title'),
-                    f"Custom layout deleted. Switched to {fallback_layout}."
-                )
-                
-                if self.callback:
-                    self.callback()
-                    
-                self._on_close()
-                
-            except Exception as e:
-                logger.error(f"Error deleting custom layout: {e}")
-                messagebox.showerror(
-                    LanguageManager.get('error_title'),
-                    LanguageManager.get('key_editor_error_deleting_custom_layout')
-                )
+            self._on_close()
 
     def _save_mapping(self):
         """Save the custom mapping - ONLY if there are actual changes"""
@@ -449,67 +431,52 @@ class KeyEditorWindow:
             self._on_close()
             return
         
-        try:
-            custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
-            custom_file.parent.mkdir(parents=True, exist_ok=True)
-            
-            root = ET.Element('layout')
-            
-            try:
-                from config_manager import ConfigManager
-                config = ConfigManager.get_config()
-                current_layout = config.get("ui_settings", {}).get("keyboard_layout", "QWERTY")
-                
-                root.set('base_layout', current_layout)
-                logger.info(f"Custom mapping saved with base layout: {current_layout}")
-                
-                config_updates = {"ui_settings": {"keyboard_layout": "Custom"}}
-                ConfigManager.save(config_updates)
-                logger.info("Automatically set keyboard layout to 'Custom'")
-                
-            except Exception as e:
-                logger.error(f"Error setting base layout: {e}")
-                root.set('base_layout', 'QWERTY')
-            
-            for key_id in sorted(self.current_mapping.keys()):
-                key_elem = ET.SubElement(root, 'key', id=key_id)
-                key_elem.text = self.current_mapping[key_id]
-            
-            # Pretty XML
-            from xml.dom import minidom
-            rough_string = ET.tostring(root, 'utf-8')
-            parsed = minidom.parseString(rough_string)
-            pretty_string = parsed.toprettyxml(indent="  ")
-            
-            # XML Declaration
-            lines = pretty_string.split('\n')
-            if '<?xml version="1.0" ?>' in lines[0]:
-                lines = lines[1:]
-            
-            final_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + '\n'.join(lines)
-            
-            with open(custom_file, 'w', encoding='utf-8') as f:
-                f.write(final_xml)
-            
-            logger.info(f"Saved custom mapping with {len(self.current_mapping)} keys")
-            self.has_changes = False
-            
-            messagebox.showinfo(
-                LanguageManager.get('info_title'),
-                LanguageManager.get('key_editor_custom_layout_saved_activated')
-            )
+        custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
+        custom_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        root = ET.Element('layout')
+        
+        from config_manager import ConfigManager
+        config = ConfigManager.get_config()
+        current_layout = config.get("ui_settings", {}).get("keyboard_layout", "QWERTY")
+        
+        root.set('base_layout', current_layout)
+        
+        config_updates = {"ui_settings": {"keyboard_layout": "Custom"}}
+        ConfigManager.save(config_updates)
+        
+        for key_id in sorted(self.current_mapping.keys()):
+            key_elem = ET.SubElement(root, 'key', id=key_id)
+            key_elem.text = self.current_mapping[key_id]
+        
+        # Pretty XML
+        from xml.dom import minidom
+        rough_string = ET.tostring(root, 'utf-8')
+        parsed = minidom.parseString(rough_string)
+        pretty_string = parsed.toprettyxml(indent="  ")
+        
+        # XML Declaration
+        lines = pretty_string.split('\n')
+        if '<?xml version="1.0" ?>' in lines[0]:
+            lines = lines[1:]
+        
+        final_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + '\n'.join(lines)
+        
+        with open(custom_file, 'w', encoding='utf-8') as f:
+            f.write(final_xml)
+        
+        logger.info(f"Saved custom mapping with {len(self.current_mapping)} keys")
+        self.has_changes = False
+        
+        messagebox.showinfo(
+            LanguageManager.get('info_title'),
+            LanguageManager.get('key_editor_custom_layout_saved_activated')
+        )
 
-            if self.callback:
-                self.callback()
+        if self.callback:
+            self.callback()
 
-            self._on_close()
-            
-        except Exception as e:
-            logger.error(f"Error saving custom mapping: {e}")
-            messagebox.showerror(
-                LanguageManager.get('error_title'),
-                LanguageManager.get('key_editor_save_error')
-            )
+        self._on_close()
 
     def _reset_all_to_default(self):
         """Reset all keys to default values"""
@@ -517,54 +484,33 @@ class KeyEditorWindow:
             LanguageManager.get('warning_title'),
             LanguageManager.get('key_editor_reset_confirm')
         ):
-            try:
-                custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
-                base_layout = "QWERTY"
-                
-                if custom_file.exists():
-                    tree = ET.parse(custom_file)
-                    root = tree.getroot()
-                    base_layout = root.get('base_layout', 'QWERTY')
-                    logger.info(f"Resetting to base layout: {base_layout}")
-                
-                from language_manager import KeyboardLayoutManager
-                base_default_mapping = KeyboardLayoutManager.load_layout_silently(base_layout)
-                
-                has_actual_changes = any(
-                    self.current_mapping[key_id] != base_default_mapping.get(key_id, "")
-                    for key_id in self.current_mapping
-                )
-                
-                if has_actual_changes:
-                    self.has_changes = True
-                
-                self.current_mapping = base_default_mapping.copy()
-                
-                # Update UI
-                for key_id in self.key_buttons:
-                    self._update_key_button(key_id)
-                
-                self._update_change_count()
-                self._cancel_edit()
-                
-                logger.info(f"Reset all keys to base layout: {base_layout}")
-                
-            except Exception as e:
-                logger.error(f"Error resetting to base layout: {e}")
-                # Fallback
-                has_actual_changes = any(
-                    self.current_mapping[key_id] != self.default_mapping.get(key_id, "")
-                    for key_id in self.current_mapping
-                )
-                
-                if has_actual_changes:
-                    self.has_changes = True
-                    
-                self.current_mapping = self.default_mapping.copy()
-                for key_id in self.key_buttons:
-                    self._update_key_button(key_id)
-                self._update_change_count()
-                self._cancel_edit()
+            custom_file = Path(resource_path('resources/layouts/CUSTOM.xml'))
+            base_layout = "QWERTY"
+            
+            if custom_file.exists():
+                tree = ET.parse(custom_file)
+                root = tree.getroot()
+                base_layout = root.get('base_layout', 'QWERTY')
+            
+            from language_manager import KeyboardLayoutManager
+            base_default_mapping = KeyboardLayoutManager.load_layout_silently(base_layout)
+            
+            has_actual_changes = any(
+                self.current_mapping[key_id] != base_default_mapping.get(key_id, "")
+                for key_id in self.current_mapping
+            )
+            
+            if has_actual_changes:
+                self.has_changes = True
+            
+            self.current_mapping = base_default_mapping.copy()
+            
+            # Update UI
+            for key_id in self.key_buttons:
+                self._update_key_button(key_id)
+            
+            self._update_change_count()
+            self._cancel_edit()
 
     def _on_close(self):
         """Close the window with confirmation if there are unsaved changes"""
@@ -579,7 +525,6 @@ class KeyEditorWindow:
             elif response:  # Yes - Save
                 self._save_mapping()
                 return
-            # No - Continue closing
         
         self.has_changes = False
         

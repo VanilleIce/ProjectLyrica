@@ -7,7 +7,6 @@ from pathlib import Path
 from threading import Event, Thread
 from pynput.keyboard import Listener, Key
 from tkinter import filedialog, messagebox
-import xml.etree.ElementTree as ET
 
 from update_checker import check_update
 from logging_setup import setup_logging
@@ -20,20 +19,13 @@ from resource_loader import resource_path
 
 logger = logging.getLogger("ProjectLyrica.ProjectLyrica")
 
-# -------------------------------
 # Constants
-# -------------------------------
-
 DEFAULT_WINDOW_SIZE = (400, 355)
 EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
 VERSION = "2.7.1"
-
-# -------------------------------
-# Music App
-# -------------------------------
 
 class MusicApp:
     def __init__(self):
@@ -42,13 +34,9 @@ class MusicApp:
 
         self.config = ConfigManager.get_config()
 
-        try:
-            custom_was_missing, fallback_layout = ConfigManager.check_and_handle_missing_custom()
-            if custom_was_missing:
-                logger.info(f"Custom layout was missing, switched to {fallback_layout}")
-                self.config = ConfigManager.get_config()
-        except Exception as e:
-            logger.error(f"Error handling missing custom layout: {e}")
+        custom_was_missing, fallback_layout = ConfigManager.check_and_handle_missing_custom()
+        if custom_was_missing:
+            self.config = ConfigManager.get_config()
 
         self._init_language()
 
@@ -75,14 +63,10 @@ class MusicApp:
 
     def _start_sky_check(self):
         def check_sky():
-            try:
-                if self.current_play_state in ["ready", "disabled"]:
-                    self._update_play_button_state("ready")
-                
-                self.root.after(2000, check_sky)
-            except Exception as e:
-                logger.error(f"Sky check timer error: {e}")
-                self.root.after(5000, check_sky)
+            if self.current_play_state in ["ready", "disabled"]:
+                self._update_play_button_state("ready")
+            
+            self.root.after(2000, check_sky)
         
         check_sky()
 
@@ -102,23 +86,19 @@ class MusicApp:
             self._update_play_button_state("ready")
 
     def _check_sky_running(self, use_cache=True):
-        try:
-            current_time = time.time()
-            
-            if use_cache and current_time - self._last_sky_check < 1:
-                return self._sky_running_cache
-            
-            if hasattr(self, 'player') and self.player is not None:
-                window = self.player._find_sky_window()
-                result = window is not None
+        current_time = time.time()
+        
+        if use_cache and current_time - self._last_sky_check < 1:
+            return self._sky_running_cache
+        
+        if hasattr(self, 'player') and self.player is not None:
+            window = self.player._find_sky_window()
+            result = window is not None
 
-                self._sky_running_cache = result
-                self._last_sky_check = current_time
-                return result
-            return False
-        except Exception as e:
-            logger.error(f"Error checking if Sky is running: {e}")
-            return False
+            self._sky_running_cache = result
+            self._last_sky_check = current_time
+            return result
+        return False
 
     def _init_language(self):
         LanguageManager.init()
@@ -162,39 +142,24 @@ class MusicApp:
         self.show_ramping_info = self.ramping_info_display_count < MAX_RAMPING_INFO_DISPLAY
 
     def _setup_key_listener(self):
-        try:
-            self.key_listener = Listener(on_press=self._handle_keypress)
-            self.key_listener.start()
-        except Exception as e:
-            logger.error(f"Failed to start key listener: {e}")
-            messagebox.showerror("Error", "Failed to initialize keyboard listener")
+        self.key_listener = Listener(on_press=self._handle_keypress)
+        self.key_listener.start()
 
     def _init_gui(self):
-        try:
-            self.root = ctk.CTk()
-            self.root.title(LanguageManager.get("project_title"))
-            self.root.iconbitmap(resource_path("resources/icons/icon.ico"))
-            self.root.protocol('WM_DELETE_WINDOW', self._shutdown)
-            
-            theme = self.config.get("ui_settings", {}).get("theme", "dark")
-            ctk.set_appearance_mode(theme)
-            
-            self.update_status, self.latest_version, self.update_url = self._check_updates()
-            self._create_gui_components()
-            self._setup_gui_layout()
-
-        except Exception as e:
-            logger.critical(f"GUI initialization failed: {e}", exc_info=True)
-            if hasattr(self, 'root'):
-                self.root.destroy()
-            raise
+        self.root = ctk.CTk()
+        self.root.title(LanguageManager.get("project_title"))
+        self.root.iconbitmap(resource_path("resources/icons/icon.ico"))
+        self.root.protocol('WM_DELETE_WINDOW', self._shutdown)
+        
+        theme = self.config.get("ui_settings", {}).get("theme", "dark")
+        ctk.set_appearance_mode(theme)
+        
+        self.update_status, self.latest_version, self.update_url = self._check_updates()
+        self._create_gui_components()
+        self._setup_gui_layout()
 
     def _check_updates(self):
-        try:
-            return check_update(VERSION, "VanilleIce/ProjectLyrica")
-        except Exception as e:
-            logger.error(f"Update check failed: {e}")
-            return ("error", "", "")
+        return check_update(VERSION, "VanilleIce/ProjectLyrica")
 
     def _create_gui_components(self):
         if self.update_status == "update":
@@ -300,8 +265,6 @@ class MusicApp:
         return btn
 
     def _update_play_button_state(self, state):
-        logger.debug(f"Update play button state: {state}")
-        
         self.current_play_state = state
         
         if state == "playing":
@@ -392,7 +355,6 @@ class MusicApp:
         self.root.update_idletasks()
 
     def _stop_song(self):
-        """Stops playback completely"""
         if self.player.playback_active:
             self.player.stop()
             self._update_play_button_state("ready")
@@ -452,27 +414,18 @@ class MusicApp:
         )
 
     def _on_speed_change_changed(self, speed_change_updates):
-        """Handle speed change settings updates"""
-        logger.info(f"Speed change settings updated: {speed_change_updates}")
-        
         self.config = ConfigManager.get_config()
         
         speed_change_settings = self.config.get("speed_change_settings", {})
         self.speed_change_config = speed_change_settings
-        
-        if "preset_mappings" in speed_change_updates:
-            logger.info("Speed change preset mappings updated")
 
     def _on_pause_key_changed(self, new_pause_key):
-        logger.info(f"Pause key changed to: '{new_pause_key}'")
         self.pause_key = new_pause_key
         
         if self.current_play_state == "paused":
             self._update_play_button_state("paused")
 
     def _on_theme_changed(self, new_theme):
-        logger.info(f"Theme changed to: {new_theme}")
-
         from settings_window import SettingsWindow
         if SettingsWindow.is_open():
             for window in SettingsWindow._open_windows[:]:
@@ -491,8 +444,6 @@ class MusicApp:
         )
 
     def _on_timing_changed(self, timing_updates):
-        logger.info(f"Timing settings updated: {timing_updates}")
-
         if hasattr(self, 'player'):
             if "delays" in timing_updates:
                 delays = timing_updates["delays"]
@@ -504,19 +455,14 @@ class MusicApp:
                 self.player.ramp_begin_config = ramping.get("begin", self.player.ramp_begin_config)
                 self.player.ramp_end_config = ramping.get("end", self.player.ramp_end_config)
                 self.player.ramp_after_pause_config = ramping.get("after_pause", self.player.ramp_after_pause_config)
-            
-            logger.info("MusicPlayer timing settings updated immediately")
 
     def _on_playback_changed(self, playback_updates):
-        logger.info(f"Playback settings updated: {playback_updates}")
-        
         if hasattr(self, 'speed_presets'):
             self.speed_presets = playback_updates["speed_presets"]
             self._update_speed_preset_buttons()
         
         if hasattr(self, 'player'):
             self.player.key_press_durations = playback_updates["key_press_durations"]
-            logger.info("MusicPlayer playback settings updated immediately")
             
         if hasattr(self, 'duration_presets'):
             self.duration_presets = playback_updates["key_press_durations"]
@@ -568,8 +514,7 @@ class MusicApp:
                 base_height += RAMPING_INFO_HEIGHT
             
             self.root.geometry(f"{FULL_SIZE[0]}x{base_height}")
-        except Exception as e:
-            logger.error(f"Window size adjustment failed: {e}")
+        except:
             self.root.geometry(f"{DEFAULT_WINDOW_SIZE[0]}x{DEFAULT_WINDOW_SIZE[1]}")
 
     def _toggle_smooth_ramping(self):
@@ -601,7 +546,6 @@ class MusicApp:
         })
 
         self._adjust_window_size()
-        logger.info(f"Smooth ramping {'enabled' if self.smooth_ramping_enabled else 'disabled'}")
 
     def _open_releases(self, event):
         try:
@@ -618,8 +562,8 @@ class MusicApp:
         try:
             song_name = Path(self.selected_file).name
             logger.info(f"Playing: {song_name}")
-        except Exception as e:
-            logger.error(f"Could not get song name: {e}")
+        except:
+            pass
         
         logger.info("Attempting to focus Sky window")
         window_focused = False
@@ -631,23 +575,15 @@ class MusicApp:
             try:
                 window = self.player._find_sky_window()
                 if window:
-                    logger.debug(f"Found Sky window: {window.title}")
                     if self.player._focus_window(window):
                         window_focused = True
-                        logger.info(f"Successfully focused Sky window on attempt {attempt}/{focus_attempts}")
                         break
-                    else:
-                        logger.warning(f"Failed to focus Sky window on attempt {attempt}/{focus_attempts}")
-                else:
-                    logger.warning(f"No Sky window found on attempt {attempt}/{focus_attempts}")
-            except Exception as e:
-                logger.error(f"Window focus error on attempt {attempt}/{focus_attempts}: {e}")
-                time.sleep(0.5)
+            except:
+                time.sleep(0.2)
             
             time.sleep(0.2)
         
         if not window_focused:
-            logger.error(f"Failed to focus Sky window after {focus_attempts} attempts")
             self.root.after(0, lambda: messagebox.showerror(
                 LanguageManager.get("error_title"), 
                 LanguageManager.get("sky_window_focus_error")
@@ -659,15 +595,11 @@ class MusicApp:
         remaining_delay = max(0, self.player.initial_delay - elapsed_time)
         
         if remaining_delay > 0:
-            logger.debug(f"Waiting initial delay: {remaining_delay:.2f}s (of {self.player.initial_delay}s)")
             time.sleep(remaining_delay)
-        else:
-            logger.debug(f"Focus took longer than initial delay ({elapsed_time:.2f}s), skipping wait")
         
         try:
             self.player.play(song_data)
         except Exception as play_error:
-            logger.critical(f"Playback thread crashed: {play_error}", exc_info=True)
             self.root.after(0, lambda e=play_error: messagebox.showerror(
                 "Critical Error", 
                 f"Playback failed: {str(e)}"
@@ -675,89 +607,71 @@ class MusicApp:
         finally:
             try:
                 winsound.Beep(1000, 500)
-            except Exception as e:
-                logger.warning(f"Could not play completion beep: {e}")
-            logger.info("Playback thread completed")
+            except:
+                pass
 
             self.root.after(0, lambda: self._update_play_button_state("ready"))
 
     def _handle_keypress(self, key):
-        """Handle all key events including pause and speed changes"""
-        try:
-            if not hasattr(self, 'root') or not self.root.winfo_exists():
-                return
-                
-            key_char = getattr(key, 'char', None)
-            key_name = getattr(key, 'name', None)
+        if not hasattr(self, 'root') or not self.root.winfo_exists():
+            return
+            
+        key_char = getattr(key, 'char', None)
+        key_name = getattr(key, 'name', None)
 
-            if key_char == self.pause_key:
-                self._handle_pause_key()
-                return
+        if key_char == self.pause_key:
+            self._handle_pause_key()
+            return
 
-            self._handle_preset_speed_change(key_char, key_name)
-                
-        except Exception as e:
-            logger.error(f"Key handler error: {e}")
+        self._handle_preset_speed_change(key_char, key_name)
 
     def _handle_pause_key(self):
-        """Handle pause key events"""
         if not self.selected_file or not self.player.playback_active:
             return
 
         if self.player.pause_flag.is_set():
-            logger.info("Resuming playback via pause key")
             self.player.pause_flag.clear()
             self.root.after(0, lambda: self._update_play_button_state("playing"))
             
             if window := self.player._find_sky_window():
                 self.player._focus_window(window)
         else:
-            logger.info("Pausing playback via pause key")
             self.player.pause_flag.set()
 
             if not hasattr(self, '_originally_paused_file'):
                 self._originally_paused_file = self.selected_file
-                logger.info(f"Originally paused file set to: {self._originally_paused_file}")
             
             self.root.after(0, lambda: self._update_play_button_state("paused"))
 
-    def _handle_speed_change_key(self, key_char, key_name):
-        """Handle speed change keys during playback - nur Preset Mode"""
-        if self.player.playback_active:
-            self._handle_preset_speed_change(key_char, key_name)
-
     def _handle_preset_speed_change(self, key_char, key_name):
-        """Verbessertes Preset-Handling mit sofortiger Reaktion"""
-        try:
-            preset_mappings = self.speed_change_config.get('preset_mappings', [])
+        preset_mappings = self.speed_change_config.get('preset_mappings', [])
+        
+        for mapping in preset_mappings:
+            preset_key = mapping.get('key', '')
+            preset_speed = mapping.get('speed', 600)
             
-            for mapping in preset_mappings:
-                preset_key = mapping.get('key', '')
-                preset_speed = mapping.get('speed', 600)
+            if (key_char and key_char == preset_key) or (key_name and key_name == preset_key):
                 
-                if (key_char and key_char == preset_key) or (key_name and key_name == preset_key):
-                    
-                    old_speed = self.current_speed_value
-                    self.current_speed_value = preset_speed
-                    self.last_speed_before_disable = preset_speed
-                    self.speed_changed_by_preset = True
-                    
-                    if (self.player.playback_active and 
-                        not self.player.pause_flag.is_set() and 
-                        old_speed != preset_speed):
-
-                        self.player._init_speed_ramping(preset_speed)
-                        logger.info(f"Speed ramping started: {old_speed} -> {preset_speed} "
-                                f"(immediate response, interrupting previous if any)")
-                    else:
+                old_speed = self.current_speed_value
+                self.current_speed_value = preset_speed
+                self.last_speed_before_disable = preset_speed
+                self.speed_changed_by_preset = True
+                
+                if self.player.playback_active:
+                    if not self.player.pause_flag.is_set() and old_speed != preset_speed:
+                        current_actual_speed = self.player._get_current_actual_speed()
+                        self.player._init_speed_ramping(preset_speed, current_actual_speed)
+                        logger.info(f"Speed ramping started: {old_speed} -> {preset_speed}")
+                    elif self.player.pause_flag.is_set():
                         self.player.current_speed = preset_speed
-                        logger.info(f"Speed set to {preset_speed} (no ramping)")
-                    
-                    self.root.after(0, lambda: self._update_speed_display(preset_speed))
-                    return
-                    
-        except Exception as e:
-            logger.error(f"Preset speed change error: {e}")
+                        self.player.speed_ramping_active = False
+                        logger.info(f"Speed changed during pause: {old_speed} -> {preset_speed}")
+                else:
+                    self.player.current_speed = preset_speed
+                    logger.info(f"Speed set to {preset_speed} (playback inactive)")
+                
+                self.root.after(0, lambda: self._update_speed_display(preset_speed))
+                return
 
     def _update_speed_ui_visibility(self):
         if self.speed_enabled or self.speed_changed_by_preset:
@@ -791,69 +705,57 @@ class MusicApp:
         self.root.update_idletasks()
 
     def _select_file(self):
+        songs_dir = Path("resources/Songs")
         try:
-            logger.info("Opening file selection dialog")
-            songs_dir = Path("resources/Songs")
-            try:
-                if not songs_dir.exists():
-                    logger.warning("Songs directory not found, falling back to CWD")
-                    songs_dir = Path.cwd()
-            except Exception as e:
-                logger.error(f"Directory check failed: {e}")
+            if not songs_dir.exists():
                 songs_dir = Path.cwd()
+        except:
+            songs_dir = Path.cwd()
 
-            file = filedialog.askopenfilename(
-                initialdir=songs_dir,
-                filetypes=[(LanguageManager.get("supported_formats"), "*.json *.txt *.skysheet")]
-            )
+        file = filedialog.askopenfilename(
+            initialdir=songs_dir,
+            filetypes=[(LanguageManager.get("supported_formats"), "*.json *.txt *.skysheet")]
+        )
+        
+        if file:
+            previous_file = getattr(self, 'selected_file', None)
+            self.selected_file = file
             
-            if file:
-                previous_file = getattr(self, 'selected_file', None)
-                self.selected_file = file
-                
-                try:
-                    name = Path(file).name
-                    display = name if len(name) <= 30 else f"{name[:25]}..."
-                    self.file_btn.configure(text=display)
-                except Exception as e:
-                    logger.error(f"Filename processing failed: {e}")
-                    self.file_btn.configure(text="Selected file")
+            try:
+                name = Path(file).name
+                display = name if len(name) <= 30 else f"{name[:25]}..."
+                self.file_btn.configure(text=display)
+            except:
+                self.file_btn.configure(text="Selected file")
 
-                if self.player.playback_active and self.player.pause_flag.is_set():
-                    if not hasattr(self, '_originally_paused_file'):
-                        self._originally_paused_file = previous_file
-                        logger.info(f"Set originally paused file to: {previous_file}")
+            if self.player.playback_active and self.player.pause_flag.is_set():
+                if not hasattr(self, '_originally_paused_file'):
+                    self._originally_paused_file = previous_file
                     
-                    has_different_file = (self._originally_paused_file != self.selected_file)
-                    if has_different_file:
-                        logger.info(f"Different file selected during pause - showing PURPLE button")
-                    else:
-                        logger.info(f"Same file selected during pause - showing ORANGE button")
-                        
+                has_different_file = (self._originally_paused_file != self.selected_file)
+                if has_different_file:
+                    pass
+                else:
+                    pass
+                    
+                self._update_play_button_state("paused")
+            else:
+                self._update_play_button_state("ready")
+            
+            try:
+                relative_path = Path(file).relative_to(Path.cwd())
+                logger.info(f"Selected song: {relative_path}")
+            except ValueError:
+                logger.info(f"Selected song: {file}")
+                
+        else:
+            if hasattr(self, 'selected_file') and self.selected_file:
+                if self.player.playback_active and self.player.pause_flag.is_set():
                     self._update_play_button_state("paused")
                 else:
                     self._update_play_button_state("ready")
-                
-                try:
-                    relative_path = Path(file).relative_to(Path.cwd())
-                    logger.info(f"Selected song: {relative_path}")
-                except ValueError:
-                    logger.info(f"Selected song: {file}")
-                    
             else:
-                if hasattr(self, 'selected_file') and self.selected_file:
-                    logger.info("File dialog closed without selection - keeping previous file")
-                    if self.player.playback_active and self.player.pause_flag.is_set():
-                        self._update_play_button_state("paused")
-                    else:
-                        self._update_play_button_state("ready")
-                else:
-                    self._update_play_button_state("ready")
-                        
-        except Exception as e:
-            logger.error(f"File selection failed: {e}")
-            messagebox.showerror("Error", LanguageManager.get("file_selection_error"))
-            self._update_play_button_state("ready")
+                self._update_play_button_state("ready")
 
     def _play_song(self):
         if not self._check_sky_running(use_cache=False):
@@ -869,180 +771,137 @@ class MusicApp:
             self._update_play_button_state("ready")
             return
 
-        try:
-            if self.player.playback_active:
-                self.player.stop()
-                time.sleep(0.1)
+        if self.player.playback_active:
+            self.player.stop()
+            time.sleep(0.1)
 
-            if hasattr(self, '_originally_paused_file'):
-                del self._originally_paused_file
-                logger.info("Cleared originally paused file for restart")
+        if hasattr(self, '_originally_paused_file'):
+            del self._originally_paused_file
 
-            if self.speed_enabled:
+        if self.speed_enabled:
+            current_speed = self.current_speed_value
+        else:
+            if self.speed_changed_by_preset:
                 current_speed = self.current_speed_value
             else:
-                if self.speed_changed_by_preset:
-                    current_speed = self.current_speed_value
-                    logger.info(f"Using preset speed {current_speed} (speed disabled but preset was pressed)")
-                else:
-                    current_speed = 1000
-                    logger.info(f"Using default speed 1000 (speed disabled and no preset pressed)")
-            
-            self.player.current_speed = current_speed
-            
-            logger.info(f"Starting playback with speed: {current_speed} (speed_enabled: {self.speed_enabled}, preset_used: {self.speed_changed_by_preset})")
-            
-            song = self.player.parse_song(self.selected_file)
-            self._update_play_button_state("playing")
-            Thread(target=self._play_thread, args=(song,), daemon=True).start()
-            
-        except Exception as e:
-            messagebox.showerror("Error", f"{LanguageManager.get('play_error_message')}: {e}")
-            self._update_play_button_state("ready")
-
+                current_speed = 1000
+        
+        self.player.current_speed = current_speed
+        
+        logger.info(f"Starting playback with speed: {current_speed}")
+        
+        song = self.player.parse_song(self.selected_file)
+        self._update_play_button_state("playing")
+        Thread(target=self._play_thread, args=(song,), daemon=True).start()
+        
     def _set_duration(self, event):
         try:
             duration = round(self.duration_slider.get(), 3)
             self.player.press_duration = duration
             self.duration_label.configure(text=f"{LanguageManager.get('duration')} {duration} s")
-        except Exception as e:
-            logger.error(f"Duration setting failed: {e}")
+        except:
+            pass
 
     def _apply_preset(self, duration):
         try:
             self.player.press_duration = duration
             self.duration_slider.set(duration)
             self.duration_label.configure(text=f"{LanguageManager.get('duration')} {duration} s")
-        except Exception as e:
-            logger.error(f"Preset application failed: {e}")
+        except:
+            pass
 
     def _set_speed(self, speed):
         try:
-            MIN_SPEED = 100
-            MAX_SPEED = 1500
+            speed = float(speed)
+        except (ValueError, TypeError):
+            messagebox.showerror("Error", "Speed must be a valid number")
+            return
             
-            try:
-                speed = float(speed)
-            except (ValueError, TypeError):
-                messagebox.showerror("Error", "Speed must be a valid number")
-                return
-                
-            if speed <= 0:
-                messagebox.showerror("Error", LanguageManager.get("invalid_speed"))
-                return
-                
-            if speed < MIN_SPEED:
-                messagebox.showwarning(
-                    LanguageManager.get('warning_title'), 
-                    LanguageManager.get('speed_too_slow').format(
-                        min_speed=MIN_SPEED, 
-                        min_speed_again=MIN_SPEED
-                    )
+        if speed <= 0:
+            messagebox.showerror("Error", LanguageManager.get("invalid_speed"))
+            return
+            
+        MIN_SPEED = 100
+        MAX_SPEED = 1500
+            
+        if speed < MIN_SPEED:
+            messagebox.showwarning(
+                LanguageManager.get('warning_title'), 
+                LanguageManager.get('speed_too_slow').format(
+                    min_speed=MIN_SPEED, 
+                    min_speed_again=MIN_SPEED
                 )
-                speed = MIN_SPEED
-                
-            if speed > MAX_SPEED:
-                messagebox.showwarning(
-                    LanguageManager.get('warning_title'), 
-                    LanguageManager.get('speed_too_fast').format(
-                        max_speed=MAX_SPEED,
-                        max_speed_again=MAX_SPEED
-                    )
-                )
-                speed = MAX_SPEED
-                
-            self.current_speed_value = speed
-            self.player.set_speed(speed)       
-            self._update_speed_display(speed)
-                
-        except Exception as e:
-            logger.error(f"Speed setting failed: {e}")
-            messagebox.showerror(
-                LanguageManager.get('error_title'), 
-                LanguageManager.get('speed_setting_failed').format(error=str(e))
             )
+            speed = MIN_SPEED
+            
+        if speed > MAX_SPEED:
+            messagebox.showwarning(
+                LanguageManager.get('warning_title'), 
+                LanguageManager.get('speed_too_fast').format(
+                    max_speed=MAX_SPEED,
+                    max_speed_again=MAX_SPEED
+                )
+            )
+            speed = MAX_SPEED
+            
+        self.current_speed_value = speed
+        self.player.set_speed(speed)       
+        self._update_speed_display(speed)
 
     def _toggle_keypress(self):
-        try:
-            self.keypress_enabled = not self.keypress_enabled
-            status = "enabled" if self.keypress_enabled else "disabled"
-            self.keypress_btn.configure(text=f"{LanguageManager.get('key_press')}: {LanguageManager.get(status)}")
+        self.keypress_enabled = not self.keypress_enabled
+        status = "enabled" if self.keypress_enabled else "disabled"
+        self.keypress_btn.configure(text=f"{LanguageManager.get('key_press')}: {LanguageManager.get(status)}")
+        
+        if self.keypress_enabled:
+            self.duration_frame.pack(pady=5, before=self.speed_btn)
+            self.duration_slider.pack(pady=5)
+            self.duration_label.pack()
+            self.preset_frame.pack(pady=5)
+        else:
+            self.duration_frame.pack_forget()
+            self.player.press_duration = 0.1
             
-            if self.keypress_enabled:
-                self.duration_frame.pack(pady=5, before=self.speed_btn)
-                self.duration_slider.pack(pady=5)
-                self.duration_label.pack()
-                self.preset_frame.pack(pady=5)
-            else:
-                self.duration_frame.pack_forget()
-                self.player.press_duration = 0.1
-                
-            self._adjust_window_size()
-        except Exception as e:
-            logger.error(f"Keypress toggle failed: {e}")
+        self._adjust_window_size()
 
     def _toggle_speed(self):
-        try:
-            self.speed_enabled = not self.speed_enabled
-            
-            if self.speed_enabled:
-                self.player.current_speed = self.current_speed_value
-            else:
-                self.last_speed_before_disable = self.current_speed_value
-                self.player.current_speed = 1000
+        self.speed_enabled = not self.speed_enabled
+        
+        if self.speed_enabled:
+            self.player.current_speed = self.current_speed_value
+        else:
+            self.last_speed_before_disable = self.current_speed_value
+            self.player.current_speed = 1000
 
-            self._update_speed_ui_visibility()
-            
-        except Exception as e:
-            logger.error(f"Speed toggle failed: {e}")
+        self._update_speed_ui_visibility()
 
     def _shutdown(self):
         logger.info("Application shutdown initiated")
         try:
             if hasattr(self, 'player') and self.player.playback_active:
-                try:
-                    self.player.stop()
-                except Exception as e:
-                    logger.error(f"Player stop failed during shutdown: {e}")
+                self.player.stop()
             
             if hasattr(self, 'player'):
-                try:
-                    self.player.clear_cache()
-                except Exception as e:
-                    logger.error(f"Cache cleanup failed: {e}")
+                self.player.clear_cache()
 
             if hasattr(self, 'key_listener'):
-                try:
-                    if self.key_listener.is_alive():
-                        self.key_listener.stop()
-                except Exception as e:
-                    logger.error(f"Key listener stop failed: {e}")
+                if self.key_listener.is_alive():
+                    self.key_listener.stop()
 
             if hasattr(self, '_mutex'):
-                try:
-                    ctypes.windll.kernel32.CloseHandle(self._mutex)
-                except Exception as e:
-                    logger.error(f"Mutex close failed: {e}")
+                ctypes.windll.kernel32.CloseHandle(self._mutex)
 
         except Exception as e:
-            logger.critical(f"Shutdown error: {e}", exc_info=True)
+            logger.critical(f"Shutdown error: {e}")
         finally:
             try:
                 self.root.destroy()
-            except Exception as e:
-                logger.error(f"Root window destruction failed: {e}")
+            except:
+                pass
             logger.info("Application closed")
 
     def run(self):
-        try:
-            self.root.mainloop()
-        except Exception as e:
-            logger.critical(f"Main loop crashed: {e}", exc_info=True)
-            raise
-
-# -------------------------------
-# App Starter
-# -------------------------------
+        self.root.mainloop()
 
 if __name__ == "__main__":
     try:
@@ -1050,13 +909,13 @@ if __name__ == "__main__":
             try:
                 from ctypes import windll
                 windll.shcore.SetProcessDpiAwareness(1)
-            except Exception as e:
-                logger.warning(f"DPI awareness setting failed: {e}")
+            except:
+                pass
 
         ctk.set_widget_scaling(1.0)
         ctk.set_window_scaling(1.0)
 
         MusicApp().run()
     except Exception as e:
-        logger.critical(f"Application crashed: {e}", exc_info=True)
+        logger.critical(f"Application crashed: {e}")
         messagebox.showerror("Critical Error", f"The application encountered a critical error and will close: {str(e)}")
