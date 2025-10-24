@@ -63,7 +63,11 @@ class MusicApp:
 
     def _start_sky_check(self):
         def check_sky():
-            if self.current_play_state in ["ready", "disabled"]:
+            sky_running = self._check_sky_running()
+            
+            if (self.current_play_state == "paused" and not sky_running):
+                self._update_play_button_state("disabled")
+            elif self.current_play_state in ["ready", "disabled"]:
                 self._update_play_button_state("ready")
             
             self.root.after(2000, check_sky)
@@ -78,9 +82,13 @@ class MusicApp:
         sky_running = self._check_sky_running()
         has_file = bool(self.selected_file)
 
+        if not sky_running:
+            self._update_play_button_state("disabled")
+            return
+
         if self.player.playback_active and self.player.pause_flag.is_set():
             self._update_play_button_state("paused")
-        elif not sky_running or not has_file:
+        elif not has_file:
             self._update_play_button_state("disabled")
         else:
             self._update_play_button_state("ready")
@@ -274,7 +282,8 @@ class MusicApp:
                 fg_color="#666666",
                 hover_color="#666666",
                 text_color="#ffffff",
-                state="disabled"
+                state="disabled",
+                height=40
             )
         elif state == "paused":
             has_different_file = False
@@ -342,15 +351,28 @@ class MusicApp:
                     height=40
                 )
         elif state == "disabled":
-            self.play_btn.configure(
-                text=LanguageManager.get("play_button_text"),
-                command=None,
-                fg_color="#666666",
-                hover_color="#666666",
-                text_color="#aaaaaa",
-                state="disabled",
-                height=40
-            )
+            sky_running = self._check_sky_running(use_cache=False)
+            
+            if not sky_running:
+                self.play_btn.configure(
+                    text=LanguageManager.get("sky_only_warning"),
+                    command=None,
+                    fg_color="#666666",
+                    hover_color="#666666",
+                    text_color="#aaaaaa",
+                    state="disabled",
+                    height=40
+                )
+            else:
+                self.play_btn.configure(
+                    text=LanguageManager.get("play_button_text"),
+                    command=None,
+                    fg_color="#666666",
+                    hover_color="#666666",
+                    text_color="#aaaaaa",
+                    state="disabled",
+                    height=40
+                )
 
         self.root.update_idletasks()
 
@@ -629,6 +651,10 @@ class MusicApp:
         if not self.selected_file or not self.player.playback_active:
             return
 
+        if not self._check_sky_running():
+            self._update_play_button_state("disabled")
+            return
+
         if self.player.pause_flag.is_set():
             self.player.pause_flag.clear()
             self.root.after(0, lambda: self._update_play_button_state("playing"))
@@ -657,6 +683,8 @@ class MusicApp:
                 self.last_speed_before_disable = preset_speed
                 self.speed_changed_by_preset = True
                 
+                self.root.after(0, lambda: self._update_speed_display(preset_speed))
+                
                 if self.player.playback_active:
                     if not self.player.pause_flag.is_set() and old_speed != preset_speed:
                         current_actual_speed = self.player._get_current_actual_speed()
@@ -670,12 +698,12 @@ class MusicApp:
                     self.player.current_speed = preset_speed
                     logger.info(f"Speed set to {preset_speed} (playback inactive)")
                 
-                self.root.after(0, lambda: self._update_speed_display(preset_speed))
                 return
 
     def _update_speed_ui_visibility(self):
+        current_speed = int(self.current_speed_value)
+        
         if self.speed_enabled or self.speed_changed_by_preset:
-            current_speed = int(self.current_speed_value)
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
         else:
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}")
@@ -684,7 +712,6 @@ class MusicApp:
             self.speed_frame.pack(pady=5, before=self.ramping_btn)
             self.speed_preset_frame.pack(pady=(0, 8))
             if hasattr(self, 'speed_label'):
-                current_speed = int(self.current_speed_value)
                 self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {current_speed}")
                 self.speed_label.pack(pady=(0, 8))
         else:
@@ -696,13 +723,29 @@ class MusicApp:
         self.current_speed_value = new_speed
         self.player.current_speed = new_speed
 
+        current_speed = int(self.current_speed_value)
+        
         if self.speed_enabled or self.speed_changed_by_preset:
-            current_speed = int(self.current_speed_value)
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {current_speed}")
         else:
             self.speed_btn.configure(text=f"{LanguageManager.get('speed_control')}: {LanguageManager.get('disabled')}")
+
+        if hasattr(self, 'speed_label') and self.speed_label.winfo_exists():
+            self.speed_label.configure(text=f"{LanguageManager.get('current_speed')}: {current_speed}")
         
         self.root.update_idletasks()
+
+    def _toggle_speed(self):
+        self.speed_enabled = not self.speed_enabled
+        
+        if self.speed_enabled:
+            self.player.current_speed = self.current_speed_value
+        else:
+            self.last_speed_before_disable = self.current_speed_value
+            self.player.current_speed = 1000
+
+        self._update_speed_ui_visibility()
+        self._update_speed_display(self.current_speed_value)
 
     def _select_file(self):
         songs_dir = Path("resources/Songs")
@@ -759,16 +802,16 @@ class MusicApp:
 
     def _play_song(self):
         if not self._check_sky_running(use_cache=False):
-            messagebox.showerror(
-                LanguageManager.get("error_title"),
-                LanguageManager.get("sky_only_warning")
-            )
-            self._update_play_button_state("ready")
+            self._update_play_button_state("disabled")
             return
             
         if not self.selected_file:
             messagebox.showwarning("Warning", LanguageManager.get("choose_song_warning"))
             self._update_play_button_state("ready")
+            return
+
+        if not self.player._find_sky_window():
+            self._update_play_button_state("disabled")
             return
 
         if self.player.playback_active:
@@ -863,17 +906,6 @@ class MusicApp:
             self.player.press_duration = 0.1
             
         self._adjust_window_size()
-
-    def _toggle_speed(self):
-        self.speed_enabled = not self.speed_enabled
-        
-        if self.speed_enabled:
-            self.player.current_speed = self.current_speed_value
-        else:
-            self.last_speed_before_disable = self.current_speed_value
-            self.player.current_speed = 1000
-
-        self._update_speed_ui_visibility()
 
     def _shutdown(self):
         logger.info("Application shutdown initiated")
