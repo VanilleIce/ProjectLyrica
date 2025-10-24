@@ -19,13 +19,13 @@ class SettingsWindow:
     def __init__(self, parent=None, theme_callback=None, timing_callback=None, playback_callback=None, pause_key_callback=None, speed_change_callback=None):
         for window in SettingsWindow._open_windows[:]:
             try:
-                if hasattr(window, 'window') and window.window.winfo_exists():
+                if window.window.winfo_exists():
                     window.window.focus()
                     window.window.lift()
                     return
                 else:
                     SettingsWindow._open_windows.remove(window)
-            except Exception as e:
+            except:
                 SettingsWindow._open_windows.remove(window)
 
         self.parent = parent
@@ -38,7 +38,7 @@ class SettingsWindow:
 
         try:
             self.window.iconbitmap(resource_path("resources/icons/icon.ico"))
-        except Exception:
+        except:
             pass
         
         SettingsWindow._open_windows.append(self)
@@ -48,7 +48,6 @@ class SettingsWindow:
         self.window.grab_set()
         
         self._check_missing_custom_layout()
-        self._original_custom_hash = self._get_custom_file_hash()
         self._load_current_config()
         self._create_ui()
         self._setup_bindings()
@@ -66,20 +65,16 @@ class SettingsWindow:
 
     def _check_missing_custom_layout(self):
         """Checks whether custom layout has been deleted"""
-        try:
-            custom_was_missing, fallback_layout = ConfigManager.check_and_handle_missing_custom()
-            if custom_was_missing:
-                logger.info(f"Settings: Custom was missing, switched to {fallback_layout}")
-                messagebox.showinfo(
-                    LanguageManager.get('info_title'),
-                    LanguageManager.get('custom_layout_not_found').format(fallback_layout=fallback_layout)
-                )
-        except Exception as e:
-            logger.error(f"Error checking missing custom in settings: {e}")
+        custom_was_missing, fallback_layout = ConfigManager.check_and_handle_missing_custom()
+        if custom_was_missing:
+            messagebox.showinfo(
+                LanguageManager.get('info_title'),
+                LanguageManager.get('custom_layout_not_found').format(fallback_layout=fallback_layout)
+            )
 
     def _position_window(self):
         """Position window next to main window"""
-        if self.parent and hasattr(self.parent, 'winfo_x') and self.parent.winfo_exists():
+        if self.parent and self.parent.winfo_exists():
             try:
                 self.parent.update_idletasks()
                 
@@ -96,7 +91,7 @@ class SettingsWindow:
                 
                 self.window.geometry(f"720x750+{settings_x}+{settings_y}")
                 
-            except Exception:
+            except:
                 self.window.geometry("720x750+100+100")
         else:
             self.window.geometry("720x750+100+100")
@@ -117,8 +112,7 @@ class SettingsWindow:
         self.current_ramping = {
             "begin_steps": ramping.get("begin", {}).get("steps", 20),
             "end_steps": ramping.get("end", {}).get("steps", 16), 
-            "after_pause_steps": ramping.get("after_pause", {}).get("steps", 12),
-            "speed_change_steps": ramping.get("speed_change", {}).get("steps", 8)
+            "after_pause_steps": ramping.get("after_pause", {}).get("steps", 12)
         }
         
         ui_settings = self.config.get("ui_settings", {})
@@ -235,7 +229,7 @@ class SettingsWindow:
         self.custom_keys_status.pack(side="left", padx=10)
 
     def _create_speed_change_section(self, parent):
-        """Create speed change during playback section - nur Preset Mode"""
+        """Create speed change during playback section"""
         section_frame = ctk.CTkFrame(parent)
         section_frame.pack(fill="x", pady=(0, 15))
         
@@ -321,15 +315,6 @@ class SettingsWindow:
                 self.preset_key_vars.append(key_var)
                 self.preset_speed_vars.append(speed_var)
 
-    def _on_speed_change_mode_changed(self, mode):
-        """Handle speed change mode change"""
-        if mode == "preset":
-            self.preset_keys_frame.pack(fill="x", padx=10, pady=5)
-            self.incremental_frame.pack_forget()
-        else:
-            self.preset_keys_frame.pack_forget()
-            self.incremental_frame.pack(fill="x", padx=10, pady=5)
-
     def _create_array_setting(self, parent, label_key, config_key, default_values, hint_key):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", padx=10, pady=5)
@@ -378,12 +363,7 @@ class SettingsWindow:
 
     def _open_key_editor(self):
         from key_editor import KeyEditorWindow
-        
-        def refresh_settings():
-            self._load_current_config()
-            self._update_ui_after_custom_save()
-        
-        KeyEditorWindow(self.window, refresh_settings)
+        KeyEditorWindow(self.window, self._update_ui_after_custom_save)
 
     def _update_ui_after_custom_save(self):
         self._load_current_config()
@@ -399,7 +379,6 @@ class SettingsWindow:
         
         if current_value == "Custom" and not custom_exists:
             current_value = self._get_fallback_layout()
-            logger.info(f"Auto-switched from deleted Custom to {current_value}")
         
         if current_value not in available_layouts:
             current_value = available_layouts[0] if available_layouts else "QWERTY"
@@ -477,8 +456,6 @@ class SettingsWindow:
             self.initial_delay_var = var
         elif config_key == 'pause_resume_delay':
             self.pause_resume_delay_var = var
-        
-        logger.debug(f"Created delay entry: {config_key} = {current_value}")
 
     def _create_ramping_section(self, parent):
         """Create ramping section with speed change ramping"""
@@ -491,24 +468,6 @@ class SettingsWindow:
         self._create_ramping_entry(section_frame, 'settings_ramping_start', 'begin_steps', 'settings_ramping_start_hint')
         self._create_ramping_entry(section_frame, 'settings_ramping_end', 'end_steps', 'settings_ramping_end_hint')
         self._create_ramping_entry(section_frame, 'settings_ramping_after_pause', 'after_pause_steps', 'settings_ramping_pause_hint')
-        
-        ramp_steps_frame = ctk.CTkFrame(section_frame, fg_color="transparent")
-        ramp_steps_frame.pack(fill="x", padx=10, pady=5)
-        
-        ctk.CTkLabel(ramp_steps_frame, text=LanguageManager.get('settings_speed_change_ramp_steps'), width=150).pack(side="left")
-        
-        step_options = ["2", "4", "6", "8", "12", "16", "20"]
-        current_steps = str(self.current_ramping.get('speed_change_steps', 8))
-        
-        self.speed_change_ramp_steps_var = ctk.StringVar(value=current_steps)
-        steps_dropdown = ctk.CTkComboBox(
-            ramp_steps_frame, 
-            values=step_options,
-            variable=self.speed_change_ramp_steps_var,
-            state="readonly",
-            width=80
-        )
-        steps_dropdown.pack(side="left", padx=5)
 
     def _create_ramping_entry(self, parent, label_key, config_key, hint_key):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
@@ -628,13 +587,6 @@ class SettingsWindow:
             if begin_steps <= 0 or end_steps <= 0 or after_pause_steps <= 0:
                 return False, LanguageManager.get('settings_error_positive')
             
-            try:
-                speed_change_steps = int(self.speed_change_ramp_steps_var.get().strip())
-                if speed_change_steps <= 0:
-                    return False, LanguageManager.get('settings_error_positive')
-            except ValueError:
-                return False, LanguageManager.get('settings_error_numbers')
-            
             pause_key = self.pause_key_var.get().strip()
             if len(pause_key) != 1:
                 return False, LanguageManager.get('settings_error_pause_key')
@@ -666,15 +618,13 @@ class SettingsWindow:
             new_begin_steps = int(self.begin_steps_var.get())
             new_end_steps = int(self.end_steps_var.get())
             new_after_pause_steps = int(self.after_pause_steps_var.get())
-            new_speed_change_steps = int(self.speed_change_ramp_steps_var.get())
             
             timing_changed = (
                 new_initial_delay != self.current_delays["initial_delay"] or
                 new_pause_delay != self.current_delays["pause_resume_delay"] or
                 new_begin_steps != self.current_ramping["begin_steps"] or
                 new_end_steps != self.current_ramping["end_steps"] or
-                new_after_pause_steps != self.current_ramping["after_pause_steps"] or
-                new_speed_change_steps != self.current_ramping["speed_change_steps"]
+                new_after_pause_steps != self.current_ramping["after_pause_steps"]
             )
             
             if timing_changed:
@@ -686,8 +636,7 @@ class SettingsWindow:
                     "ramping": {
                         "begin": {"steps": new_begin_steps},
                         "end": {"steps": new_end_steps},
-                        "after_pause": {"steps": new_after_pause_steps},
-                        "speed_change": {"steps": new_speed_change_steps}
+                        "after_pause": {"steps": new_after_pause_steps}
                     }
                 }
             
@@ -749,12 +698,8 @@ class SettingsWindow:
             current_mappings = self.current_speed_change.get('preset_mappings', [])
             speed_change_changed = new_preset_mappings != current_mappings
 
-            speed_change_updates = {}
             if speed_change_changed:
-                speed_change_updates["preset_mappings"] = new_preset_mappings
-                if "speed_change_settings" not in updates:
-                    updates["speed_change_settings"] = {}
-                updates["speed_change_settings"]["preset_mappings"] = new_preset_mappings
+                updates["speed_change_settings"] = {"preset_mappings": new_preset_mappings}
 
             new_lang_code = self._get_selected_lang_code()
             layout_name = self.keyboard_layout_var.get()
@@ -767,37 +712,6 @@ class SettingsWindow:
 
             if updates:
                 if ConfigManager.save(updates):
-                    if "timing_settings" in updates:
-                        timing_updates = updates["timing_settings"]
-                        if "delays" in timing_updates:
-                            self.current_delays["initial_delay"] = timing_updates["delays"]["initial_delay"]
-                            self.current_delays["pause_resume_delay"] = timing_updates["delays"]["pause_resume_delay"]
-                        if "ramping" in timing_updates:
-                            ramping = timing_updates["ramping"]
-                            self.current_ramping["begin_steps"] = ramping["begin"]["steps"]
-                            self.current_ramping["end_steps"] = ramping["end"]["steps"]
-                            self.current_ramping["after_pause_steps"] = ramping["after_pause"]["steps"]
-                            self.current_ramping["speed_change_steps"] = ramping["speed_change"]["steps"]
-
-                    if "playback_settings" in updates:
-                        playback = updates["playback_settings"]
-                        self.current_playback["key_durations"] = playback["key_press_durations"]
-                        self.current_playback["speed_presets"] = playback["speed_presets"]
-
-                    if "speed_change_settings" in updates:
-                        speed_change = updates["speed_change_settings"]
-                        if "preset_mappings" in speed_change:
-                            self.current_speed_change["preset_mappings"] = speed_change["preset_mappings"]
-                    
-                    logger.debug("Current config updated after successful save")
-
-                    if new_pause_key != original_pause_key and hasattr(self, 'pause_key_callback'):
-                        self.pause_key_callback(new_pause_key)
-                    
-                    if new_theme != original_theme and self.theme_callback:
-                        self.theme_callback(new_theme)
-                        ctk.set_appearance_mode(new_theme)
-
                     if "timing_settings" in updates and self.timing_callback:
                         timing_updates = updates["timing_settings"]
                         if "delays" not in timing_updates:
@@ -810,9 +724,16 @@ class SettingsWindow:
                     if "playback_settings" in updates and self.playback_callback:
                         self.playback_callback(updates["playback_settings"])
                     
-                    if speed_change_changed and hasattr(self, 'speed_change_callback'):
-                        self.speed_change_callback(speed_change_updates)
+                    if speed_change_changed and self.speed_change_callback:
+                        self.speed_change_callback({"preset_mappings": new_preset_mappings})
                     
+                    if new_pause_key != original_pause_key and self.pause_key_callback:
+                        self.pause_key_callback(new_pause_key)
+                    
+                    if new_theme != original_theme and self.theme_callback:
+                        self.theme_callback(new_theme)
+                        ctk.set_appearance_mode(new_theme)
+
                     needs_restart = (original_layout != layout_name) or (original_lang != new_lang_code)
                     
                     if needs_restart:
@@ -832,19 +753,8 @@ class SettingsWindow:
                 messagebox.showinfo(LanguageManager.get('info_title'), LanguageManager.get('settings_no_changes'))
                     
         except Exception as e:
-            logger.error(f"Error saving settings: {e}", exc_info=True)
+            logger.error(f"Error saving settings: {e}")
             messagebox.showerror(LanguageManager.get('error_title'), LanguageManager.get('settings_save_error'))
-
-    def _get_custom_file_hash(self):
-        try:
-            custom_file = Path("resources/layouts/CUSTOM.xml")
-            if custom_file.exists():
-                content = custom_file.read_text(encoding='utf-8')
-                return hash(content)
-            return None
-        except Exception as e:
-            logger.error(f"Error getting custom file hash: {e}")
-            return None
 
     def _restart_main_application(self):
         try:
@@ -894,19 +804,15 @@ class SettingsWindow:
 
     def _on_close(self):
         try:
-            try:
-                self.window.grab_release()
-            except:
-                pass
+            self.window.grab_release()
+        except:
+            pass
 
-            if self in SettingsWindow._open_windows:
-                SettingsWindow._open_windows.remove(self)
+        if self in SettingsWindow._open_windows:
+            SettingsWindow._open_windows.remove(self)
 
-            if hasattr(self, 'window') and self.window.winfo_exists():
-                self.window.destroy()
-                
-        except Exception as e:
-            SettingsWindow._open_windows.clear()
+        if self.window.winfo_exists():
+            self.window.destroy()
 
     @classmethod
     def is_open(cls):

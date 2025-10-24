@@ -27,6 +27,7 @@ def check_update(current_version: str, repo: str) -> Tuple[str, str, str]:
         Tuple: (status, latest_version, url)
         status: "update", "current", "no_connection", or "error"
     """
+    # Connection check
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(2)
@@ -37,6 +38,7 @@ def check_update(current_version: str, repo: str) -> Tuple[str, str, str]:
         logger.warning(f"Socket error during connection check: {e}")
         return ("no_connection", "", "")
     
+    # GitHub API request
     try:
         logger.info("Checking for application updates...")
         
@@ -53,11 +55,11 @@ def check_update(current_version: str, repo: str) -> Tuple[str, str, str]:
             }
         )
         
+        # Rate limit check
         if response.status_code == 403 and 'X-RateLimit-Remaining' in response.headers:
             remaining = int(response.headers['X-RateLimit-Remaining'])
             if remaining == 0:
-                reset_time = int(response.headers.get('X-RateLimit-Reset', 0))
-                logger.warning(f"GitHub API rate limit exceeded. Resets at {reset_time}")
+                logger.warning("GitHub API rate limit exceeded")
                 return ("error", "", "")
         
         response.raise_for_status()
@@ -74,14 +76,12 @@ def check_update(current_version: str, repo: str) -> Tuple[str, str, str]:
         
         current_ver = version_tuple(current_version)
         latest_ver = version_tuple(latest)
-        logger.debug(f"Normalized versions: Local={current_ver}, GitHub={latest_ver}")
         
         if latest_ver > current_ver:
             logger.info(f"Update available: {current_version} → {latest}")
-            logger.info(f"Download: {url}")
             return ("update", latest, url)
         elif latest_ver == current_ver:
-            logger.info(f"Using latest version: {current_version} (same as GitHub)")
+            logger.info(f"Using latest version: {current_version}")
             return ("current", latest, url)
         else:
             logger.info(f"Local version is newer: {current_version} (GitHub has {latest})")
@@ -96,11 +96,8 @@ def check_update(current_version: str, repo: str) -> Tuple[str, str, str]:
     except requests.exceptions.RequestException as e:
         logger.error(f"GitHub API request failed: {str(e)}")
         return ("error", "", "")
-    except ValueError as e:
-        logger.error(f"JSON decode error: {str(e)}")
-        return ("error", "", "")
     except Exception as e:
-        logger.error(f"Unexpected error during update check: {str(e)}", exc_info=True)
+        logger.error(f"Unexpected error during update check: {str(e)}")
         return ("error", "", "")
 
 def check_for_updates(current_version: str, repo: str) -> Tuple[str, str, str]:

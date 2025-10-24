@@ -44,9 +44,6 @@ class ConfigManager:
                     "steps": 12,
                     "start_percentage": 50,
                     "end_percentage": 100
-                },
-                "speed_change": {
-                    "steps": 12
                 }
             }
         },
@@ -82,61 +79,48 @@ class ConfigManager:
         if cls._config is not None:
             return cls._config
             
-        try:
-            if cls.SETTINGS_FILE.exists() and cls.SETTINGS_FILE.stat().st_size > 0:
-                try:
-                    with open(cls.SETTINGS_FILE, 'r', encoding="utf-8") as f:
-                        content = f.read().strip()
-                        
-                    if not content:
-                        logger.warning("Config file is empty, recreating with defaults")
-                        return cls._create_default_config()
-                        
-                    user_config = json.loads(content)
-                        
-                    if isinstance(user_config, dict):
-                        cls._config = cls._upgrade_config(user_config)
-                        return cls._config
-                    else:
-                        logger.error("Config file is not a dictionary, recreating with defaults")
-                        return cls._create_default_config()
-                        
-                except json.JSONDecodeError as e:
-                    logger.error(f"JSON decode error in config file: {e}")
-                    backup_file = cls.SETTINGS_FILE.with_suffix('.json.bak')
-                    try:
-                        cls.SETTINGS_FILE.rename(backup_file)
-                        logger.info("Backed up corrupt config to settings.json.bak")
-                    except Exception as backup_error:
-                        logger.error(f"Could not backup corrupt config: {backup_error}")
+        if cls.SETTINGS_FILE.exists() and cls.SETTINGS_FILE.stat().st_size > 0:
+            try:
+                with open(cls.SETTINGS_FILE, 'r', encoding="utf-8") as f:
+                    content = f.read().strip()
                     
+                if not content:
+                    logger.warning("Config file is empty, recreating with defaults")
                     return cls._create_default_config()
-                except Exception as e:
-                    logger.error(f"Error loading config: {e}")
+                    
+                user_config = json.loads(content)
+                    
+                if isinstance(user_config, dict):
+                    cls._config = cls._upgrade_config(user_config)
+                    return cls._config
+                else:
+                    logger.error("Config file is not a dictionary, recreating with defaults")
                     return cls._create_default_config()
+                    
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON decode error in config file: {e}")
+                backup_file = cls.SETTINGS_FILE.with_suffix('.json.bak')
+                cls.SETTINGS_FILE.rename(backup_file)
+                logger.info("Backed up corrupt config to settings.json.bak")
+                return cls._create_default_config()
+            except Exception as e:
+                logger.error(f"Error loading config: {e}")
+                return cls._create_default_config()
 
-            return cls._create_default_config()
-            
-        except Exception as e:
-            logger.critical(f"Critical config error: {e}\n{traceback.format_exc()}")
-            return cls.DEFAULT_CONFIG.copy()
+        return cls._create_default_config()
 
     @classmethod
     def _create_default_config(cls) -> Dict[str, Any]:
         """Create and save a new config file with defaults safely"""
         config = cls.DEFAULT_CONFIG.copy()
-        try:
-            cls.SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        cls.SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-            if cls._save_config(config):
-                logger.info("Created new config file with defaults")
-            else:
-                logger.error("Failed to save default config")
-                
-            return config
-        except Exception as e:
-            logger.error(f"Failed to create config file: {e}")
-            return config
+        if cls._save_config(config):
+            logger.info("Created new config file with defaults")
+        else:
+            logger.error("Failed to save default config")
+            
+        return config
 
     @classmethod
     def _upgrade_config(cls, config: Dict[str, Any]) -> Dict[str, Any]:
@@ -203,7 +187,6 @@ class ConfigManager:
         if "ramping_info_display_count" in config and isinstance(config["ramping_info_display_count"], int):
             old_value = config["ramping_info_display_count"]
             config["ramping_info_display_count"] = {"value": old_value}
-            logger.info(f"Migrated ramping_info_display_count from {old_value} to new structure")
             upgraded = True
 
         # Migrate old timing_config to new timing_settings structure
@@ -229,9 +212,6 @@ class ConfigManager:
                         "steps": old_timing.get("ramp_steps_after_pause", 12),
                         "start_percentage": 50,
                         "end_percentage": 100
-                    },
-                    "speed_change": {
-                        "steps": 12
                     }
                 }
             }
@@ -260,15 +240,9 @@ class ConfigManager:
                 del old_speed_change["preset_keys"]
                 upgraded = True
 
-            if "ramping" in old_speed_change and "timing_settings" in config:
-                timing_ramping = config["timing_settings"].get("ramping", {})
-                if "speed_change" not in timing_ramping:
-                    timing_ramping["speed_change"] = {
-                        "steps": old_speed_change["ramping"].get("steps", 8)
-                    }
-                    if "ramping" in old_speed_change:
-                        del old_speed_change["ramping"]
-                    upgraded = True
+            if "ramping" in old_speed_change:
+                del old_speed_change["ramping"]
+                upgraded = True
 
             keys_to_remove = ["step_size", "enabled", "mode", "increment_keys"]
             for key in keys_to_remove:
@@ -282,8 +256,8 @@ class ConfigManager:
 
         if "timing_settings" in config and "ramping" in config["timing_settings"]:
             timing_ramping = config["timing_settings"]["ramping"]
-            if "speed_change" not in timing_ramping:
-                timing_ramping["speed_change"] = cls.DEFAULT_CONFIG["timing_settings"]["ramping"]["speed_change"].copy()
+            if "speed_change" in timing_ramping:
+                del timing_ramping["speed_change"]
                 upgraded = True
 
         # Ensure all required sections exist
@@ -304,8 +278,7 @@ class ConfigManager:
                 "ramping": {
                     "begin": {"steps": 20, "start_percentage": 50, "end_percentage": 100},
                     "end": {"steps": 16, "start_percentage": 100, "end_percentage": 50},
-                    "after_pause": {"steps": 12, "start_percentage": 50, "end_percentage": 100},
-                    "speed_change": {"steps": 12}
+                    "after_pause": {"steps": 12, "start_percentage": 50, "end_percentage": 100}
                 }
             },
             "ui_settings": {
@@ -373,14 +346,13 @@ class ConfigManager:
             return cls._save_config(config)
             
         except Exception as e:
-            logger.error(f"Failed to update config: {e}\n{traceback.format_exc()}")
+            logger.error(f"Failed to update config: {e}")
             return False
 
     @classmethod
     def _save_config(cls, config: Dict[str, Any]) -> bool:
         """Internal method to save config to file"""
         try:
-            logger.debug("Saving configuration")
             cls.SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
             
             with open(cls.SETTINGS_FILE, 'w', encoding='utf-8') as f:
@@ -389,7 +361,7 @@ class ConfigManager:
             cls._config = config
             return True
         except Exception as e:
-            logger.error(f"Save failed: {e}\n{traceback.format_exc()}")
+            logger.error(f"Save failed: {e}")
             return False
 
     @classmethod
@@ -424,48 +396,43 @@ class ConfigManager:
     @classmethod
     def check_and_handle_missing_custom(cls):
         """Checks whether custom layout has been deleted and resets to default"""
-        try:
-            custom_file = Path('resources/layouts/CUSTOM.xml')
-            config = cls.get_config()
-            current_layout = config.get("ui_settings", {}).get("keyboard_layout", "")
-            
-            if current_layout == "Custom" and not custom_file.exists():
-                logger.warning("Custom layout is active but CUSTOM.xml is missing!")
+        custom_file = Path('resources/layouts/CUSTOM.xml')
+        config = cls.get_config()
+        current_layout = config.get("ui_settings", {}).get("keyboard_layout", "")
+        
+        if current_layout == "Custom" and not custom_file.exists():
+            logger.warning("Custom layout is active but CUSTOM.xml is missing!")
 
-                lang_code = config.get("ui_settings", {}).get("selected_language", "en_US")
-                
-                lang_to_layout = {
-                    "ar": "Arabic",
-                    "da": "QWERTY",
-                    "de": "QWERTZ", 
-                    "en": "QWERTY",
-                    "en_US": "QWERTY",
-                    "es": "QWERTY",
-                    "fr": "AZERTY",
-                    "id": "QWERTY",
-                    "it": "QWERTY",
-                    "ja": "JIS",
-                    "ko_KR": "QWERTY",
-                    "mg_MG": "QWERTY",
-                    "nl": "QWERTY",
-                    "pl": "QWERTY",
-                    "pt": "QWERTY",
-                    "ru": "йцукен",
-                    "zh": "QWERTY",
-                }
-                fallback_layout = lang_to_layout.get(lang_code, "QWERTY")
-                
-                updates = {"ui_settings": {"keyboard_layout": fallback_layout}}
-                ConfigManager.save(updates)
-                logger.info(f"Layout reset to {fallback_layout} after custom deletion")
-                
-                return True, fallback_layout
-                
-            return False, None
+            lang_code = config.get("ui_settings", {}).get("selected_language", "en_US")
             
-        except Exception as e:
-            logger.error(f"Error checking missing custom layout: {e}")
-            return False, None
+            lang_to_layout = {
+                "ar": "Arabic",
+                "da": "QWERTY",
+                "de": "QWERTZ", 
+                "en": "QWERTY",
+                "en_US": "QWERTY",
+                "es": "QWERTY",
+                "fr": "AZERTY",
+                "id": "QWERTY",
+                "it": "QWERTY",
+                "ja": "JIS",
+                "ko_KR": "QWERTY",
+                "mg_MG": "QWERTY",
+                "nl": "QWERTY",
+                "pl": "QWERTY",
+                "pt": "QWERTY",
+                "ru": "йцукен",
+                "zh": "QWERTY",
+            }
+            fallback_layout = lang_to_layout.get(lang_code, "QWERTY")
+            
+            updates = {"ui_settings": {"keyboard_layout": fallback_layout}}
+            ConfigManager.save(updates)
+            logger.info(f"Layout reset to {fallback_layout} after custom deletion")
+            
+            return True, fallback_layout
+            
+        return False, None
 
     @classmethod
     def log_system_info(cls, version: str):
@@ -480,54 +447,43 @@ class ConfigManager:
         
         lang_code = ui_settings.get("selected_language", "en_US")
         
-        try:
-            from language_manager import LanguageManager, KeyboardLayoutManager
-            
-            current_layout = ui_settings.get("keyboard_layout", "QWERTY")
+        current_layout = ui_settings.get("keyboard_layout", "QWERTY")
 
-            if current_layout == "Custom":
-                custom_file = Path("resources/layouts/CUSTOM.xml")
-                if custom_file.exists():
-                    tree = ET.parse(custom_file)
-                    current_key_map = {}
-                    for key in tree.findall('key'):
-                        key_id = key.get('id')
-                        key_text = key.text.strip() if key.text else ""
-                        if key_id:
-                            current_key_map[key_id] = key_text
-                else:
-                    current_key_map = {}
-                default_key_map = {}
-                is_custom = True
-                layout_display = "Custom"
+        if current_layout == "Custom":
+            custom_file = Path("resources/layouts/CUSTOM.xml")
+            if custom_file.exists():
+                tree = ET.parse(custom_file)
+                current_key_map = {}
+                for key in tree.findall('key'):
+                    key_id = key.get('id')
+                    key_text = key.text.strip() if key.text else ""
+                    if key_id:
+                        current_key_map[key_id] = key_text
             else:
-                default_key_map = KeyboardLayoutManager.load_layout_silently(current_layout)
-                current_key_map = config.get("key_mapping", {})
-                is_custom = current_key_map != default_key_map
-                layout_display = current_layout
+                current_key_map = {}
+            layout_display = "Custom"
+        else:
+            from language_manager import KeyboardLayoutManager
+            default_key_map = KeyboardLayoutManager.load_layout_silently(current_layout)
+            current_key_map = config.get("key_mapping", {})
+            layout_display = current_layout
 
-            key_map_details = []
-            relevant_keys = set(current_key_map.keys())
-            
-            for key in sorted(relevant_keys):
-                current_val = current_key_map[key]
-                if current_layout == "Custom":
-                    key_map_details.append(f"  {key}: {current_val}")
+        key_map_details = []
+        relevant_keys = set(current_key_map.keys())
+        
+        for key in sorted(relevant_keys):
+            current_val = current_key_map[key]
+            if current_layout == "Custom":
+                key_map_details.append(f"  {key}: {current_val}")
+            else:
+                default_val = default_key_map.get(key, "")
+                if current_val == default_val:
+                    key_map_details.append(f"  {key}: {current_val} (default)")
                 else:
-                    default_val = default_key_map.get(key, "")
-                    if current_val == default_val:
-                        key_map_details.append(f"  {key}: {current_val} (default)")
-                    else:
-                        key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
-                            
-        except Exception as e:
-            logger.error(f"Key mapping analysis error: {e}")
-            key_map_details = ["  [Error: Could not analyze key mapping]"]
-            layout_display = "Error"
-
+                    key_map_details.append(f"  {key}: {current_val} (modified from '{default_val}')")
+                        
         timing_delays = timing_settings.get("delays", {})
         timing_ramping = timing_settings.get("ramping", {})
-        speed_change_ramping = timing_ramping.get("speed_change", {})
         
         preset_mappings = speed_change_settings.get("preset_mappings", [])
         preset_info = []
@@ -546,7 +502,6 @@ class ConfigManager:
             f"Ramp Steps Begin: {timing_ramping.get('begin', {}).get('steps')}",
             f"Ramp Steps End: {timing_ramping.get('end', {}).get('steps')}",
             f"Ramp Steps Pause: {timing_ramping.get('after_pause', {}).get('steps')}",
-            f"Speed Change Ramp Steps: {speed_change_ramping.get('steps')}",
             "",
             "== Player Settings ==",
             f"Pause Key: '{ui_settings.get('pause_key')}'",
@@ -563,10 +518,5 @@ class ConfigManager:
             *key_map_details
         ]
 
-        try:
-            logger.info("Application Config:\n\t" + "\n\t".join(info))
-        except UnicodeEncodeError:
-            cleaned_info = [line.encode('ascii', 'replace').decode('ascii') for line in info]
-            logger.info("Application Config (ASCII-safe):\n\t" + "\n\t".join(cleaned_info))
-
+        logger.info("Application Config:\n\t" + "\n\t".join(info))
         logger.info("Full configuration logged")
