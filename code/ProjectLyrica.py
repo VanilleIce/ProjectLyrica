@@ -25,7 +25,7 @@ EXPANDED_SIZE = (400, 455)
 FULL_SIZE = (400, 535)
 RAMPING_INFO_HEIGHT = 55
 MAX_RAMPING_INFO_DISPLAY = 6
-VERSION = "2.7.1"
+VERSION = "2.7.1.1"
 
 class MusicApp:
     def __init__(self):
@@ -37,6 +37,9 @@ class MusicApp:
         custom_was_missing, fallback_layout = ConfigManager.check_and_handle_missing_custom()
         if custom_was_missing:
             self.config = ConfigManager.get_config()
+
+        self._previous_sky_running = False
+        self._playback_was_paused_before_sky_exit = False
 
         self._init_language()
 
@@ -64,17 +67,30 @@ class MusicApp:
     def _start_sky_check(self):
         def check_sky():
             sky_running = self._check_sky_running()
+            previous_sky_state = getattr(self, '_previous_sky_running', False)
+            
+            if not previous_sky_state and sky_running:
+                if hasattr(self, '_playback_was_paused_before_sky_exit') and self._playback_was_paused_before_sky_exit:
+                    self._update_play_button_based_on_sky()
+
+            self._previous_sky_running = sky_running
             
             if (self.current_play_state == "paused" and not sky_running):
+                self._playback_was_paused_before_sky_exit = True
                 self._update_play_button_state("disabled")
             elif self.current_play_state in ["ready", "disabled"]:
                 self._update_play_button_state("ready")
             
             self.root.after(2000, check_sky)
         
+        # Initialisiere Variablen
+        self._previous_sky_running = self._check_sky_running()
+        self._playback_was_paused_before_sky_exit = False
+        
         check_sky()
 
     def _update_play_button_based_on_sky(self):
+        """Update play button state considering Sky status AND previous playback state"""
         if not hasattr(self, 'player') or self.player is None:
             self._update_play_button_state("disabled")
             return
@@ -86,7 +102,15 @@ class MusicApp:
             self._update_play_button_state("disabled")
             return
 
-        if self.player.playback_active and self.player.pause_flag.is_set():
+        was_paused_before_sky_restart = (
+            hasattr(self, '_playback_was_paused_before_sky_exit') and 
+            self._playback_was_paused_before_sky_exit
+        )
+
+        if was_paused_before_sky_restart and has_file:
+            self._update_play_button_state("paused")
+            self._playback_was_paused_before_sky_exit = False
+        elif self.player.playback_active and self.player.pause_flag.is_set():
             self._update_play_button_state("paused")
         elif not has_file:
             self._update_play_button_state("disabled")
@@ -653,16 +677,20 @@ class MusicApp:
 
         if not self._check_sky_running():
             self._update_play_button_state("disabled")
+            if self.player.pause_flag.is_set():
+                self._playback_was_paused_before_sky_exit = True
             return
 
         if self.player.pause_flag.is_set():
             self.player.pause_flag.clear()
             self.root.after(0, lambda: self._update_play_button_state("playing"))
+            self._playback_was_paused_before_sky_exit = False
             
             if window := self.player._find_sky_window():
                 self.player._focus_window(window)
         else:
             self.player.pause_flag.set()
+            self._playback_was_paused_before_sky_exit = True
 
             if not hasattr(self, '_originally_paused_file'):
                 self._originally_paused_file = self.selected_file
