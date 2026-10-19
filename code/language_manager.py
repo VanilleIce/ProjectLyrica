@@ -15,7 +15,7 @@ logger = logging.getLogger("ProjectLyrica.LanguageManager")
 # ==================== Sprachen & Layouts ====================
 
 # Format: code : {"name": Anzeigename, "layout": Layoutname}
-#
+
 LANGUAGES: Dict[str, Dict[str, str]] = {
     "ar_AR": {"name": "العربية",              "layout": "ARABIC"},
     "da_DK": {"name": "Dansk",                "layout": "QWERTY"},

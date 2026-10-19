@@ -113,7 +113,6 @@ class ConfigManager:
                 except OSError:
                     current_mtime = 0.0
 
-                # Cache gültig wenn Datei unverändert
                 if cls._config is not None and current_mtime == cls._config_mtime:
                     return cls._config
 
@@ -346,7 +345,7 @@ class ConfigManager:
             tmp_file.replace(settings_file)
 
             cls._config = config
-            # mtime aktualisieren damit get_config() nicht neu lädt
+
             try:
                 cls._config_mtime = settings_file.stat().st_mtime
             except OSError:

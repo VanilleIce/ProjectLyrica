@@ -195,7 +195,6 @@ def _compare_versions(v1: str, v2: str) -> int:
     t1 = version_tuple(v1)
     t2 = version_tuple(v2)
 
-    # Auf gleiche Länge auffüllen mit 0
     max_len = max(len(t1), len(t2))
     t1 = t1 + (0,) * (max_len - len(t1))
     t2 = t2 + (0,) * (max_len - len(t2))

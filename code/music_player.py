@@ -51,7 +51,7 @@ FOCUS_RETRY_DELAY = 0.1
 CUSTOM_LAYOUT_FILE = "resources/layouts/CUSTOM.xml"
 SUPPORTED_ENCODINGS = ("utf-8", "utf-16", "latin-1")
 
-# Key-Prefixes für Layout-Mapping (unterstützt mehrere Oktaven)
+# Key-Prefixes für Layout-Mapping
 KEY_PREFIXES = ('', '1', '2', '3')
 
 
@@ -258,7 +258,6 @@ class MusicPlayer:
         if self._load_standard_mapping(current_layout):
             return
 
-        # Letzter Fallback: Config key_mapping
         self._load_fallback_mapping(config)
 
     def _load_custom_mapping(self) -> bool:
@@ -459,7 +458,6 @@ class MusicPlayer:
             self.playback.note_count = len(notes)
             self._init_begin_ramping()
 
-            # Warten mit Pause-Check (statt time.sleep)
             if not self._wait_with_pause_check(self.initial_delay, precision_timer):
                 return
 
@@ -754,21 +752,11 @@ class MusicPlayer:
         self._wait_resume_delay(timer_func)
         self._restore_ramping_state(ramping_state)
 
-        # Nach jeder Pause sanft weiterrampen (wenn aktiviert)
         if self.enable_ramping:
             self.ramping.is_after_pause = True
             self.ramping.after_pause_counter = 0
 
         return True
-#
-#        if self.enable_ramping:
-#            speed_after = self._get_current_actual_speed()
-#            if (abs(speed_after - speed_before_pause) > 1
-#                    or self.ramping.is_after_pause):
-#                self.ramping.is_after_pause = True
-#                self.ramping.after_pause_counter = 0
-#
-#        return True
 
     def _wait_resume_delay(self, timer_func: Callable):
         """Wartet Pause-Resume-Delay."""

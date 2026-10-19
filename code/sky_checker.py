@@ -14,13 +14,12 @@ from resource_loader import resource_path
 
 logger = logging.getLogger("ProjectLyrica.SkyChecker")
 
-# Beispiel-Pfad für leeren Zustand (wird angezeigt, aber nicht akzeptiert)
 EXAMPLE_PATH = (
     r"C:\Program Files (x86)\Steam\steamapps\common"
     r"\Sky Children of the Light\Sky.exe"
 )
 
-# Mögliche Steam-Installationsordner (für initialdir)
+# Mögliche Steam-Installationsordner
 STEAM_SEARCH_PATHS = (
     Path("C:/Program Files (x86)/Steam/steamapps/common"),
     Path("C:/Program Files/Steam/steamapps/common"),

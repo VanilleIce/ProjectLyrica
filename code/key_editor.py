@@ -442,7 +442,6 @@ class KeyEditorWindow:
 
         messagebox.showinfo(LanguageManager.get('info_title'), info_text)
 
-        # Original-Mapping aktualisieren, damit _on_close() nicht fragt
         self.original_mapping = self.current_mapping.copy()
         self.has_changes = False
 
@@ -501,7 +500,6 @@ class KeyEditorWindow:
 
         logger.info(f"Saved custom mapping to {custom_file}")
 
-        # Original-Mapping aktualisieren
         self.original_mapping = self.current_mapping.copy()
         self.has_changes = False
 

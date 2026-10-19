@@ -12,8 +12,7 @@ from pathlib import Path
 from threading import Thread
 from tkinter import filedialog, messagebox
 
-# ==================== KRITISCH: cwd VOR allen App-Imports setzen ====================
-# Verhindert, dass Store-Python / .bat-Start / PyInstaller den falschen cwd nutzt.
+# =============================================================================
 if __name__ == "__main__":
     try:
         if getattr(sys, 'frozen', False):
@@ -140,8 +139,6 @@ class CTkTooltip:
             self.tooltip.attributes("-topmost", True)
 
             tooltip_bg = ("gray90", "gray20")
-
-            # "Unsichtbare" Farbe → runde Ecken
             transparent_color = "#010203"
             try:
                 self.tooltip.configure(fg_color=transparent_color)
@@ -1177,7 +1174,7 @@ class MusicApp:
         3. Über resource_path (sucht im Script-Dir und bis zu 3 Ebenen darüber)
         4. Fallback: CWD
         """
-        # 1. Neben der EXE (wichtigster Fall für Release!)
+        # 1. Neben der EXE
         if getattr(sys, 'frozen', False):
             exe_dir = Path(sys.executable).parent
             external_songs = exe_dir / "resources" / "Songs"

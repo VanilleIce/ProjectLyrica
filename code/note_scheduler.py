@@ -23,7 +23,7 @@ class NoteScheduler:
     # Minimaler/Maximaler Sleep zwischen Checks (Sekunden)
     MIN_SLEEP = 0.001
     MAX_SLEEP = 0.05
-    IDLE_SLEEP = 0.02  # Wenn Queue leer
+    IDLE_SLEEP = 0.02
 
     def __init__(self, release_callback: Callable[[Any], None]):
         """
@@ -36,7 +36,7 @@ class NoteScheduler:
         self._stop_event = Event()
         self._thread: Optional[Thread] = None
         self._active = False
-        self._counter = 0  # Tiebreaker für heapq
+        self._counter = 0
 
         self._start_thread()
 

@@ -15,7 +15,7 @@ _MAX_SEARCH_DEPTH = 3
 
 def _get_script_dir() -> Path:
     """Verzeichnis des aktuell laufenden Scripts (robust)."""
-    # 1. __main__.__file__ (zuverlässigster Weg bei direktem Start)
+    # 1. __main__.__file__
     try:
         import __main__
         main_file = getattr(__main__, '__file__', None)

@@ -347,7 +347,7 @@ class SettingsWindow:
         self._load_current_config()
         self.custom_keys_status.configure(text=self._get_custom_keys_status())
 
-        # Live-Reload: Player-Key-Mapping neu laden (KEIN Neustart nötig!)
+        # Live-Reload: Player-Key-Mapping neu laden
         callback = self.callbacks.get('custom_layout_callback')
         if callback:
             try:
@@ -373,7 +373,6 @@ class SettingsWindow:
                 self.current_ui.get('language', 'en_US')
             )
 
-        # Case-insensitive Match: "QWERTZ" → "Qwertz" oder "QWERTZ"
         matched = None
         if current_value:
             for available in available_layouts:
@@ -406,7 +405,7 @@ class SettingsWindow:
         self.keyboard_layout_dropdown.configure(values=available_layouts)
         self.keyboard_layout_var.set(current_value)
 
-        # Close-Button zurücksetzen (keine echten Änderungen mehr)
+        # Close-Button zurücksetzen
         self._last_change_state = False
         self._update_close_button(False)
 
@@ -446,7 +445,7 @@ class SettingsWindow:
         speed_display_values = [f"{speed}" for speed in available_speeds]
         current_mappings = self.current_speed_change.get('preset_mappings', [])
 
-        # WICHTIG: Vars neu initialisieren
+        # Vars neu initialisieren
         self.preset_key_vars = []
         self.preset_speed_vars = []
 
@@ -781,7 +780,6 @@ class SettingsWindow:
         if not self.close_btn:
             return
 
-        # WICHTIG: Prüfen ob Fenster noch existiert (könnte gerade zerstört werden)
         try:
             if not self.window.winfo_exists():
                 return
@@ -1190,8 +1188,6 @@ class SettingsWindow:
             time.sleep(1.0)
 
             # 5. Umgebung für neue Instanz vorbereiten
-            #    WICHTIG bei --onefile: Neue Instanz muss ihren eigenen _MEI-Ordner
-            #    erstellen, nicht den der alten erben.
             env = os.environ.copy()
             env["PYINSTALLER_RESET_ENVIRONMENT"] = "1"
             env.pop("_PYI_APPLICATION_HOME_DIR", None)
