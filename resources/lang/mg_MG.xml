@@ -6,31 +6,28 @@
     <translation key="project_title">Tetikasa Lyrica</translation>
     <translation key="file_select_title">Misafidiana hira</translation>
     <translation key="play_button_text">▶ Lalao</translation>
+    <translation key="playing_button_text">Milalao...</translation>
+    <translation key="restart_button_text">Avereno indray?</translation>
+    <translation key="pause_key_hint">na ampiasao [pause_key]</translation>
     <translation key="supported_formats">Endrika tohanana</translation>
+    <translation key="file_hint_no_file">⚠️ Misafidiana hira aloha</translation>
 
     <!-- ================= -->
     <!-- FAMpitandremana & Fahadisoana -->
     <!-- ================= -->
     <translation key="warning_title">Fampitandremana</translation>
     <translation key="error_title">Hadisoana</translation>
+    <translation key="info_title">Fampahalalana</translation>
     <translation key="choose_song_warning">Misafidiana hira alohan'ny hanohizana.</translation>
-    <translation key="play_error_message">Nisy olana tamin'ny filalaovana ny hira</translation>
-    <translation key="security_error_path">Lalan-drakitra tsy azo ekena</translation>
-    <translation key="invalid_file_format">Endrika rakitra tsy manan-kery. Tohana: .json, .txt, .skysheet</translation>
-    <translation key="sky_window_not_found">Tsy hita ny varavarankely Sky</translation>
-    <translation key="window_focus_error">Tsy afaka nampifantoka ny varavarankely</translation>
-    <translation key="browser_open_error">Tsy afaka nanokatra ny navigatera</translation>
-    <translation key="sky_not_running">Tokony hiasa ny Sky!</translation>
+    <translation key="sky_only_warning">Miasa amin'ny Sky ihany!</translation>
+    <translation key="sky_window_focus_error">Tsy afaka nampifantoka ny varavarankelin'ny Sky. Ataovy azo antoka fa mihazakazaka sy hita maso ny Sky.</translation>
+    <translation key="invalid_song_format">Diso ny endriky ny hira na ny fanoratana azy</translation>
     <translation key="missing_song_notes">Tsy hita ny angona momba ny hira (songNotes)</translation>
     <translation key="invalid_speed">Hafainganana tsy manan-kery! Tokony lehibe noho ny 0.</translation>
-    <translation key="invalid_song_format">Diso ny endriky ny hira na ny fanoratana azy</translation>
-
-    <translation key="sky_only_warning">Miasa amin'ny Sky ihany! Alefaso azafady ny Sky Children of the Light.</translation>
-    <translation key="sky_window_focus_error">Tsy afaka nampifantoka ny varavarankelin'ny Sky. Ataovy azo antoka fa mihazakazaka sy hita maso ny Sky.</translation>
-
+    <translation key="invalid_speed_number">Tokony ho isa manan-kery ny hafainganana</translation>
     <translation key="speed_too_slow">Mora loatra ny hafainganana. Ny hafainganana farafahakeliny dia {min_speed}. Hatao ho {min_speed_again}.</translation>
     <translation key="speed_too_fast">Hafainganana loatra ny hafainganana. Ny hafainganana ambony indrindra dia {max_speed}. Hatao ho {max_speed_again}.</translation>
-    <translation key="speed_setting_failed">Hadisoana rehefa mametraka ny hafainganana: {error}</translation>
+    <translation key="no_bpm_found">Tsy misy fampahalalana BPM ity rakitra hira ity. Ampiasaina ny hafainganana tokony ho</translation>
 
     <!-- ================= -->
     <!-- ASA NY MPILALAO MOZIKA -->
@@ -40,33 +37,28 @@
     <translation key="disabled">Foana</translation>
     <translation key="duration">Faharetan'ny fanindriana</translation>
     <translation key="speed_control">Fifehezana hafainganana</translation>
-    <translation key="current_speed">Hafainganana ankehitriny</translation>
-    <translation key="preset">Preset</translation>
-    
+    <translation key="smooth_ramping">Fandefasana malefaka</translation>
+    <translation key="smooth_ramping_info">Manitsy ny hafainganana amim-pitandremana eo am-piandohana sy eo amin'ny faran'ny hira mba hahatonga ny fandefasana ho voajanahary kokoa.</translation>
+
     <!-- ================= -->
     <!-- FITENY & FANORATANA -->
     <!-- ================= -->
     <translation key="language_window_title">Safidy fiteny</translation>
     <translation key="select_language">Misafidiana fiteny:</translation>
     <translation key="language_saved">Voavonjy ny fiteny</translation>
+    <translation key="language_save_failed">Tsy afaka nitahiry ny fiteny</translation>
+    <translation key="no_languages_configured">Tsy misy fiteny voarindra</translation>
     <translation key="save_button_text">Tehirizo</translation>
-    <translation key="smooth_ramping">Fandefasana malefaka</translation>
-    <translation key="smooth_ramping_info">Manitsy ny hafainganana amim-pitandremana eo am-piandohana sy eo amin'ny faran'ny hira mba hahatonga ny fandefasana ho voajanahary kokoa.</translation>
-    <translation key="playing_button_text">Milalao...</translation>
-    <translation key="paused_button_text">Naato</translation>
-    <translation key="restart_button_text">Avereno indray?</translation>
-    <translation key="pause_key_hint">na ampiasao [pause_key]</translation>
-    
+
     <!-- ================= -->
     <!-- FAMPANDRAISANA NY VERSIONS -->
     <!-- ================= -->
     <translation key="update_available_text">Misy fanavaozana! v {}</translation>
     <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">Tsy nahomby ny fanamarinana</translation>
     <translation key="no_connection_text">Tsy misy fifandraisana amin'ny mpizara</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- SKYCHECKER -->
     <!-- ================= -->
     <translation key="window_settings_title">Fisafidianana Sky.exe</translation>
     <translation key="select_sky_exe_instruction">Mifidiana ny Sky.exe:</translation>
@@ -77,19 +69,18 @@
     <translation key="exe_path_invalid">Tsy misy ny rakitra voafidy</translation>
 
     <!-- ================= -->
-    <!-- Settings Window -->
+    <!-- SETTINGS WINDOW - HEADER -->
     <!-- ================= -->
     <translation key="settings_window_title">Fanjifajifa</translation>
-    <translation key="info_title">Fampahalalana</translation>
 
     <!-- ================= -->
-    <!-- Game Settings -->
+    <!-- SETTINGS - GAME -->
     <!-- ================= -->
     <translation key="settings_game_title">Fanjifajifa Lalao</translation>
     <translation key="settings_sky_path">Lalan'ny Sky.exe</translation>
 
     <!-- ================= -->
-    <!-- Playback Settings -->
+    <!-- SETTINGS - PLAYBACK -->
     <!-- ================= -->
     <translation key="settings_playback_title">Fanjifajifa Filalaovana</translation>
     <translation key="settings_key_durations">Faharetan'ny Fanindriana Bokotra</translation>
@@ -98,20 +89,26 @@
     <translation key="settings_speed_presets_hint">(sanda misaraka amin'ny koma)</translation>
     <translation key="settings_custom_keys">Bokotra Namboarina</translation>
     <translation key="settings_edit_keys">Hanova Bokotra</translation>
-    <translation key="settings_custom_keys_status">{count} bokotra nohamarinina</translation>
     <translation key="settings_using_default_layout">Ampiasaina ny fandaharana tokony ho</translation>
     <translation key="settings_custom_active">Namboarina (mavitrika)</translation>
     <translation key="settings_custom_available">Namboarina azo ampiasaina</translation>
 
     <!-- ================= -->
-    <!-- Delays -->
+    <!-- SETTINGS - SPEED CHANGE -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Fiovana hafainganana mandritra ny filalaovana</translation>
+    <translation key="settings_speed_change_enable_hint">Ampiasaina ny fiovana hafainganana mandritra ny filalaovana amin'ny alalan'ny fitendry haingam-pandeha</translation>
+    <translation key="settings_speed_change_preset_keys">Bokotra Preset</translation>
+
+    <!-- ================= -->
+    <!-- SETTINGS - DELAYS -->
     <!-- ================= -->
     <translation key="settings_delays_title">Fahatarana</translation>
     <translation key="settings_initial_delay">Fahatarana Fanombohana</translation>
     <translation key="settings_pause_delay">Fahatarana Fijanonana</translation>
 
     <!-- ================= -->
-    <!-- Ramping -->
+    <!-- SETTINGS - RAMPING -->
     <!-- ================= -->
     <translation key="settings_ramping_title">Fandefasana Hafainganana</translation>
     <translation key="settings_ramping_start">Dingana Fanombohana</translation>
@@ -120,9 +117,12 @@
     <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
     <translation key="settings_ramping_after_pause">Dingana aorian'ny Fijanonana</translation>
     <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Fandefasana Hafainganana</translation>
+    <translation key="settings_speed_transition">Fotoana Fifindrana</translation>
+    <translation key="settings_speed_transition_hint">(segondra ho an'ny fifindrana malefaka)</translation>
 
     <!-- ================= -->
-    <!-- Interface -->
+    <!-- SETTINGS - INTERFACE -->
     <!-- ================= -->
     <translation key="settings_interface_title">Interface</translation>
     <translation key="settings_language">Fiteny</translation>
@@ -131,21 +131,18 @@
     <translation key="theme_light">Mazava</translation>
     <translation key="settings_keyboard_layout">Fandaharana Klavie</translation>
     <translation key="settings_pause_key">Bokotra Fijanonana</translation>
-
-    <translation key="settings_speed_change_title">Fiovana hafainganana mandritra ny filalaovana</translation>
-    <translation key="settings_speed_change_enable_hint">Ampiasaina ny fiovana hafainganana mandritra ny filalaovana amin'ny alalan'ny fitendry haingam-pandeha</translation>
-    <translation key="settings_speed_change_preset_keys">Bokotra Preset</translation>
-    <translation key="settings_speed_change_ramp_steps">Dingana Fandefasana Hafakinganana</translation>
+    <translation key="settings_reset_speed_key">Bokotra Famerenana Hafainganana</translation>
 
     <!-- ================= -->
-    <!-- Buttons -->
+    <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Tehirizo</translation>
     <translation key="settings_reset">Averina</translation>
-    <translation key="settings_cancel">Aoka ihany</translation>
+    <translation key="settings_cancel">Hidio</translation>
+    <translation key="settings_no_changes">Tsy nisy fiovana hita</translation>
 
     <!-- ================= -->
-    <!-- Messages -->
+    <!-- SETTINGS - MESSAGES -->
     <!-- ================= -->
     <translation key="settings_saved">Voatahiry ny fanjifajifa!</translation>
     <translation key="settings_save_error">Nisy olana tamin'ny fitahirizana ny fanjifajifa</translation>
@@ -159,55 +156,45 @@
     <translation key="custom_layout_not_found">Tsy hita ny fandaharana namboarina. Nivadika ho {fallback_layout} mandeha ho azy.</translation>
 
     <!-- ================= -->
-    <!-- Validation Errors -->
+    <!-- SETTINGS - VALIDATION ERRORS -->
     <!-- ================= -->
     <translation key="settings_error_numbers">Ampidiro azafady ny isa manan-kery</translation>
     <translation key="settings_error_positive">Ampidiro azafady ny sanda tsara</translation>
-    <translation key="settings_error_empty">Fenoy azafady ny saha rehetra</translation>
-    <translation key="settings_error_pause_key">Tokony ho litera iray monja ny bokotra fijanonana</translation>
     <translation key="settings_error_general">Fampidirana tsy manan-kery</translation>
+    <translation key="settings_error_pause_key">Tokony ho litera iray monja ny bokotra fijanonana</translation>
+    <translation key="settings_error_reset_speed_key">Tokony ho litera iray monja ny bokotra famerenana hafainganana</translation>
 
     <!-- ================= -->
-    <!-- Key Editor -->
+    <!-- KEY EDITOR - HEADER & INSTRUCTIONS -->
     <!-- ================= -->
     <translation key="key_editor_title">Mpanova Fandaharana Bokotra</translation>
     <translation key="key_editor_instructions">Tsindrio ny bokotra etsy ambany ary avy eo tsindrio ny fandaharana tianao amin'ny klavierinao. Escape hanafoana, Backspace hanafana.</translation>
+
+    <!-- ================= -->
+    <!-- KEY EDITOR - STATUS -->
+    <!-- ================= -->
     <translation key="key_editor_current_key">Bokotra ankehitriny:</translation>
     <translation key="key_editor_no_selection">Tsy misy bokotra voafidy</translation>
     <translation key="key_editor_press_key">Tsindrio bokotra...</translation>
     <translation key="key_editor_empty">(banga)</translation>
-    <translation key="key_editor_delete">Fafao ny Namboarina</translation>
     <translation key="key_editor_changes">{changed}/{total} bokotra nohavaozina</translation>
-    <translation key="key_editor_saved_settings_hint">Voatahiry ny fandaharana namboarina. Tsindrio azafady ny 'Tehirizo' ao amin'ny Fanjifajifa mba hahombiazana ny fiovana.</translation>
 
     <!-- ================= -->
-    <!-- Status Labels -->
-    <!-- ================= -->
-    <translation key="key_editor_default">Tokony ho</translation>
-    <translation key="key_editor_custom">Namboarina</translation>
-    <translation key="key_editor_empty_error">Tsy afaka mbola banga ny bokotra {key}</translation>
-
-    <!-- ================= -->
-    <!-- Buttons -->
+    <!-- KEY EDITOR - BUTTONS -->
     <!-- ================= -->
     <translation key="key_editor_save">Tehirizo</translation>
     <translation key="key_editor_reset_all">Averina Rehetra</translation>
-    <translation key="key_editor_import">Ampidiro</translation>
+    <translation key="key_editor_delete">Fafao ny Namboarina</translation>
     <translation key="key_editor_cancel">Aoka ihany</translation>
 
     <!-- ================= -->
-    <!-- Dialog Messages -->
+    <!-- KEY EDITOR - MESSAGES -->
     <!-- ================= -->
-    <translation key="key_editor_saved">Voatahiry ny fandaharana bokotra!</translation>
-    <translation key="key_editor_save_error">Nisy olana tamin'ny fitahirizana ny fandaharana bokotra</translation>
-    <translation key="key_editor_reset_confirm">Averina amin'ny sanda tokony ho izy ve ny bokotra rehetra?</translation>
-    <translation key="key_editor_import_title">Ampidiro ny Fandaharana Bokotra</translation>
-    <translation key="key_editor_import_success">Nampidirina ny fandaharana bokotra</translation>
-    <translation key="key_editor_import_error">Nisy olana tamin'ny fampidirana ny fandaharana bokotra</translation>
     <translation key="key_editor_no_changes">Tsy nisy fiovana natao tamin'ny fandaharana namboarina.</translation>
     <translation key="key_editor_unconfirm_changes">Misy fiovana tsy voatahiry ianao. Tehirizo alohan'ny hanakatonana?</translation>
+    <translation key="key_editor_reset_confirm">Averina amin'ny sanda tokony ho izy ve ny bokotra rehetra?</translation>
     <translation key="key_editor_delete_custom_layout_confirm">Fafana ve ny fandaharana namboarina ary hiverina amin'ny fandaharana tokony ho?</translation>
     <translation key="key_editor_custom_layout_saved_activated">Voatahiry sy nampiasaina ny fandaharana namboarina.</translation>
-    <translation key="key_editor_error_deleting_custom_layout">Nisy olana tamin'ny fanafanana ny fandaharana namboarina.</translation>
+    <translation key="key_editor_custom_deleted">Voafafa ny fandaharana namboarina. Nivadika ho {layout}.</translation>
 
 </translations>

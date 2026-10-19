@@ -6,31 +6,28 @@
     <translation key="project_title">Projekt Lyrica</translation>
     <translation key="file_select_title">Vælg Sang</translation>
     <translation key="play_button_text">▶ Afspil</translation>
+    <translation key="playing_button_text">Afspiller...</translation>
+    <translation key="restart_button_text">Genstart?</translation>
+    <translation key="pause_key_hint">eller brug [pause_key]</translation>
     <translation key="supported_formats">Understøttede Formater</translation>
+    <translation key="file_hint_no_file">⚠️ Vælg først en sang</translation>
 
     <!-- ================= -->
     <!-- ADVARSELER & FEJL -->
     <!-- ================= -->
     <translation key="warning_title">Advarsel</translation>
     <translation key="error_title">Fejl</translation>
+    <translation key="info_title">Information</translation>
     <translation key="choose_song_warning">Vælg venligst en sang</translation>
-    <translation key="play_error_message">Fejl ved afspilning af musik</translation>
-    <translation key="security_error_path">Uautoriseret filsti</translation>
-    <translation key="invalid_file_format">Ugyldigt filformat. Understøttet: .json, .txt, .skysheet</translation>
-    <translation key="sky_window_not_found">Sky-vindue ikke fundet</translation>
-    <translation key="window_focus_error">Kunne ikke fokusere vindue</translation>
-    <translation key="browser_open_error">Kunne ikke åbne browser</translation>
-    <translation key="sky_not_running">Sky skal køre!</translation>
+    <translation key="sky_only_warning">Virker kun i Sky!</translation>
+    <translation key="sky_window_focus_error">Kunne ikke fokusere Sky-vindue. Sørg for at Sky kører og er synlig.</translation>
+    <translation key="invalid_song_format">Ugyldigt sangformat</translation>
     <translation key="missing_song_notes">Sangdata mangler (songNotes)</translation>
     <translation key="invalid_speed">Ugyldig hastighed! Skal være større end 0.</translation>
-    <translation key="invalid_song_format">Ugyldigt sangformat</translation>
-
-    <translation key="sky_only_warning">Virker kun i Sky! Start venligst Sky Children of the Light.</translation>
-    <translation key="sky_window_focus_error">Kunne ikke fokusere Sky-vindue. Sørg for at Sky kører og er synlig.</translation>
-
+    <translation key="invalid_speed_number">Hastighed skal være et gyldigt tal</translation>
     <translation key="speed_too_slow">Hastighed for langsom. Minimumshastighed er {min_speed}. Sætter til {min_speed_again}.</translation>
     <translation key="speed_too_fast">Hastighed for hurtig. Maksimal hastighed er {max_speed}. Sætter til {max_speed_again}.</translation>
-    <translation key="speed_setting_failed">Kunne ikke indstille hastighed: {error}</translation>
+    <translation key="no_bpm_found">Denne sangfil indeholder ikke BPM-information. Bruger standardhastighed</translation>
 
     <!-- ================= -->
     <!-- MUSIKAFSPILLER FUNKTIONER -->
@@ -40,33 +37,28 @@
     <translation key="disabled">Deaktiveret</translation>
     <translation key="duration">Varighed af tastetryk</translation>
     <translation key="speed_control">Hastighed</translation>
-    <translation key="current_speed">Nuværende hastighed</translation>
-    <translation key="preset">Forudindstilling</translation>
-    
+    <translation key="smooth_ramping">Glatte overgange</translation>
+    <translation key="smooth_ramping_info">Jævn hastighedsændring i starten og slutningen af sangen for mere naturlige overgange.</translation>
+
     <!-- ================= -->
     <!-- SPROG & LAYOUT -->
     <!-- ================= -->
     <translation key="language_window_title">Sprogvalg</translation>
     <translation key="select_language">Vælg sprog:</translation>
     <translation key="language_saved">Sprog gemt</translation>
+    <translation key="language_save_failed">Kunne ikke gemme sprog</translation>
+    <translation key="no_languages_configured">Ingen sprog konfigureret</translation>
     <translation key="save_button_text">Gem</translation>
-    <translation key="smooth_ramping">Glatte overgange</translation>
-    <translation key="smooth_ramping_info">Jævn hastighedsændring i starten og slutningen af sangen for mere naturlige overgange.</translation>
-    <translation key="playing_button_text">Afspiller...</translation>
-    <translation key="paused_button_text">På pause</translation>
-    <translation key="restart_button_text">Genstart?</translation>
-    <translation key="pause_key_hint">eller brug [pause_key]</translation>
-    
+
     <!-- ================= -->
     <!-- VERSION INFORMATION -->
     <!-- ================= -->
     <translation key="update_available_text">Opdatering tilgængelig! v {}</translation>
     <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">Tjek mislykkedes</translation>
     <translation key="no_connection_text">Ingen forbindelse til server</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- SKYCHECKER -->
     <!-- ================= -->
     <translation key="window_settings_title">Sky.exe Valg</translation>
     <translation key="select_sky_exe_instruction">Vælg venligst Sky.exe filen:</translation>
@@ -77,19 +69,18 @@
     <translation key="exe_path_invalid">Den valgte fil eksisterer ikke</translation>
 
     <!-- ================= -->
-    <!-- Indstillinger Vindue -->
+    <!-- SETTINGS WINDOW - HEADER -->
     <!-- ================= -->
     <translation key="settings_window_title">Indstillinger</translation>
-    <translation key="info_title">Information</translation>
 
     <!-- ================= -->
-    <!-- Spil Indstillinger -->
+    <!-- SETTINGS - GAME -->
     <!-- ================= -->
     <translation key="settings_game_title">Spil Indstillinger</translation>
     <translation key="settings_sky_path">Sky.exe Sti</translation>
 
     <!-- ================= -->
-    <!-- Afspilnings Indstillinger -->
+    <!-- SETTINGS - PLAYBACK -->
     <!-- ================= -->
     <translation key="settings_playback_title">Afspilnings Indstillinger</translation>
     <translation key="settings_key_durations">Tastetryk Varighed</translation>
@@ -98,20 +89,26 @@
     <translation key="settings_speed_presets_hint">(værdier adskilt af komma)</translation>
     <translation key="settings_custom_keys">Brugerdefinerede Taster</translation>
     <translation key="settings_edit_keys">Rediger Taster</translation>
-    <translation key="settings_custom_keys_status">{count} taster tilpasset</translation>
     <translation key="settings_using_default_layout">Brug standard layout</translation>
     <translation key="settings_custom_active">Brugerdefineret (aktiv)</translation>
     <translation key="settings_custom_available">Brugerdefineret tilgængelig</translation>
 
     <!-- ================= -->
-    <!-- Forsinkelser -->
+    <!-- SETTINGS - SPEED CHANGE -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Hastighedsændring Under Afspilning</translation>
+    <translation key="settings_speed_change_enable_hint">Aktiver hastighedsændring under afspilning ved hjælp af tastaturgenveje</translation>
+    <translation key="settings_speed_change_preset_keys">Forudindstillingstaster</translation>
+
+    <!-- ================= -->
+    <!-- SETTINGS - DELAYS -->
     <!-- ================= -->
     <translation key="settings_delays_title">Forsinkelser</translation>
     <translation key="settings_initial_delay">Start Forsinkelse</translation>
     <translation key="settings_pause_delay">Pause Forsinkelse</translation>
 
     <!-- ================= -->
-    <!-- Hastighedsovergange -->
+    <!-- SETTINGS - RAMPING -->
     <!-- ================= -->
     <translation key="settings_ramping_title">Hastighedsovergange</translation>
     <translation key="settings_ramping_start">Start Trin</translation>
@@ -120,9 +117,12 @@
     <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
     <translation key="settings_ramping_after_pause">Efter Pause Trin</translation>
     <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Hastighedsramping</translation>
+    <translation key="settings_speed_transition">Overgangstid</translation>
+    <translation key="settings_speed_transition_hint">(sekunder for glatte overgange)</translation>
 
     <!-- ================= -->
-    <!-- Interface -->
+    <!-- SETTINGS - INTERFACE -->
     <!-- ================= -->
     <translation key="settings_interface_title">Interface</translation>
     <translation key="settings_language">Sprog</translation>
@@ -131,21 +131,18 @@
     <translation key="theme_light">Lys</translation>
     <translation key="settings_keyboard_layout">Tastatur Layout</translation>
     <translation key="settings_pause_key">Pause Taste</translation>
-
-    <translation key="settings_speed_change_title">Hastighedsændring Under Afspilning</translation>
-    <translation key="settings_speed_change_enable_hint">Aktiver hastighedsændring under afspilning ved hjælp af tastaturgenveje</translation>
-    <translation key="settings_speed_change_preset_keys">Forudindstillingstaster</translation>
-    <translation key="settings_speed_change_ramp_steps">Hastighedsovergangstrin</translation>
+    <translation key="settings_reset_speed_key">Nulstil Hastighedstast</translation>
 
     <!-- ================= -->
-    <!-- Knapper -->
+    <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Gem</translation>
     <translation key="settings_reset">Nulstil</translation>
-    <translation key="settings_cancel">Annuller</translation>
+    <translation key="settings_cancel">Luk</translation>
+    <translation key="settings_no_changes">Ingen ændringer registreret</translation>
 
     <!-- ================= -->
-    <!-- Beskeder -->
+    <!-- SETTINGS - MESSAGES -->
     <!-- ================= -->
     <translation key="settings_saved">Indstillinger gemt!</translation>
     <translation key="settings_save_error">Fejl ved gemning af indstillinger</translation>
@@ -159,55 +156,45 @@
     <translation key="custom_layout_not_found">Brugerdefineret layout ikke fundet. Skiftede automatisk til {fallback_layout}.</translation>
 
     <!-- ================= -->
-    <!-- Validerings Fejl -->
+    <!-- SETTINGS - VALIDATION ERRORS -->
     <!-- ================= -->
     <translation key="settings_error_numbers">Indtast venligst gyldige tal</translation>
     <translation key="settings_error_positive">Indtast venligst positive værdier</translation>
-    <translation key="settings_error_empty">Udfyld venligst alle felter</translation>
-    <translation key="settings_error_pause_key">Pause-tasten skal være præcis ét tegn</translation>
     <translation key="settings_error_general">Ugyldig indtastning</translation>
+    <translation key="settings_error_pause_key">Pause-tasten skal være præcis ét tegn</translation>
+    <translation key="settings_error_reset_speed_key">Nulstil hastighedstasten skal være præcis ét tegn</translation>
 
     <!-- ================= -->
-    <!-- Taste Editor -->
+    <!-- KEY EDITOR - HEADER & INSTRUCTIONS -->
     <!-- ================= -->
     <translation key="key_editor_title">Taste Layout Editor</translation>
     <translation key="key_editor_instructions">Klik på en tast nedenfor og tryk derefter på den ønskede layout på dit tastatur. Escape for at annullere, Backspace for at slette.</translation>
+
+    <!-- ================= -->
+    <!-- KEY EDITOR - STATUS -->
+    <!-- ================= -->
     <translation key="key_editor_current_key">Nuværende tast:</translation>
     <translation key="key_editor_no_selection">Ingen tast valgt</translation>
     <translation key="key_editor_press_key">Tryk på en tast...</translation>
     <translation key="key_editor_empty">(tom)</translation>
-    <translation key="key_editor_delete">Slet Brugerdefineret</translation>
     <translation key="key_editor_changes">{changed}/{total} taster ændret</translation>
-    <translation key="key_editor_saved_settings_hint">Brugerdefineret layout gemt. Klik venligst 'Gem' i Indstillinger for at ændringerne træder i kraft.</translation>
 
     <!-- ================= -->
-    <!-- Status Etiketter -->
-    <!-- ================= -->
-    <translation key="key_editor_default">Standard</translation>
-    <translation key="key_editor_custom">Tilpasset</translation>
-    <translation key="key_editor_empty_error">Tasten {key} kan ikke være tom</translation>
-
-    <!-- ================= -->
-    <!-- Knapper -->
+    <!-- KEY EDITOR - BUTTONS -->
     <!-- ================= -->
     <translation key="key_editor_save">Gem</translation>
     <translation key="key_editor_reset_all">Nulstil Alle</translation>
-    <translation key="key_editor_import">Importer</translation>
+    <translation key="key_editor_delete">Slet Brugerdefineret</translation>
     <translation key="key_editor_cancel">Annuller</translation>
 
     <!-- ================= -->
-    <!-- Dialog Beskeder -->
+    <!-- KEY EDITOR - MESSAGES -->
     <!-- ================= -->
-    <translation key="key_editor_saved">Taste layout gemt!</translation>
-    <translation key="key_editor_save_error">Fejl ved gemning af taste layout</translation>
-    <translation key="key_editor_reset_confirm">Nulstil alle taster til standardværdier?</translation>
-    <translation key="key_editor_import_title">Importer Taste Layout</translation>
-    <translation key="key_editor_import_success">Taste layout importeret</translation>
-    <translation key="key_editor_import_error">Fejl ved import af taste layout</translation>
     <translation key="key_editor_no_changes">Ingen ændringer foretaget til brugerdefineret layout.</translation>
     <translation key="key_editor_unconfirm_changes">Du har ugemte ændringer. Gem før lukning?</translation>
+    <translation key="key_editor_reset_confirm">Nulstil alle taster til standardværdier?</translation>
     <translation key="key_editor_delete_custom_layout_confirm">Slet brugerdefineret layout og vend tilbage til standard layout?</translation>
     <translation key="key_editor_custom_layout_saved_activated">Brugerdefineret layout gemt og aktiveret.</translation>
-    <translation key="key_editor_error_deleting_custom_layout">Fejl ved sletning af brugerdefineret layout.</translation>
+    <translation key="key_editor_custom_deleted">Brugerdefineret layout slettet. Skiftede til {layout}.</translation>
 
 </translations>

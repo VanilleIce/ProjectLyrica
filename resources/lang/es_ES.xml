@@ -6,31 +6,28 @@
     <translation key="project_title">Proyecto Lyrica</translation>
     <translation key="file_select_title">Seleccionar canción</translation>
     <translation key="play_button_text">▶ Reproducir</translation>
+    <translation key="playing_button_text">Reproduciendo...</translation>
+    <translation key="restart_button_text">¿Reiniciar?</translation>
+    <translation key="pause_key_hint">o usa [pause_key]</translation>
     <translation key="supported_formats">Formatos compatibles</translation>
+    <translation key="file_hint_no_file">⚠️ Selecciona una canción primero</translation>
 
     <!-- ================= -->
     <!-- ADVERTENCIAS Y ERRORES -->
     <!-- ================= -->
     <translation key="warning_title">Advertencia</translation>
     <translation key="error_title">Error</translation>
+    <translation key="info_title">Información</translation>
     <translation key="choose_song_warning">Por favor, selecciona una canción antes de continuar.</translation>
-    <translation key="play_error_message">Error al reproducir la música</translation>
-    <translation key="security_error_path">Ruta de archivo no autorizada</translation>
-    <translation key="invalid_file_format">Formato de archivo inválido. Compatible: .json, .txt, .skysheet</translation>
-    <translation key="sky_window_not_found">Ventana Sky no encontrada</translation>
-    <translation key="window_focus_error">No se pudo enfocar la ventana</translation>
-    <translation key="browser_open_error">No se pudo abrir el navegador</translation>
-    <translation key="sky_not_running">¡Sky debe estar en ejecución!</translation>
+    <translation key="sky_only_warning">¡Solo funciona en Sky!</translation>
+    <translation key="sky_window_focus_error">No se pudo enfocar la ventana de Sky. Asegúrate de que Sky esté ejecutándose y visible.</translation>
+    <translation key="invalid_song_format">Formato de canción no válido</translation>
     <translation key="missing_song_notes">Datos de canción faltantes (songNotes)</translation>
     <translation key="invalid_speed">¡Velocidad inválida! Debe ser mayor que 0.</translation>
-    <translation key="invalid_song_format">Formato de canción no válido</translation>
-
-    <translation key="sky_only_warning">¡Solo funciona en Sky! Por favor, inicia Sky Children of the Light.</translation>
-    <translation key="sky_window_focus_error">No se pudo enfocar la ventana de Sky. Asegúrate de que Sky esté ejecutándose y visible.</translation>
-
+    <translation key="invalid_speed_number">La velocidad debe ser un número válido</translation>
     <translation key="speed_too_slow">Velocidad demasiado lenta. La velocidad mínima es {min_speed}. Se establecerá en {min_speed_again}.</translation>
     <translation key="speed_too_fast">Velocidad demasiado rápida. La velocidad máxima es {max_speed}. Se establecerá en {max_speed_again}.</translation>
-    <translation key="speed_setting_failed">Error al establecer la velocidad: {error}</translation>
+    <translation key="no_bpm_found">Este archivo de canción no contiene información de BPM. Usando velocidad predeterminada</translation>
 
     <!-- ================= -->
     <!-- FUNCIONES DEL REPRODUCTOR DE MÚSICA -->
@@ -40,33 +37,28 @@
     <translation key="disabled">Deshabilitado</translation>
     <translation key="duration">Duración de la presión de la tecla</translation>
     <translation key="speed_control">Velocidad</translation>
-    <translation key="current_speed">Velocidad actual</translation>
-    <translation key="preset">Preajuste</translation>
-    
+    <translation key="smooth_ramping">Transiciones Suaves</translation>
+    <translation key="smooth_ramping_info">Ajusta suavemente la velocidad al principio y al final de la canción para transiciones más naturales.</translation>
+
     <!-- ================= -->
     <!-- IDIOMA Y DISEÑO -->
     <!-- ================= -->
     <translation key="language_window_title">Selección de idioma</translation>
     <translation key="select_language">Seleccionar idioma:</translation>
     <translation key="language_saved">Idioma guardado</translation>
+    <translation key="language_save_failed">No se pudo guardar el idioma</translation>
+    <translation key="no_languages_configured">No hay idiomas configurados</translation>
     <translation key="save_button_text">Guardar</translation>
-    <translation key="smooth_ramping">Transiciones Suaves</translation>
-    <translation key="smooth_ramping_info">Ajusta suavemente la velocidad al principio y al final de la canción para transiciones más naturales.</translation>
-    <translation key="playing_button_text">Reproduciendo...</translation>
-    <translation key="paused_button_text">Pausado</translation>
-    <translation key="restart_button_text">¿Reiniciar?</translation>
-    <translation key="pause_key_hint">o usa [pause_key]</translation>
-    
+
     <!-- ================= -->
     <!-- INFORMACIÓN DE VERSIÓN -->
     <!-- ================= -->
     <translation key="update_available_text">¡Actualización disponible! v {}</translation>
     <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">Verificación fallida</translation>
     <translation key="no_connection_text">Sin conexión al servidor</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- SKYCHECKER -->
     <!-- ================= -->
     <translation key="window_settings_title">Selección de Sky.exe</translation>
     <translation key="select_sky_exe_instruction">Por favor, selecciona el Sky.exe:</translation>
@@ -77,19 +69,18 @@
     <translation key="exe_path_invalid">El archivo seleccionado no existe</translation>
 
     <!-- ================= -->
-    <!-- Settings Window -->
+    <!-- SETTINGS WINDOW - HEADER -->
     <!-- ================= -->
     <translation key="settings_window_title">Configuración</translation>
-    <translation key="info_title">Información</translation>
 
     <!-- ================= -->
-    <!-- Game Settings -->
+    <!-- SETTINGS - GAME -->
     <!-- ================= -->
     <translation key="settings_game_title">Configuración del Juego</translation>
     <translation key="settings_sky_path">Ruta de Sky.exe</translation>
 
     <!-- ================= -->
-    <!-- Playback Settings -->
+    <!-- SETTINGS - PLAYBACK -->
     <!-- ================= -->
     <translation key="settings_playback_title">Configuración de Reproducción</translation>
     <translation key="settings_key_durations">Duración de Pulsación de Teclas</translation>
@@ -98,20 +89,26 @@
     <translation key="settings_speed_presets_hint">(valores separados por comas)</translation>
     <translation key="settings_custom_keys">Teclas Personalizadas</translation>
     <translation key="settings_edit_keys">Editar Teclas</translation>
-    <translation key="settings_custom_keys_status">{count} teclas personalizadas</translation>
     <translation key="settings_using_default_layout">Usando distribución predeterminada</translation>
     <translation key="settings_custom_active">Personalizado (activo)</translation>
     <translation key="settings_custom_available">Personalizado disponible</translation>
 
     <!-- ================= -->
-    <!-- Delays -->
+    <!-- SETTINGS - SPEED CHANGE -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Cambio de Velocidad Durante la Reproducción</translation>
+    <translation key="settings_speed_change_enable_hint">Habilitar cambio de velocidad durante la reproducción usando atajos de teclado</translation>
+    <translation key="settings_speed_change_preset_keys">Teclas Preestablecidas</translation>
+
+    <!-- ================= -->
+    <!-- SETTINGS - DELAYS -->
     <!-- ================= -->
     <translation key="settings_delays_title">Retrasos</translation>
     <translation key="settings_initial_delay">Retraso Inicial</translation>
     <translation key="settings_pause_delay">Retraso de Pausa</translation>
 
     <!-- ================= -->
-    <!-- Ramping -->
+    <!-- SETTINGS - RAMPING -->
     <!-- ================= -->
     <translation key="settings_ramping_title">Transiciones de Velocidad</translation>
     <translation key="settings_ramping_start">Pasos de Inicio</translation>
@@ -120,9 +117,12 @@
     <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
     <translation key="settings_ramping_after_pause">Pasos después de Pausa</translation>
     <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Ramping de Velocidad</translation>
+    <translation key="settings_speed_transition">Tiempo de Transición</translation>
+    <translation key="settings_speed_transition_hint">(segundos para transiciones suaves)</translation>
 
     <!-- ================= -->
-    <!-- Interface -->
+    <!-- SETTINGS - INTERFACE -->
     <!-- ================= -->
     <translation key="settings_interface_title">Interfaz</translation>
     <translation key="settings_language">Idioma</translation>
@@ -131,21 +131,18 @@
     <translation key="theme_light">Claro</translation>
     <translation key="settings_keyboard_layout">Distribución de Teclado</translation>
     <translation key="settings_pause_key">Tecla de Pausa</translation>
-
-    <translation key="settings_speed_change_title">Cambio de Velocidad Durante la Reproducción</translation>
-    <translation key="settings_speed_change_enable_hint">Habilitar cambio de velocidad durante la reproducción usando atajos de teclado</translation>
-    <translation key="settings_speed_change_preset_keys">Teclas Preestablecidas</translation>
-    <translation key="settings_speed_change_ramp_steps">Pasos de Transición de Velocidad</translation>
+    <translation key="settings_reset_speed_key">Tecla de Reinicio de Velocidad</translation>
 
     <!-- ================= -->
-    <!-- Buttons -->
+    <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Guardar</translation>
     <translation key="settings_reset">Restablecer</translation>
-    <translation key="settings_cancel">Cancelar</translation>
+    <translation key="settings_cancel">Cerrar</translation>
+    <translation key="settings_no_changes">No se detectaron cambios</translation>
 
     <!-- ================= -->
-    <!-- Messages -->
+    <!-- SETTINGS - MESSAGES -->
     <!-- ================= -->
     <translation key="settings_saved">¡Configuración guardada!</translation>
     <translation key="settings_save_error">Error al guardar la configuración</translation>
@@ -159,55 +156,45 @@
     <translation key="custom_layout_not_found">Distribución personalizada no encontrada. Cambiado automáticamente a {fallback_layout}.</translation>
 
     <!-- ================= -->
-    <!-- Validation Errors -->
+    <!-- SETTINGS - VALIDATION ERRORS -->
     <!-- ================= -->
     <translation key="settings_error_numbers">Por favor, introduce números válidos</translation>
     <translation key="settings_error_positive">Por favor, introduce valores positivos</translation>
-    <translation key="settings_error_empty">Por favor, completa todos los campos</translation>
-    <translation key="settings_error_pause_key">La tecla de pausa debe ser exactamente un carácter</translation>
     <translation key="settings_error_general">Entrada no válida</translation>
+    <translation key="settings_error_pause_key">La tecla de pausa debe ser exactamente un carácter</translation>
+    <translation key="settings_error_reset_speed_key">La tecla de reinicio de velocidad debe ser exactamente un carácter</translation>
 
     <!-- ================= -->
-    <!-- Key Editor -->
+    <!-- KEY EDITOR - HEADER & INSTRUCTIONS -->
     <!-- ================= -->
     <translation key="key_editor_title">Editor de Distribución de Teclas</translation>
     <translation key="key_editor_instructions">Haz clic en una tecla abajo y luego presiona la asignación deseada en tu teclado. Escape para cancelar, Retroceso para eliminar.</translation>
+
+    <!-- ================= -->
+    <!-- KEY EDITOR - STATUS -->
+    <!-- ================= -->
     <translation key="key_editor_current_key">Tecla actual:</translation>
     <translation key="key_editor_no_selection">Ninguna tecla seleccionada</translation>
     <translation key="key_editor_press_key">Presiona una tecla...</translation>
     <translation key="key_editor_empty">(vacío)</translation>
-    <translation key="key_editor_delete">Eliminar Personalizado</translation>
     <translation key="key_editor_changes">{changed}/{total} teclas modificadas</translation>
-    <translation key="key_editor_saved_settings_hint">Distribución personalizada guardada. Por favor, haz clic en 'Guardar' en Configuración para que los cambios surtan efecto.</translation>
 
     <!-- ================= -->
-    <!-- Status Labels -->
-    <!-- ================= -->
-    <translation key="key_editor_default">Predeterminado</translation>
-    <translation key="key_editor_custom">Personalizado</translation>
-    <translation key="key_editor_empty_error">La tecla {key} no puede estar vacía</translation>
-
-    <!-- ================= -->
-    <!-- Buttons -->
+    <!-- KEY EDITOR - BUTTONS -->
     <!-- ================= -->
     <translation key="key_editor_save">Guardar</translation>
     <translation key="key_editor_reset_all">Restablecer Todo</translation>
-    <translation key="key_editor_import">Importar</translation>
+    <translation key="key_editor_delete">Eliminar Personalizado</translation>
     <translation key="key_editor_cancel">Cancelar</translation>
 
     <!-- ================= -->
-    <!-- Dialog Messages -->
+    <!-- KEY EDITOR - MESSAGES -->
     <!-- ================= -->
-    <translation key="key_editor_saved">¡Distribución de teclas guardada!</translation>
-    <translation key="key_editor_save_error">Error al guardar la distribución de teclas</translation>
-    <translation key="key_editor_reset_confirm">¿Restablecer todas las teclas a los valores predeterminados?</translation>
-    <translation key="key_editor_import_title">Importar Distribución de Teclas</translation>
-    <translation key="key_editor_import_success">Distribución de teclas importada</translation>
-    <translation key="key_editor_import_error">Error al importar la distribución de teclas</translation>
     <translation key="key_editor_no_changes">No se realizaron cambios en la distribución personalizada.</translation>
     <translation key="key_editor_unconfirm_changes">Tienes cambios sin guardar. ¿Guardar antes de cerrar?</translation>
+    <translation key="key_editor_reset_confirm">¿Restablecer todas las teclas a los valores predeterminados?</translation>
     <translation key="key_editor_delete_custom_layout_confirm">¿Eliminar distribución personalizada y volver a la distribución predeterminada?</translation>
     <translation key="key_editor_custom_layout_saved_activated">Distribución personalizada guardada y activada.</translation>
-    <translation key="key_editor_error_deleting_custom_layout">Error al eliminar la distribución personalizada.</translation>
+    <translation key="key_editor_custom_deleted">Distribución personalizada eliminada. Cambiado a {layout}.</translation>
 
 </translations>
