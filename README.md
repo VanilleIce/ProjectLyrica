@@ -22,16 +22,16 @@ Simply select a song, click “Play,” and enjoy!
  
 - 🎼 **Plug & Play** – Load any compatible song and play instantly 
 - 🎚️ **Precision Controls** 
-  - Playback speed: 600–1500 BPM  -> preferably up to 1200
+  - Playback speed: 100–1500 BPM (default: 1000)
   - Custom note duration: 0.1–1.0 seconds 
-  - Smooth speed ramping for natural transitions 
+  - Smooth speed ramping at song start/end and after pauses 
 - ⏯️ **Smart Playback** 
   - Pause/resume mid-performance with customizable hotkey 
   - Automatic focus on the game window 
   - Intelligent pause handling with resume ramping 
-- 🌐 **Multi-language Support** – 15+ languages with automatic keyboard layouts 
+- 🌐 **Multi-language Support** – 19 languages with automatic keyboard layouts 
 - ⌨️ **Visual Key Editor** – Customize key bindings with intuitive interface 
-- 💾 **Preset System** – Save and load favorite Presets
+- 💾 **Speed Presets** – Quick-access buttons for your favorite playback speeds
 - 🎛️ **Comprehensive Settings** – Fine-tune timing, delays, and behavior
  
 --- 
@@ -42,7 +42,7 @@ Simply select a song, click “Play,” and enjoy!
 
  1. **Download the latest release from** [GitHub Releases](https://github.com/VanilleIce/ProjectLyrica/releases)
  2. **Run** `^ProjectLyrica_setup.exe^` **and follow the installer**
- 3. **Start the Lyrica project** from the folder.
+ 3. **Start Project Lyrica** from your desktop or Start Menu.
  
 ### 🔧 For Developers
 
@@ -65,7 +65,9 @@ cd ProjectLyrica
 python ProjectLyrica.py 
 ``` 
  
-> ✅ **System Requirements:** Windows 10/11 • Python 3.10+ • Sky: Children of the Light 
+> ✅ **System Requirements (End Users):** Windows 10/11 • Sky: Children of the Light
+
+> 🔧 **Developer Requirements:** Python 3.10+
  
 --- 
  
@@ -89,7 +91,7 @@ python ProjectLyrica.py
  
 ### Keyboard Layouts 
 - Access **Settings** → **Edit Keys** for visual key mapping 
-- Choose from 6+ regional layouts (QWERTY, AZERTY, QWERTZ, JIS, etc.) 
+- Choose from 6 regional layouts (QWERTY, QWERTZ, AZERTY, JIS, ARABIC, ЙЦУКЕН) 
 - Create and save custom layouts 
 - Automatic layout selection based on language 
  
@@ -124,7 +126,7 @@ We welcome your contributions! Please:
   Adjust timing settings and enable/disable smooth ramping 
  
 - **Translation issues?** 
-  Check language settings and report missing translations 
+  Check language settings and report missing translations in [GitHub Issues](https://github.com/VanilleIce/ProjectLyrica/issues)
  
 --- 
  
