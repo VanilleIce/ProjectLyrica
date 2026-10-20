@@ -139,6 +139,7 @@
     <translation key="settings_save">Opslaan</translation>
     <translation key="settings_reset">Resetten</translation>
     <translation key="settings_cancel">Sluiten</translation>
+    <translation key="settings_save_and_close">Opslaan &amp; Sluiten</translation>
     <translation key="settings_no_changes">Geen wijzigingen gedetecteerd</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Druk op een toets...</translation>
     <translation key="key_editor_empty">(leeg)</translation>
     <translation key="key_editor_changes">{changed}/{total} toetsen gewijzigd</translation>
+    <translation key="key_editor_save_and_close">Opslaan &amp; Sluiten</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

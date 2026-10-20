@@ -139,6 +139,7 @@
     <translation key="settings_save">Сохранить</translation>
     <translation key="settings_reset">Сбросить</translation>
     <translation key="settings_cancel">Закрыть</translation>
+    <translation key="settings_save_and_close">Сохранить и закрыть</translation>
     <translation key="settings_no_changes">Изменений не обнаружено</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Нажмите клавишу...</translation>
     <translation key="key_editor_empty">(пусто)</translation>
     <translation key="key_editor_changes">{changed}/{total} клавиш изменено</translation>
+    <translation key="key_editor_save_and_close">Сохранить и закрыть</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

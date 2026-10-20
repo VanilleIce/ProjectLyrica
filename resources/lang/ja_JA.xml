@@ -139,6 +139,7 @@
     <translation key="settings_save">保存</translation>
     <translation key="settings_reset">リセット</translation>
     <translation key="settings_cancel">閉じる</translation>
+    <translation key="settings_save_and_close">保存して閉じる</translation>
     <translation key="settings_no_changes">変更は検出されませんでした</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">キーを押してください...</translation>
     <translation key="key_editor_empty">（空）</translation>
     <translation key="key_editor_changes">{changed}/{total} キーが変更されました</translation>
+    <translation key="key_editor_save_and_close">保存して閉じる</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

@@ -139,6 +139,7 @@
     <translation key="settings_save">บันทึก</translation>
     <translation key="settings_reset">รีเซ็ต</translation>
     <translation key="settings_cancel">ปิด</translation>
+    <translation key="settings_save_and_close">บันทึกและปิด</translation>
     <translation key="settings_no_changes">ไม่พบการเปลี่ยนแปลง</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">กดปุ่ม...</translation>
     <translation key="key_editor_empty">(ว่าง)</translation>
     <translation key="key_editor_changes">เปลี่ยนแล้ว {changed}/{total} ปุ่ม</translation>
+    <translation key="key_editor_save_and_close">บันทึกและปิด</translation>
 
     <!-- ================= -->
     <!-- ตัวแก้ไขเค้าโครงปุ่ม - ปุ่ม -->

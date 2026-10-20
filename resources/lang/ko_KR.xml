@@ -139,6 +139,7 @@
     <translation key="settings_save">저장</translation>
     <translation key="settings_reset">재설정</translation>
     <translation key="settings_cancel">닫기</translation>
+    <translation key="settings_save_and_close">저장 및 닫기</translation>
     <translation key="settings_no_changes">변경 사항이 감지되지 않았습니다</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">키를 누르세요...</translation>
     <translation key="key_editor_empty">(비어 있음)</translation>
     <translation key="key_editor_changes">{changed}/{total} 키 변경됨</translation>
+    <translation key="key_editor_save_and_close">저장 및 닫기</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

@@ -139,6 +139,7 @@
     <translation key="settings_save">Lưu</translation>
     <translation key="settings_reset">Đặt lại</translation>
     <translation key="settings_cancel">Đóng</translation>
+    <translation key="settings_save_and_close">Lưu &amp; Đóng</translation>
     <translation key="settings_no_changes">Không phát hiện thay đổi</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Nhấn một phím...</translation>
     <translation key="key_editor_empty">(trống)</translation>
     <translation key="key_editor_changes">Đã thay đổi {changed}/{total} phím</translation>
+    <translation key="key_editor_save_and_close">Lưu &amp; Đóng</translation>
 
     <!-- ================= -->
     <!-- TRÌNH CHỈNH SỬA PHÍM - NÚT -->

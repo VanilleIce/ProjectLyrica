@@ -139,6 +139,7 @@
     <translation key="settings_save">Guardar</translation>
     <translation key="settings_reset">Repor</translation>
     <translation key="settings_cancel">Fechar</translation>
+    <translation key="settings_save_and_close">Guardar e fechar</translation>
     <translation key="settings_no_changes">Nenhuma alteração detetada</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Pressione uma tecla...</translation>
     <translation key="key_editor_empty">(vazio)</translation>
     <translation key="key_editor_changes">{changed}/{total} teclas modificadas</translation>
+    <translation key="key_editor_save_and_close">Guardar e fechar</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

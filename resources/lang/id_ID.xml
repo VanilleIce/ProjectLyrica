@@ -139,6 +139,7 @@
     <translation key="settings_save">Simpan</translation>
     <translation key="settings_reset">Setel Ulang</translation>
     <translation key="settings_cancel">Tutup</translation>
+    <translation key="settings_save_and_close">Simpan &amp; Tutup</translation>
     <translation key="settings_no_changes">Tidak ada perubahan terdeteksi</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Tekan tombol...</translation>
     <translation key="key_editor_empty">(kosong)</translation>
     <translation key="key_editor_changes">{changed}/{total} tombol diubah</translation>
+    <translation key="key_editor_save_and_close">Simpan &amp; Tutup</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

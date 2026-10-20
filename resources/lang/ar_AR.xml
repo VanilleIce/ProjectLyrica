@@ -139,6 +139,7 @@
     <translation key="settings_save">حفظ</translation>
     <translation key="settings_reset">إعادة تعيين</translation>
     <translation key="settings_cancel">إغلاق</translation>
+    <translation key="settings_save_and_close">حفظ وإغلاق</translation>
     <translation key="settings_no_changes">لم يتم اكتشاف تغييرات</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">اضغط على المفتاح...</translation>
     <translation key="key_editor_empty">(فارغ)</translation>
     <translation key="key_editor_changes">{changed}/{total} مفاتيح معدلة</translation>
+    <translation key="key_editor_save_and_close">حفظ وإغلاق</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

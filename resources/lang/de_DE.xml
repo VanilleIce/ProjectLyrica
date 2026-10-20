@@ -90,8 +90,8 @@
     <translation key="settings_custom_keys">Benutzerdefinierte Tasten</translation>
     <translation key="settings_edit_keys">Tasten bearbeiten</translation>
     <translation key="settings_using_default_layout">Standardbelegung verwenden</translation>
-    <translation key="settings_custom_active">Custom (active)</translation>
-    <translation key="settings_custom_available">Custom available</translation>
+    <translation key="settings_custom_active">Benutzerdefiniert (aktiv)</translation>
+    <translation key="settings_custom_available">Benutzerdefiniert verfügbar</translation>
 
     <!-- ================= -->
     <!-- SETTINGS - SPEED CHANGE -->
@@ -137,9 +137,9 @@
     <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Speichern</translation>
-    <translation key="settings_save_and_close">Speichern &amp; Schließen</translation>
     <translation key="settings_reset">Zurücksetzen</translation>
     <translation key="settings_cancel">Schliessen</translation>
+    <translation key="settings_save_and_close">Speichern &amp; Schließen</translation>
     <translation key="settings_no_changes">Keine Änderungen erkannt</translation>
 
     <!-- ================= -->
@@ -186,7 +186,7 @@
     <!-- ================= -->
     <translation key="key_editor_save">Speichern</translation>
     <translation key="key_editor_reset_all">Alle zurücksetzen</translation>
-    <translation key="key_editor_delete">Delete Custom</translation>
+    <translation key="key_editor_delete">Benutzerdefiniert löschen</translation>
     <translation key="key_editor_cancel">Abbrechen</translation>
 
     <!-- ================= -->

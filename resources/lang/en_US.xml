@@ -139,6 +139,7 @@
     <translation key="settings_save">Save</translation>
     <translation key="settings_reset">Reset</translation>
     <translation key="settings_cancel">Close</translation>
+    <translation key="settings_save_and_close">Save &amp; Close</translation>
     <translation key="settings_no_changes">No changes detected</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Press a key...</translation>
     <translation key="key_editor_empty">(empty)</translation>
     <translation key="key_editor_changes">{changed}/{total} keys changed</translation>
+    <translation key="key_editor_save_and_close">Save &amp; Close</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

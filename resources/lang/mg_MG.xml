@@ -139,6 +139,7 @@
     <translation key="settings_save">Tehirizo</translation>
     <translation key="settings_reset">Averina</translation>
     <translation key="settings_cancel">Hidio</translation>
+    <translation key="settings_save_and_close">Tehirizo &amp; Hidio</translation>
     <translation key="settings_no_changes">Tsy nisy fiovana hita</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Tsindrio bokotra...</translation>
     <translation key="key_editor_empty">(banga)</translation>
     <translation key="key_editor_changes">{changed}/{total} bokotra nohavaozina</translation>
+    <translation key="key_editor_save_and_close">Tehirizo &amp; Hidio</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

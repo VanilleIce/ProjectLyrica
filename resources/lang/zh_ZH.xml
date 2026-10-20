@@ -139,6 +139,7 @@
     <translation key="settings_save">保存</translation>
     <translation key="settings_reset">重置</translation>
     <translation key="settings_cancel">关闭</translation>
+    <translation key="settings_save_and_close">保存并关闭</translation>
     <translation key="settings_no_changes">未检测到更改</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">按下按键...</translation>
     <translation key="key_editor_empty">(空)</translation>
     <translation key="key_editor_changes">{changed}/{total} 个按键已修改</translation>
+    <translation key="key_editor_save_and_close">保存并关闭</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

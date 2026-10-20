@@ -139,6 +139,7 @@
     <translation key="settings_save">Zapisz</translation>
     <translation key="settings_reset">Resetuj</translation>
     <translation key="settings_cancel">Zamknij</translation>
+    <translation key="settings_save_and_close">Zapisz i zamknij</translation>
     <translation key="settings_no_changes">Nie wykryto zmian</translation>
 
     <!-- ================= -->
@@ -178,6 +179,7 @@
     <translation key="key_editor_press_key">Naciśnij klawisz...</translation>
     <translation key="key_editor_empty">(pusty)</translation>
     <translation key="key_editor_changes">{changed}/{total} klawiszy zmienionych</translation>
+    <translation key="key_editor_save_and_close">Zapisz i zamknij</translation>
 
     <!-- ================= -->
     <!-- KEY EDITOR - BUTTONS -->

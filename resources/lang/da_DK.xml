@@ -139,6 +139,7 @@
     <translation key="settings_save">Gem</translation>
     <translation key="settings_reset">Nulstil</translation>
     <translation key="settings_cancel">Luk</translation>
+    <translation key="settings_save_and_close">Gem og luk</translation>
     <translation key="settings_no_changes">Ingen ændringer registreret</translation>
 
     <!-- ================= -->
