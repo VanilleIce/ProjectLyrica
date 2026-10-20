@@ -2,12 +2,15 @@
  
 [![CLA assistant](https://cla-assistant.io/readme/badge/VanilleIce/ProjectLyrica)](https://cla-assistant.io/VanilleIce/ProjectLyrica) 
  
-## 📜 License 
- 
-Project Lyrica is licensed under the **AGPLv3 with commercial use restriction**. 
-You may not use this software for any commercial purpose without explicit permission. 
- 
-[View Full License](LICENSE) | [Contributor Agreement](CLA.md) 
+## 📜 License
+
+**Project Lyrica is proprietary software.**
+
+- **Commercial use is prohibited**
+- **Redistribution is prohibited** (except unmodified, non-commercial)
+- **Modification is prohibited** (except for private use)
+
+[View Full License](LICENSE.md) | [Contributor Agreement](CLA.md) 
  
 --- 
  

@@ -1,5 +1,9 @@
-# Copyright (C) 2026 VanilleIce
-# This program is licensed under the GNU AGPLv3. See LICENSE for details.
+# Copyright (C) 2025-2026 VanilleIce
+# All rights reserved.
+#
+# Project Lyrica is proprietary software.
+# Commercial use, redistribution, and modification are prohibited.
+# See LICENSE.md for details.
 
 import logging
 from pathlib import Path
