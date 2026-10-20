@@ -130,7 +130,7 @@ We welcome your contributions! Please:
  
 - **Translation issues?** 
   Check language settings and report missing translations in [GitHub Issues](https://github.com/VanilleIce/ProjectLyrica/issues)
- 
+
 --- 
  
 ## 🎵 Supported Formats 
