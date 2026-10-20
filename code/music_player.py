@@ -68,6 +68,7 @@ class RampingState:
     begin_completed: bool = False
     speed_ramping_active: bool = False
     speed_ramp_target: float = DEFAULT_SPEED
+    paused_speed: float = 0.0
 
 
 @dataclass
@@ -601,8 +602,19 @@ class MusicPlayer:
         config = self.ramp_after_pause_config
         steps = max(1, config.get('steps', 12))
         progress = min(1.0, self.ramping.after_pause_counter / steps)
-        start_pct = 50
-        end_pct = 100
+
+        paused_speed = self.ramping.paused_speed
+        current_speed = self.current_speed
+
+        # Startwert: 50% des Werts VOR der Pause
+        if paused_speed > 0 and current_speed > 0:
+            start_speed = paused_speed * 0.5
+            start_speed = max(50.0, min(start_speed, current_speed))
+            start_pct = (start_speed / current_speed) * 100.0
+        else:
+            start_pct = 50.0
+
+        end_pct = 100.0
 
         ramp_factor *= max(0.01, (start_pct + (end_pct - start_pct) * progress) / 100.0)
         self.ramping.after_pause_counter += 1
@@ -729,12 +741,14 @@ class MusicPlayer:
         """Behandelt Pause. Gibt False zurück wenn abgebrochen."""
         ramping_state = self._get_ramping_state()
 
+        # Speed vor der Pause merken (für die Pause-Rampe)
+        ramping_state.paused_speed = self._get_current_actual_speed()
+
         with self.status_lock:
             self.playback.pause_count += 1
         pause_start = timer_func()
 
         self._release_all()
-        speed_before_pause = self._get_current_actual_speed()
 
         pause_start_time = timer_func()
         while self.pause_flag.is_set() and not self.stop_event.is_set():
@@ -781,6 +795,7 @@ class MusicPlayer:
             begin_completed=self.ramping.begin_completed,
             speed_ramping_active=self.speed_ramping.active,
             speed_ramp_target=self.speed_ramping.target_speed,
+            paused_speed=self.ramping.paused_speed,
         )
 
     def _restore_ramping_state(self, state: RampingState):
@@ -792,6 +807,7 @@ class MusicPlayer:
         self.ramping.end_counter = state.end_counter
         self.ramping.after_pause_counter = state.after_pause_counter
         self.ramping.begin_completed = state.begin_completed
+        self.ramping.paused_speed = state.paused_speed
         self.speed_ramping.active = state.speed_ramping_active
         self.speed_ramping.target_speed = state.speed_ramp_target
 

@@ -243,17 +243,8 @@ class KeyEditorWindow:
         self._refresh_all_button_colors()
 
     def _refresh_all_button_colors(self):
-        for key_id, btn in self.key_buttons.items():
-            is_selected = (key_id == self.currently_editing)
-            is_custom = self._is_key_custom(key_id)
-
-            if is_selected:
-                btn.configure(fg_color="#F24236", hover_color="#D32F2F")
-            else:
-                btn.configure(
-                    fg_color="#2E86AB" if is_custom else "#3A3A3A",
-                    hover_color="#1B5E7B" if is_custom else "#4A4A4A"
-                )
+        for key_id in self.key_buttons:
+            self._update_key_button(key_id)
 
     def _process_key_input(self, key_value: str):
         if not self.currently_editing:

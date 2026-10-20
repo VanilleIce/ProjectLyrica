@@ -998,14 +998,8 @@ class MusicApp:
             self._update_original_bpm_button(paused_file)
             logger.info("Resumed previous song (new song discarded)")
 
-        old_speed = (
-            self._paused_speed
-            if self._paused_speed is not None
-            else DEFAULT_SPEED
-        )
         new_speed = self.current_speed_value
-
-        self.player.current_speed = old_speed
+        self.player.current_speed = new_speed
 
         Thread(
             target=self._focus_sky_window,
@@ -1014,9 +1008,6 @@ class MusicApp:
         ).start()
 
         self.player.pause_flag.clear()
-
-        if old_speed != new_speed:
-            self.player._init_speed_ramping(new_speed)
 
         self._update_play_button_state("playing")
 
