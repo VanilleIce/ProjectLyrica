@@ -6,31 +6,28 @@
     <translation key="project_title">Projekt Lyrica</translation>
     <translation key="file_select_title">Lied auswählen</translation>
     <translation key="play_button_text">▶ Abspielen</translation>
+    <translation key="playing_button_text">Spielt...</translation>
+    <translation key="restart_button_text">Neustarten?</translation>
+    <translation key="pause_key_hint">oder benutze [pause_key]</translation>
     <translation key="supported_formats">Unterstützte Formate</translation>
+    <translation key="file_hint_no_file">⚠️ Wähle erst ein Lied aus</translation>
 
     <!-- ================= -->
     <!-- WARNUNGEN & FEHLER -->
     <!-- ================= -->
     <translation key="warning_title">Warnung</translation>
     <translation key="error_title">Fehler</translation>
+    <translation key="info_title">Information</translation>
     <translation key="choose_song_warning">Bitte wählen Sie ein Lied aus</translation>
-    <translation key="play_error_message">Fehler beim Abspielen der Musik</translation>
-    <translation key="security_error_path">Unerlaubter Dateipfad</translation>
-    <translation key="invalid_file_format">Ungültiges Dateiformat. Unterstützt: .json, .txt, .skysheet</translation>
-    <translation key="sky_window_not_found">Sky-Fenster nicht gefunden</translation>
-    <translation key="window_focus_error">Fenster konnte nicht in den Fokus gesetzt werden</translation>
-    <translation key="browser_open_error">Browser konnte nicht geöffnet werden</translation>
-    <translation key="sky_not_running">Sky muss laufen!</translation>
+    <translation key="sky_only_warning">Funktioniert nur in Sky!</translation>
+    <translation key="sky_window_focus_error">Sky-Fenster konnte nicht fokussiert werden. Stelle sicher, dass Sky läuft und sichtbar ist.</translation>
+    <translation key="invalid_song_format">Ungültiges Songformat</translation>
     <translation key="missing_song_notes">Song-Daten fehlen (songNotes)</translation>
     <translation key="invalid_speed">Ungültige Geschwindigkeit! Muss größer als 0 sein.</translation>
-    <translation key="invalid_song_format">Ungültiges Songformat</translation>
-
-    <translation key="sky_only_warning">Funktioniert nur in Sky cotl!</translation>
-    <translation key="sky_window_focus_error">Could not focus Sky window. Make sure Sky is running and visible.</translation>
-
+    <translation key="invalid_speed_number">Geschwindigkeit muss eine Zahl sein</translation>
     <translation key="speed_too_slow">Geschwindigkeit zu langsam. Mindestgeschwindigkeit ist {min_speed}. Wird auf {min_speed_again} gesetzt.</translation>
     <translation key="speed_too_fast">Geschwindigkeit zu schnell. Maximale Geschwindigkeit ist {max_speed}. Wird auf {max_speed_again} gesetzt.</translation>
-    <translation key="speed_setting_failed">Fehler beim Setzen der Geschwindigkeit: {error}</translation>
+    <translation key="no_bpm_found">Diese Song-Datei enthält keine BPM-Information. Verwende Standard-Geschwindigkeit</translation>
 
     <!-- ================= -->
     <!-- MUSIKPLAYER-FUNKTIONEN -->
@@ -40,33 +37,28 @@
     <translation key="disabled">Deaktiviert</translation>
     <translation key="duration">Dauer des Tastendrucks</translation>
     <translation key="speed_control">Geschwindigkeit</translation>
-    <translation key="current_speed">Aktuelle Geschwindigkeit</translation>
-    <translation key="preset">Preset</translation>
-    
+    <translation key="smooth_ramping">Sanfte Übergänge</translation>
+    <translation key="smooth_ramping_info">Sanfte Geschwindigkeitsänderung am Anfang und Ende des Liedes für natürlichere Übergänge.</translation>
+
     <!-- ================= -->
-    <!-- SPRACH- UND LAYOUT -->
+    <!-- SPRACHE & LAYOUT -->
     <!-- ================= -->
     <translation key="language_window_title">Sprachauswahl</translation>
     <translation key="select_language">Sprache auswählen:</translation>
     <translation key="language_saved">Sprache wurde gespeichert</translation>
+    <translation key="language_save_failed">Sprache konnte nicht gespeichert werden</translation>
+    <translation key="no_languages_configured">Keine Sprachen konfiguriert</translation>
     <translation key="save_button_text">Speichern</translation>
-    <translation key="smooth_ramping">Sanfte Übergänge</translation>
-    <translation key="smooth_ramping_info">Sanfte Geschwindigkeitsänderung am Anfang und Ende des Liedes für natürlichere Übergänge.</translation>
-    <translation key="playing_button_text">Spielt...</translation>
-    <translation key="paused_button_text">Pausiert</translation>
-    <translation key="restart_button_text">Neustarten?</translation>
-    <translation key="pause_key_hint">oder benutze [pause_key]</translation>
-    
+
     <!-- ================= -->
     <!-- VERSIONSINFORMATION -->
     <!-- ================= -->
     <translation key="update_available_text">Update verfügbar! v {}</translation>
     <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">Prüfung fehlgeschlagen</translation>
     <translation key="no_connection_text">Keine Verbindung zum Server</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- SKYCHECKER -->
     <!-- ================= -->
     <translation key="window_settings_title">Sky.exe Auswahl</translation>
     <translation key="select_sky_exe_instruction">Bitte wählen Sie die Sky.exe aus:</translation>
@@ -77,19 +69,18 @@
     <translation key="exe_path_invalid">Die ausgewählte Datei existiert nicht</translation>
 
     <!-- ================= -->
-    <!-- Settings Window -->
+    <!-- SETTINGS WINDOW - HEADER -->
     <!-- ================= -->
     <translation key="settings_window_title">Einstellungen</translation>
-    <translation key="info_title">Information</translation>
 
     <!-- ================= -->
-    <!-- Game Settings -->
+    <!-- SETTINGS - GAME -->
     <!-- ================= -->
     <translation key="settings_game_title">Spiel Einstellungen</translation>
     <translation key="settings_sky_path">Sky.exe Pfad</translation>
 
     <!-- ================= -->
-    <!-- Playback Settings -->
+    <!-- SETTINGS - PLAYBACK -->
     <!-- ================= -->
     <translation key="settings_playback_title">Wiedergabe Einstellungen</translation>
     <translation key="settings_key_durations">Tastendruck Dauer</translation>
@@ -98,20 +89,26 @@
     <translation key="settings_speed_presets_hint">(Komma-getrennte Werte)</translation>
     <translation key="settings_custom_keys">Benutzerdefinierte Tasten</translation>
     <translation key="settings_edit_keys">Tasten bearbeiten</translation>
-    <translation key="settings_custom_keys_status">{count} Tasten angepasst</translation>
     <translation key="settings_using_default_layout">Standardbelegung verwenden</translation>
-    <translation key="settings_custom_active">Custom (active)</translation>
-    <translation key="settings_custom_available">Custom available</translation>
+    <translation key="settings_custom_active">Benutzerdefiniert (aktiv)</translation>
+    <translation key="settings_custom_available">Benutzerdefiniert verfügbar</translation>
 
     <!-- ================= -->
-    <!-- Delays -->
+    <!-- SETTINGS - SPEED CHANGE -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Geschwindigkeitsänderung während der Wiedergabe</translation>
+    <translation key="settings_speed_change_enable_hint">Geschwindigkeitsänderung während der Wiedergabe per Tastenkürzel erlauben</translation>
+    <translation key="settings_speed_change_preset_keys">Preset-Tasten</translation>
+
+    <!-- ================= -->
+    <!-- SETTINGS - DELAYS -->
     <!-- ================= -->
     <translation key="settings_delays_title">Verzögerungen</translation>
     <translation key="settings_initial_delay">Start Verzögerung</translation>
     <translation key="settings_pause_delay">Pausen Verzögerung</translation>
 
     <!-- ================= -->
-    <!-- Ramping -->
+    <!-- SETTINGS - RAMPING -->
     <!-- ================= -->
     <translation key="settings_ramping_title">Geschwindigkeits-Übergänge</translation>
     <translation key="settings_ramping_start">Start Schritte</translation>
@@ -120,9 +117,12 @@
     <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
     <translation key="settings_ramping_after_pause">Nach Pause Schritte</translation>
     <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Speed-Ramping</translation>
+    <translation key="settings_speed_transition">Übergangszeit</translation>
+    <translation key="settings_speed_transition_hint">(Sekunden für sanfte Übergänge)</translation>
 
     <!-- ================= -->
-    <!-- Interface -->
+    <!-- SETTINGS - INTERFACE -->
     <!-- ================= -->
     <translation key="settings_interface_title">Oberfläche</translation>
     <translation key="settings_language">Sprache</translation>
@@ -131,22 +131,19 @@
     <translation key="theme_light">Hell</translation>
     <translation key="settings_keyboard_layout">Tastatur Layout</translation>
     <translation key="settings_pause_key">Pause Taste</translation>
-
-    <translation key="settings_speed_change_title">Geschwindigkeitsänderung während der Wiedergabe</translation>
-    <translation key="settings_speed_change_enable_hint">Enable speed change during playback using keyboard shortcuts</translation>
-    <translation key="settings_speed_change_preset_keys">Preset-Tasten</translation>
-    <translation key="settings_speed_change_ramp_steps">Geschwindigkeits-Übergangsschritte</translation>
+    <translation key="settings_reset_speed_key">Reset-Geschwindigkeit Taste</translation>
 
     <!-- ================= -->
-    <!-- Buttons -->
+    <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Speichern</translation>
-    <translation key="settings_no_changes">Keine Änderungen erkannt</translation>
     <translation key="settings_reset">Zurücksetzen</translation>
-    <translation key="settings_cancel">Abbrechen</translation>
+    <translation key="settings_cancel">Schliessen</translation>
+    <translation key="settings_save_and_close">Speichern &amp; Schließen</translation>
+    <translation key="settings_no_changes">Keine Änderungen erkannt</translation>
 
     <!-- ================= -->
-    <!-- Messages -->
+    <!-- SETTINGS - MESSAGES -->
     <!-- ================= -->
     <translation key="settings_saved">Einstellungen gespeichert!</translation>
     <translation key="settings_save_error">Fehler beim Speichern der Einstellungen</translation>
@@ -160,55 +157,46 @@
     <translation key="custom_layout_not_found">Benutzerdefiniertes Layout nicht gefunden. Automatisch zu {fallback_layout} gewechselt.</translation>
 
     <!-- ================= -->
-    <!-- Validation Errors -->
+    <!-- SETTINGS - VALIDATION ERRORS -->
     <!-- ================= -->
     <translation key="settings_error_numbers">Bitte geben Sie gültige Zahlen ein</translation>
     <translation key="settings_error_positive">Bitte geben Sie positive Werte ein</translation>
-    <translation key="settings_error_empty">Bitte füllen Sie alle Felder aus</translation>
-    <translation key="settings_error_pause_key">Pause-Taste muss genau ein Zeichen sein</translation>
     <translation key="settings_error_general">Ungültige Eingabe</translation>
+    <translation key="settings_error_pause_key">Pause-Taste muss genau ein Zeichen sein</translation>
+    <translation key="settings_error_reset_speed_key">Reset-Geschwindigkeit Taste muss genau ein Zeichen sein</translation>
 
     <!-- ================= -->
-    <!-- Key Editor -->
+    <!-- KEY EDITOR - HEADER & INSTRUCTIONS -->
     <!-- ================= -->
     <translation key="key_editor_title">Tastenbelegung Editor</translation>
     <translation key="key_editor_instructions">Klicke auf eine Taste unten und drücke dann die gewünschte Belegung auf deiner Tastatur. Escape zum Abbrechen, Backspace zum Löschen.</translation>
+
+    <!-- ================= -->
+    <!-- KEY EDITOR - STATUS -->
+    <!-- ================= -->
     <translation key="key_editor_current_key">Aktuelle Taste:</translation>
     <translation key="key_editor_no_selection">Keine Taste ausgewählt</translation>
     <translation key="key_editor_press_key">Taste drücken...</translation>
     <translation key="key_editor_empty">(leer)</translation>
-    <translation key="key_editor_delete">Delete Custom</translation>
     <translation key="key_editor_changes">{changed}/{total} Tasten geändert</translation>
-    <translation key="key_editor_saved_settings_hint">Custom layout saved. Please click 'Save' in Settings for changes to take effect.</translation>
+    <translation key="key_editor_save_and_close">Speichern &amp; Schließen</translation>
 
     <!-- ================= -->
-    <!-- Status Labels -->
-    <!-- ================= -->
-    <translation key="key_editor_default">Standard</translation>
-    <translation key="key_editor_custom">Angepasst</translation>
-    <translation key="key_editor_empty_error">Taste {key} darf nicht leer sein</translation>
-
-    <!-- ================= -->
-    <!-- Buttons -->
+    <!-- KEY EDITOR - BUTTONS -->
     <!-- ================= -->
     <translation key="key_editor_save">Speichern</translation>
     <translation key="key_editor_reset_all">Alle zurücksetzen</translation>
-    <translation key="key_editor_import">Importieren</translation>
+    <translation key="key_editor_delete">Benutzerdefiniert löschen</translation>
     <translation key="key_editor_cancel">Abbrechen</translation>
 
     <!-- ================= -->
-    <!-- Dialog Messages -->
+    <!-- KEY EDITOR - MESSAGES -->
     <!-- ================= -->
-    <translation key="key_editor_saved">Tastenbelegung gespeichert!</translation>
-    <translation key="key_editor_save_error">Fehler beim Speichern der Tastenbelegung</translation>
+    <translation key="key_editor_no_changes">Keine Änderungen am benutzerdefinierten Layout.</translation>
+    <translation key="key_editor_unconfirm_changes">Du hast ungespeicherte Änderungen. Vor dem Schließen speichern?</translation>
     <translation key="key_editor_reset_confirm">Alle Tasten auf Standardwerte zurücksetzen?</translation>
-    <translation key="key_editor_import_title">Tastenbelegung importieren</translation>
-    <translation key="key_editor_import_success">Tastenbelegung importiert</translation>
-    <translation key="key_editor_import_error">Fehler beim Importieren der Tastenbelegung</translation>
-    <translation key="key_editor_no_changes">No changes made to custom layout.</translation>
-    <translation key="key_editor_unconfirm_changes">You have unsaved changes. Save before closing?</translation>
     <translation key="key_editor_delete_custom_layout_confirm">Benutzerdefiniertes Layout löschen und zum Standard-Layout zurückkehren?</translation>
-    <translation key="key_editor_custom_layout_saved_activated">Custom layout saved and activated.</translation>
-    <translation key="key_editor_error_deleting_custom_layout">Fehler beim Löschen des benutzerdefinierten Layouts.</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Benutzerdefiniertes Layout gespeichert und aktiviert.</translation>
+    <translation key="key_editor_custom_deleted">Benutzerdefiniertes Layout gelöscht. Zu {layout} gewechselt.</translation>
 
 </translations>
