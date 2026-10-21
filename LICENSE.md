@@ -120,4 +120,26 @@ For questions regarding the use of the Software, please contact the Author.
 
 ---
 
+## § 11 Contributions
+
+(1) The Author welcomes contributions to the Software in the form of
+    pull requests, bug reports, feature suggestions, or other feedback.
+
+(2) By submitting a contribution (e.g., a pull request), the contributor
+    grants the Author a **perpetual, worldwide, non-exclusive, royalty-free,
+    irrevocable** license to use, reproduce, modify, and distribute the
+    contribution as part of the Software.
+
+(3) The contributor confirms that they have the right to grant this
+    license and that their contribution does not infringe any third-party
+    rights.
+
+(4) The Author reserves the right to **reject or modify** any contribution
+    at their sole discretion.
+
+(5) Contributions are **voluntary** and **unpaid**. The contributor
+    receives no compensation for their contribution.
+
+---
+
 **Copyright (C) 2025–2026 VanilleIce. All rights reserved.**
