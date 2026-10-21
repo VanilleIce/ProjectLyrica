@@ -4,7 +4,13 @@ We take the security of our software and our users' data very seriously. If you 
 
 ### Reporting a Vulnerability
 
-**Please report vulnerabilities via Issues.**
+If you discover a security vulnerability in Project Lyrica, please
+**do not** open a public issue.
+
+Instead, report it privately by:
+
+   Opening a **private security advisory** on GitHub:
+   https://github.com/VanilleIce/ProjectLyrica/security/advisories
 
 ### Responsible Disclosure
 
