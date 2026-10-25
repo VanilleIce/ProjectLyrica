@@ -161,7 +161,4 @@ cython_debug/
 #.idea/
 
 /.github/workflows
-code/.ProjectLyrica.py
-code/-ProjectLyrica.py
-code/olProjectLyrica.py
-/code/save
+changelog.txt
