@@ -6,31 +6,28 @@
     <translation key="project_title">Project Lyrica</translation>
     <translation key="file_select_title">Selecteer nummer</translation>
     <translation key="play_button_text">▶ Afspelen</translation>
+    <translation key="playing_button_text">Speelt...</translation>
+    <translation key="restart_button_text">Opnieuw starten?</translation>
+    <translation key="pause_key_hint">of gebruik [pause_key]</translation>
     <translation key="supported_formats">Ondersteunde formaten</translation>
+    <translation key="file_hint_no_file">⚠️ Selecteer eerst een nummer</translation>
 
     <!-- ================= -->
     <!-- WAARSCHUWINGEN & FOUTCONDITIES -->
     <!-- ================= -->
     <translation key="warning_title">Waarschuwing</translation>
     <translation key="error_title">Fout</translation>
+    <translation key="info_title">Informatie</translation>
     <translation key="choose_song_warning">Selecteer een nummer voordat je doorgaat.</translation>
-    <translation key="play_error_message">Fout bij het afspelen van muziek</translation>
-    <translation key="security_error_path">Niet-geautoriseerd bestandspad</translation>
-    <translation key="invalid_file_format">Ongeldig bestandsformaat. Ondersteund: .json, .txt, .skysheet</translation>
-    <translation key="sky_window_not_found">Sky-venster niet gevonden</translation>
-    <translation key="window_focus_error">Venster kan niet op de voorgrond worden gebracht</translation>
-    <translation key="browser_open_error">Browser kon niet worden geopend</translation>
-    <translation key="sky_not_running">Sky moet actief zijn!</translation>
+    <translation key="sky_only_warning">Werkt alleen in Sky!</translation>
+    <translation key="sky_window_focus_error">Kon Sky-venster niet focussen. Zorg ervoor dat Sky actief en zichtbaar is.</translation>
+    <translation key="invalid_song_format">Ongeldig songformaat</translation>
     <translation key="missing_song_notes">Songdata ontbreekt (songNotes)</translation>
     <translation key="invalid_speed">Ongeldige snelheid! Moet groter zijn dan 0.</translation>
-    <translation key="invalid_song_format">Ongeldig songformaat</translation>
-
-    <translation key="sky_only_warning">Werkt alleen in Sky! Start alstublieft Sky Children of the Light.</translation>
-    <translation key="sky_window_focus_error">Kon Sky-venster niet focussen. Zorg ervoor dat Sky actief en zichtbaar is.</translation>
-
+    <translation key="invalid_speed_number">Snelheid moet een geldig nummer zijn</translation>
     <translation key="speed_too_slow">Snelheid te langzaam. Minimale snelheid is {min_speed}. Wordt ingesteld op {min_speed_again}.</translation>
     <translation key="speed_too_fast">Snelheid te snel. Maximale snelheid is {max_speed}. Wordt ingesteld op {max_speed_again}.</translation>
-    <translation key="speed_setting_failed">Fout bij instellen snelheid: {error}</translation>
+    <translation key="no_bpm_found">Dit songbestand bevat geen BPM-informatie. Standaardsnelheid wordt gebruikt</translation>
 
     <!-- ================= -->
     <!-- MUZIEKSPELERFUNCTIES -->
@@ -40,33 +37,28 @@
     <translation key="disabled">Uitgeschakeld</translation>
     <translation key="duration">Toetsdrukduur</translation>
     <translation key="speed_control">Snelheid</translation>
-    <translation key="current_speed">Huidige snelheid</translation>
-    <translation key="preset">Preset</translation>
-    
+    <translation key="smooth_ramping">Zachte Overgangen</translation>
+    <translation key="smooth_ramping_info">Past de snelheid aan het begin en einde van het lied soepel aan voor natuurlijkere overgangen.</translation>
+
     <!-- ================= -->
     <!-- TAAL & LAYOUT -->
     <!-- ================= -->
     <translation key="language_window_title">Taalkeuze</translation>
     <translation key="select_language">Kies taal:</translation>
     <translation key="language_saved">Taal is opgeslagen</translation>
+    <translation key="language_save_failed">Kon taal niet opslaan</translation>
+    <translation key="no_languages_configured">Geen talen geconfigureerd</translation>
     <translation key="save_button_text">Opslaan</translation>
-    <translation key="smooth_ramping">Zachte Overgangen</translation>
-    <translation key="smooth_ramping_info">Past de snelheid aan het begin en einde van het lied soepel aan voor natuurlijkere overgangen.</translation>
-    <translation key="playing_button_text">Speelt...</translation>
-    <translation key="paused_button_text">Gepauzeerd</translation>
-    <translation key="restart_button_text">Opnieuw starten?</translation>
-    <translation key="pause_key_hint">of gebruik [pause_key]</translation>
-    
+
     <!-- ================= -->
     <!-- VERSIE-INFORMATIE -->
     <!-- ================= -->
     <translation key="update_available_text">Update beschikbaar! v {}</translation>
     <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">Controle mislukt</translation>
     <translation key="no_connection_text">Geen verbinding met server</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- SKYCHECKER -->
     <!-- ================= -->
     <translation key="window_settings_title">Sky.exe selectie</translation>
     <translation key="select_sky_exe_instruction">Selecteer de Sky.exe:</translation>
@@ -77,19 +69,18 @@
     <translation key="exe_path_invalid">Het geselecteerde bestand bestaat niet</translation>
 
     <!-- ================= -->
-    <!-- Settings Window -->
+    <!-- SETTINGS WINDOW - HEADER -->
     <!-- ================= -->
     <translation key="settings_window_title">Instellingen</translation>
-    <translation key="info_title">Informatie</translation>
 
     <!-- ================= -->
-    <!-- Game Settings -->
+    <!-- SETTINGS - GAME -->
     <!-- ================= -->
     <translation key="settings_game_title">Spelinstellingen</translation>
     <translation key="settings_sky_path">Sky.exe pad</translation>
 
     <!-- ================= -->
-    <!-- Playback Settings -->
+    <!-- SETTINGS - PLAYBACK -->
     <!-- ================= -->
     <translation key="settings_playback_title">Afspeelinstellingen</translation>
     <translation key="settings_key_durations">Toetsdrukduur</translation>
@@ -98,20 +89,26 @@
     <translation key="settings_speed_presets_hint">(waarden gescheiden door komma's)</translation>
     <translation key="settings_custom_keys">Aangepaste Toetsen</translation>
     <translation key="settings_edit_keys">Toetsen Bewerken</translation>
-    <translation key="settings_custom_keys_status">{count} toetsen aangepast</translation>
     <translation key="settings_using_default_layout">Standaardindeling gebruiken</translation>
     <translation key="settings_custom_active">Aangepast (actief)</translation>
     <translation key="settings_custom_available">Aangepast beschikbaar</translation>
 
     <!-- ================= -->
-    <!-- Delays -->
+    <!-- SETTINGS - SPEED CHANGE -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Snelheidsverandering Tijdens Afspelen</translation>
+    <translation key="settings_speed_change_enable_hint">Snelheidsverandering tijdens afspelen inschakelen met toetsenbordsnelkoppelingen</translation>
+    <translation key="settings_speed_change_preset_keys">Preset-toetsen</translation>
+
+    <!-- ================= -->
+    <!-- SETTINGS - DELAYS -->
     <!-- ================= -->
     <translation key="settings_delays_title">Vertragingen</translation>
     <translation key="settings_initial_delay">Startvertraging</translation>
     <translation key="settings_pause_delay">Pauzevertraging</translation>
 
     <!-- ================= -->
-    <!-- Ramping -->
+    <!-- SETTINGS - RAMPING -->
     <!-- ================= -->
     <translation key="settings_ramping_title">Snelheidsovergangen</translation>
     <translation key="settings_ramping_start">Startstappen</translation>
@@ -120,9 +117,12 @@
     <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
     <translation key="settings_ramping_after_pause">Stappen na Pauze</translation>
     <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Snelheidsramping</translation>
+    <translation key="settings_speed_transition">Overgangstijd</translation>
+    <translation key="settings_speed_transition_hint">(seconden voor vloeiende overgangen)</translation>
 
     <!-- ================= -->
-    <!-- Interface -->
+    <!-- SETTINGS - INTERFACE -->
     <!-- ================= -->
     <translation key="settings_interface_title">Interface</translation>
     <translation key="settings_language">Taal</translation>
@@ -131,21 +131,19 @@
     <translation key="theme_light">Licht</translation>
     <translation key="settings_keyboard_layout">Toetsenbordindeling</translation>
     <translation key="settings_pause_key">Pauze Toets</translation>
-
-    <translation key="settings_speed_change_title">Snelheidsverandering Tijdens Afspelen</translation>
-    <translation key="settings_speed_change_enable_hint">Snelheidsverandering tijdens afspelen inschakelen met toetsenbordsnelkoppelingen</translation>
-    <translation key="settings_speed_change_preset_keys">Preset-toetsen</translation>
-    <translation key="settings_speed_change_ramp_steps">Snelheidsovergangsstappen</translation>
+    <translation key="settings_reset_speed_key">Snelheid Reset Toets</translation>
 
     <!-- ================= -->
-    <!-- Buttons -->
+    <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Opslaan</translation>
     <translation key="settings_reset">Resetten</translation>
-    <translation key="settings_cancel">Annuleren</translation>
+    <translation key="settings_cancel">Sluiten</translation>
+    <translation key="settings_save_and_close">Opslaan &amp; Sluiten</translation>
+    <translation key="settings_no_changes">Geen wijzigingen gedetecteerd</translation>
 
     <!-- ================= -->
-    <!-- Messages -->
+    <!-- SETTINGS - MESSAGES -->
     <!-- ================= -->
     <translation key="settings_saved">Instellingen opgeslagen!</translation>
     <translation key="settings_save_error">Fout bij opslaan instellingen</translation>
@@ -159,55 +157,46 @@
     <translation key="custom_layout_not_found">Aangepaste indeling niet gevonden. Automatisch overgeschakeld naar {fallback_layout}.</translation>
 
     <!-- ================= -->
-    <!-- Validation Errors -->
+    <!-- SETTINGS - VALIDATION ERRORS -->
     <!-- ================= -->
     <translation key="settings_error_numbers">Voer geldige nummers in</translation>
     <translation key="settings_error_positive">Voer positieve waarden in</translation>
-    <translation key="settings_error_empty">Vul alle velden in</translation>
-    <translation key="settings_error_pause_key">Pauze toets moet precies één teken zijn</translation>
     <translation key="settings_error_general">Ongeldige invoer</translation>
+    <translation key="settings_error_pause_key">Pauze toets moet precies één teken zijn</translation>
+    <translation key="settings_error_reset_speed_key">Snelheid reset toets moet precies één teken zijn</translation>
 
     <!-- ================= -->
-    <!-- Key Editor -->
+    <!-- KEY EDITOR - HEADER & INSTRUCTIONS -->
     <!-- ================= -->
     <translation key="key_editor_title">Toetsindeling Editor</translation>
     <translation key="key_editor_instructions">Klik op een toets hieronder en druk dan op de gewenste toewijzing op je toetsenbord. Escape om te annuleren, Backspace om te verwijderen.</translation>
+
+    <!-- ================= -->
+    <!-- KEY EDITOR - STATUS -->
+    <!-- ================= -->
     <translation key="key_editor_current_key">Huidige toets:</translation>
     <translation key="key_editor_no_selection">Geen toets geselecteerd</translation>
     <translation key="key_editor_press_key">Druk op een toets...</translation>
     <translation key="key_editor_empty">(leeg)</translation>
-    <translation key="key_editor_delete">Aangepaste Verwijderen</translation>
     <translation key="key_editor_changes">{changed}/{total} toetsen gewijzigd</translation>
-    <translation key="key_editor_saved_settings_hint">Aangepaste indeling opgeslagen. Klik op 'Opslaan' in Instellingen om wijzigingen door te voeren.</translation>
+    <translation key="key_editor_save_and_close">Opslaan &amp; Sluiten</translation>
 
     <!-- ================= -->
-    <!-- Status Labels -->
-    <!-- ================= -->
-    <translation key="key_editor_default">Standaard</translation>
-    <translation key="key_editor_custom">Aangepast</translation>
-    <translation key="key_editor_empty_error">Toets {key} mag niet leeg zijn</translation>
-
-    <!-- ================= -->
-    <!-- Buttons -->
+    <!-- KEY EDITOR - BUTTONS -->
     <!-- ================= -->
     <translation key="key_editor_save">Opslaan</translation>
     <translation key="key_editor_reset_all">Alles Resetten</translation>
-    <translation key="key_editor_import">Importeren</translation>
+    <translation key="key_editor_delete">Aangepaste Verwijderen</translation>
     <translation key="key_editor_cancel">Annuleren</translation>
 
     <!-- ================= -->
-    <!-- Dialog Messages -->
+    <!-- KEY EDITOR - MESSAGES -->
     <!-- ================= -->
-    <translation key="key_editor_saved">Toetsindeling opgeslagen!</translation>
-    <translation key="key_editor_save_error">Fout bij opslaan toetsindeling</translation>
-    <translation key="key_editor_reset_confirm">Alle toetsen resetten naar standaardwaarden?</translation>
-    <translation key="key_editor_import_title">Toetsindeling Importeren</translation>
-    <translation key="key_editor_import_success">Toetsindeling geïmporteerd</translation>
-    <translation key="key_editor_import_error">Fout bij importeren toetsindeling</translation>
     <translation key="key_editor_no_changes">Geen wijzigingen aangebracht in aangepaste indeling.</translation>
     <translation key="key_editor_unconfirm_changes">Je hebt niet-opgeslagen wijzigingen. Opslaan voor sluiten?</translation>
+    <translation key="key_editor_reset_confirm">Alle toetsen resetten naar standaardwaarden?</translation>
     <translation key="key_editor_delete_custom_layout_confirm">Aangepaste indeling verwijderen en terugkeren naar standaardindeling?</translation>
     <translation key="key_editor_custom_layout_saved_activated">Aangepaste indeling opgeslagen en geactiveerd.</translation>
-    <translation key="key_editor_error_deleting_custom_layout">Fout bij verwijderen aangepaste indeling.</translation>
+    <translation key="key_editor_custom_deleted">Aangepaste indeling verwijderd. Overgeschakeld naar {layout}.</translation>
 
 </translations>

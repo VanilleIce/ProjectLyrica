@@ -5,124 +5,124 @@
     <!-- ==================== -->
     <translation key="project_title">Projet Lyrica</translation>
     <translation key="file_select_title">Sélectionner une chanson</translation>
-    <translation key="play_button_text">▶ Lecture</translation>
+    <translation key="play_button_text">▶ Lire</translation>
+    <translation key="playing_button_text">Lecture en cours...</translation>
+    <translation key="restart_button_text">Redémarrer ?</translation>
+    <translation key="pause_key_hint">ou utilise [pause_key]</translation>
     <translation key="supported_formats">Formats pris en charge</translation>
+    <translation key="file_hint_no_file">⚠️ Sélectionne d'abord une chanson</translation>
 
     <!-- ================= -->
-    <!-- AVERTISSEMENTS ET ERREURS -->
+    <!-- AVERTISSEMENTS & ERREURS -->
     <!-- ================= -->
     <translation key="warning_title">Avertissement</translation>
     <translation key="error_title">Erreur</translation>
-    <translation key="choose_song_warning">Veuillez sélectionner une chanson avant de continuer.</translation>
-    <translation key="play_error_message">Erreur lors de la lecture de la musique</translation>
-    <translation key="security_error_path">Chemin de fichier non autorisé</translation>
-    <translation key="invalid_file_format">Format de fichier invalide. Formats supportés : .json, .txt, .skysheet</translation>
-    <translation key="sky_window_not_found">Fenêtre Sky introuvable</translation>
-    <translation key="window_focus_error">Impossible de mettre la fenêtre au premier plan</translation>
-    <translation key="browser_open_error">Impossible d'ouvrir le navigateur</translation>
-    <translation key="sky_not_running">Sky doit être en cours d'exécution !</translation>
+    <translation key="info_title">Information</translation>
+    <translation key="choose_song_warning">Veuillez sélectionner une chanson</translation>
+    <translation key="sky_only_warning">Fonctionne uniquement dans Sky !</translation>
+    <translation key="sky_window_focus_error">Impossible de mettre au premier plan la fenêtre de Sky. Assure-toi que Sky est en cours d'exécution et visible.</translation>
+    <translation key="invalid_song_format">Format de chanson invalide</translation>
     <translation key="missing_song_notes">Données de chanson manquantes (songNotes)</translation>
     <translation key="invalid_speed">Vitesse invalide ! Doit être supérieure à 0.</translation>
-    <translation key="invalid_song_format">Format de chanson non valide</translation>
-
-    <translation key="sky_only_warning">Fonctionne uniquement dans Sky ! Veuillez démarrer Sky Children of the Light.</translation>
-    <translation key="sky_window_focus_error">Impossible de focaliser la fenêtre Sky. Assurez-vous que Sky est en cours d'exécution et visible.</translation>
-
-    <translation key="speed_too_slow">Vitesse trop lente. La vitesse minimale est {min_speed}. Réglée sur {min_speed_again}.</translation>
-    <translation key="speed_too_fast">Vitesse trop rapide. La vitesse maximale est {max_speed}. Réglée sur {max_speed_again}.</translation>
-    <translation key="speed_setting_failed">Erreur lors du réglage de la vitesse : {error}</translation>
+    <translation key="invalid_speed_number">La vitesse doit être un nombre valide</translation>
+    <translation key="speed_too_slow">Vitesse trop lente. La vitesse minimale est {min_speed}. Réglage sur {min_speed_again}.</translation>
+    <translation key="speed_too_fast">Vitesse trop rapide. La vitesse maximale est {max_speed}. Réglage sur {max_speed_again}.</translation>
+    <translation key="no_bpm_found">Ce fichier de chanson ne contient pas d'informations BPM. Utilisation de la vitesse par défaut</translation>
 
     <!-- ================= -->
     <!-- FONCTIONS DU LECTEUR DE MUSIQUE -->
     <!-- ================= -->
-    <translation key="key_press">Appui sur la touche</translation>
+    <translation key="key_press">Pression de touche</translation>
     <translation key="enabled">Activé</translation>
     <translation key="disabled">Désactivé</translation>
-    <translation key="duration">Durée de l'appui sur la touche</translation>
+    <translation key="duration">Durée de la pression de touche</translation>
     <translation key="speed_control">Vitesse</translation>
-    <translation key="current_speed">Vitesse actuelle</translation>
-    <translation key="preset">Préréglage</translation>
-    
+    <translation key="smooth_ramping">Transitions Fluides</translation>
+    <translation key="smooth_ramping_info">Ajuste en douceur la vitesse au début et à la fin de la chanson pour des transitions plus naturelles.</translation>
+
     <!-- ================= -->
-    <!-- LANGUE ET MISE EN PAGE -->
+    <!-- LANGUE & MISE EN PAGE -->
     <!-- ================= -->
     <translation key="language_window_title">Sélection de la langue</translation>
     <translation key="select_language">Sélectionner la langue :</translation>
     <translation key="language_saved">Langue enregistrée</translation>
+    <translation key="language_save_failed">Impossible d'enregistrer la langue</translation>
+    <translation key="no_languages_configured">Aucune langue configurée</translation>
     <translation key="save_button_text">Enregistrer</translation>
-    <translation key="smooth_ramping">Transitions Douces</translation>
-    <translation key="smooth_ramping_info">Ajuste en douceur la vitesse au début et à la fin de la chanson pour des transitions plus naturelles.</translation>
-    <translation key="playing_button_text">Joue...</translation>
-    <translation key="paused_button_text">En pause</translation>
-    <translation key="restart_button_text">Redémarrer ?</translation>
-    <translation key="pause_key_hint">ou utiliser [pause_key]</translation>
-    
+
     <!-- ================= -->
-    <!-- INFORMATION SUR LA VERSION -->
+    <!-- INFORMATIONS DE VERSION -->
     <!-- ================= -->
     <translation key="update_available_text">Mise à jour disponible ! v {}</translation>
     <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">Échec de la vérification</translation>
     <translation key="no_connection_text">Pas de connexion au serveur</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- SKYCHECKER -->
     <!-- ================= -->
     <translation key="window_settings_title">Sélection de Sky.exe</translation>
-    <translation key="select_sky_exe_instruction">Veuillez sélectionner le Sky.exe :</translation>
+    <translation key="select_sky_exe_instruction">Veuillez sélectionner le fichier Sky.exe :</translation>
     <translation key="select_sky_exe">Sélectionner Sky.exe</translation>
-    <translation key="exe_path_required">Vous devez sélectionner le Sky.exe pour continuer</translation>
+    <translation key="exe_path_required">Tu dois sélectionner Sky.exe pour continuer</translation>
     <translation key="exe_path_required_exit">L'application va se fermer car Sky.exe est requis</translation>
     <translation key="must_select_sky">Veuillez sélectionner le fichier Sky.exe</translation>
     <translation key="exe_path_invalid">Le fichier sélectionné n'existe pas</translation>
 
     <!-- ================= -->
-    <!-- Settings Window -->
+    <!-- SETTINGS WINDOW - HEADER -->
     <!-- ================= -->
     <translation key="settings_window_title">Paramètres</translation>
-    <translation key="info_title">Information</translation>
 
     <!-- ================= -->
-    <!-- Game Settings -->
+    <!-- SETTINGS - GAME -->
     <!-- ================= -->
     <translation key="settings_game_title">Paramètres du Jeu</translation>
     <translation key="settings_sky_path">Chemin de Sky.exe</translation>
 
     <!-- ================= -->
-    <!-- Playback Settings -->
+    <!-- SETTINGS - PLAYBACK -->
     <!-- ================= -->
     <translation key="settings_playback_title">Paramètres de Lecture</translation>
-    <translation key="settings_key_durations">Durée d'Appui des Touches</translation>
+    <translation key="settings_key_durations">Durées de Pression de Touches</translation>
     <translation key="settings_key_durations_hint">(secondes séparées par des virgules)</translation>
     <translation key="settings_speed_presets">Vitesses</translation>
     <translation key="settings_speed_presets_hint">(valeurs séparées par des virgules)</translation>
     <translation key="settings_custom_keys">Touches Personnalisées</translation>
     <translation key="settings_edit_keys">Modifier les Touches</translation>
-    <translation key="settings_custom_keys_status">{count} touches personnalisées</translation>
-    <translation key="settings_using_default_layout">Utiliser la disposition par défaut</translation>
+    <translation key="settings_using_default_layout">Utilisation de la disposition par défaut</translation>
     <translation key="settings_custom_active">Personnalisé (actif)</translation>
     <translation key="settings_custom_available">Personnalisé disponible</translation>
 
     <!-- ================= -->
-    <!-- Delays -->
+    <!-- SETTINGS - SPEED CHANGE -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Changement de Vitesse Pendant la Lecture</translation>
+    <translation key="settings_speed_change_enable_hint">Activer le changement de vitesse pendant la lecture via des raccourcis clavier</translation>
+    <translation key="settings_speed_change_preset_keys">Touches Prédéfinies</translation>
+
+    <!-- ================= -->
+    <!-- SETTINGS - DELAYS -->
     <!-- ================= -->
     <translation key="settings_delays_title">Délais</translation>
-    <translation key="settings_initial_delay">Délai Initial</translation>
+    <translation key="settings_initial_delay">Délai de Démarrage</translation>
     <translation key="settings_pause_delay">Délai de Pause</translation>
 
     <!-- ================= -->
-    <!-- Ramping -->
+    <!-- SETTINGS - RAMPING -->
     <!-- ================= -->
     <translation key="settings_ramping_title">Transitions de Vitesse</translation>
-    <translation key="settings_ramping_start">Étapes de Démarrage</translation>
+    <translation key="settings_ramping_start">Étapes de Début</translation>
     <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
     <translation key="settings_ramping_end">Étapes de Fin</translation>
     <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
     <translation key="settings_ramping_after_pause">Étapes après Pause</translation>
     <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Ramping de Vitesse</translation>
+    <translation key="settings_speed_transition">Temps de Transition</translation>
+    <translation key="settings_speed_transition_hint">(secondes pour des transitions fluides)</translation>
 
     <!-- ================= -->
-    <!-- Interface -->
+    <!-- SETTINGS - INTERFACE -->
     <!-- ================= -->
     <translation key="settings_interface_title">Interface</translation>
     <translation key="settings_language">Langue</translation>
@@ -131,83 +131,72 @@
     <translation key="theme_light">Clair</translation>
     <translation key="settings_keyboard_layout">Disposition du Clavier</translation>
     <translation key="settings_pause_key">Touche de Pause</translation>
-
-    <translation key="settings_speed_change_title">Changement de Vitesse Pendant la Lecture</translation>
-    <translation key="settings_speed_change_enable_hint">Activer le changement de vitesse pendant la lecture à l'aide de raccourcis clavier</translation>
-    <translation key="settings_speed_change_preset_keys">Touches de Préréglage</translation>
-    <translation key="settings_speed_change_ramp_steps">Étapes de Transition de Vitesse</translation>
+    <translation key="settings_reset_speed_key">Touche de Réinitialisation de Vitesse</translation>
 
     <!-- ================= -->
-    <!-- Buttons -->
+    <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Enregistrer</translation>
     <translation key="settings_reset">Réinitialiser</translation>
-    <translation key="settings_cancel">Annuler</translation>
+    <translation key="settings_cancel">Fermer</translation>
+    <translation key="settings_save_and_close">Enregistrer et fermer</translation>
+    <translation key="settings_no_changes">Aucun changement détecté</translation>
 
     <!-- ================= -->
-    <!-- Messages -->
+    <!-- SETTINGS - MESSAGES -->
     <!-- ================= -->
     <translation key="settings_saved">Paramètres enregistrés !</translation>
     <translation key="settings_save_error">Erreur lors de l'enregistrement des paramètres</translation>
     <translation key="settings_reset_confirm">Réinitialiser tous les paramètres aux valeurs par défaut ?</translation>
     <translation key="settings_reset_success">Paramètres réinitialisés !</translation>
     <translation key="settings_reset_error">Erreur lors de la réinitialisation</translation>
-    <translation key="settings_restart_required">Certains paramètres nécessitent un redémarrage de l'application pour prendre effet.</translation>
+    <translation key="settings_restart_required">Certains paramètres nécessitent un redémarrage pour prendre effet.</translation>
     <translation key="settings_restart_now">Redémarrer maintenant ?</translation>
-    <translation key="settings_restart_later">Paramètres enregistrés. Veuillez redémarrer l'application ultérieurement.</translation>
+    <translation key="settings_restart_later">Paramètres enregistrés. Veuillez redémarrer l'application plus tard.</translation>
     <translation key="settings_restart_failed">Redémarrage automatique échoué. Veuillez redémarrer l'application manuellement.</translation>
-    <translation key="custom_layout_not_found">Disposition personnalisée non trouvée. Passée automatiquement à {fallback_layout}.</translation>
+    <translation key="custom_layout_not_found">Disposition personnalisée introuvable. Basculement automatique vers {fallback_layout}.</translation>
 
     <!-- ================= -->
-    <!-- Validation Errors -->
+    <!-- SETTINGS - VALIDATION ERRORS -->
     <!-- ================= -->
-    <translation key="settings_error_numbers">Veuillez entrer des nombres valides</translation>
-    <translation key="settings_error_positive">Veuillez entrer des valeurs positives</translation>
-    <translation key="settings_error_empty">Veuillez remplir tous les champs</translation>
+    <translation key="settings_error_numbers">Veuillez saisir des nombres valides</translation>
+    <translation key="settings_error_positive">Veuillez saisir des valeurs positives</translation>
+    <translation key="settings_error_general">Entrée invalide</translation>
     <translation key="settings_error_pause_key">La touche de pause doit être exactement un caractère</translation>
-    <translation key="settings_error_general">Entrée non valide</translation>
+    <translation key="settings_error_reset_speed_key">La touche de réinitialisation de vitesse doit être exactement un caractère</translation>
 
     <!-- ================= -->
-    <!-- Key Editor -->
+    <!-- KEY EDITOR - HEADER & INSTRUCTIONS -->
     <!-- ================= -->
-    <translation key="key_editor_title">Éditeur de Disposition des Touches</translation>
-    <translation key="key_editor_instructions">Cliquez sur une touche ci-dessous puis appuyez sur la touche souhaitée de votre clavier. Échap pour annuler, Retour arrière pour supprimer.</translation>
+    <translation key="key_editor_title">Éditeur de Disposition de Touches</translation>
+    <translation key="key_editor_instructions">Clique sur une touche ci-dessous puis appuie sur la disposition souhaitée sur ton clavier. Échap pour annuler, Retour arrière pour supprimer.</translation>
+
+    <!-- ================= -->
+    <!-- KEY EDITOR - STATUS -->
+    <!-- ================= -->
     <translation key="key_editor_current_key">Touche actuelle :</translation>
     <translation key="key_editor_no_selection">Aucune touche sélectionnée</translation>
-    <translation key="key_editor_press_key">Appuyez sur une touche...</translation>
+    <translation key="key_editor_press_key">Appuie sur une touche...</translation>
     <translation key="key_editor_empty">(vide)</translation>
-    <translation key="key_editor_delete">Supprimer Personnalisé</translation>
     <translation key="key_editor_changes">{changed}/{total} touches modifiées</translation>
-    <translation key="key_editor_saved_settings_hint">Disposition personnalisée enregistrée. Veuillez cliquer sur 'Enregistrer' dans Paramètres pour que les changements prennent effet.</translation>
+    <translation key="key_editor_save_and_close">Enregistrer et fermer</translation>
 
     <!-- ================= -->
-    <!-- Status Labels -->
-    <!-- ================= -->
-    <translation key="key_editor_default">Par défaut</translation>
-    <translation key="key_editor_custom">Personnalisé</translation>
-    <translation key="key_editor_empty_error">La touche {key} ne peut pas être vide</translation>
-
-    <!-- ================= -->
-    <!-- Buttons -->
+    <!-- KEY EDITOR - BUTTONS -->
     <!-- ================= -->
     <translation key="key_editor_save">Enregistrer</translation>
     <translation key="key_editor_reset_all">Tout Réinitialiser</translation>
-    <translation key="key_editor_import">Importer</translation>
+    <translation key="key_editor_delete">Supprimer Personnalisé</translation>
     <translation key="key_editor_cancel">Annuler</translation>
 
     <!-- ================= -->
-    <!-- Dialog Messages -->
+    <!-- KEY EDITOR - MESSAGES -->
     <!-- ================= -->
-    <translation key="key_editor_saved">Disposition des touches enregistrée !</translation>
-    <translation key="key_editor_save_error">Erreur lors de l'enregistrement de la disposition des touches</translation>
+    <translation key="key_editor_no_changes">Aucune modification apportée à la disposition personnalisée.</translation>
+    <translation key="key_editor_unconfirm_changes">Tu as des modifications non enregistrées. Enregistrer avant de fermer ?</translation>
     <translation key="key_editor_reset_confirm">Réinitialiser toutes les touches aux valeurs par défaut ?</translation>
-    <translation key="key_editor_import_title">Importer une Disposition de Touches</translation>
-    <translation key="key_editor_import_success">Disposition des touches importée</translation>
-    <translation key="key_editor_import_error">Erreur lors de l'importation de la disposition des touches</translation>
-    <translation key="key_editor_no_changes">Aucun changement apporté à la disposition personnalisée.</translation>
-    <translation key="key_editor_unconfirm_changes">Vous avez des modifications non enregistrées. Enregistrer avant de fermer ?</translation>
-    <translation key="key_editor_delete_custom_layout_confirm">Supprimer la disposition personnalisée et revenir à la disposition par défaut ?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Supprimer la disposition personnalisée et revenir à la disposition standard ?</translation>
     <translation key="key_editor_custom_layout_saved_activated">Disposition personnalisée enregistrée et activée.</translation>
-    <translation key="key_editor_error_deleting_custom_layout">Erreur lors de la suppression de la disposition personnalisée.</translation>
+    <translation key="key_editor_custom_deleted">Disposition personnalisée supprimée. Basculé vers {layout}.</translation>
 
 </translations>

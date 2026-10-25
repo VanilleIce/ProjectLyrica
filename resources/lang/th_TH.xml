@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- ==================== -->
+    <!-- ข้อความแอปพลิเคชันหลัก -->
+    <!-- ==================== -->
+    <translation key="project_title">โปรเจกต์ Lyrica</translation>
+    <translation key="file_select_title">เลือกเพลง</translation>
+    <translation key="play_button_text">▶ เล่น</translation>
+    <translation key="playing_button_text">กำลังเล่น...</translation>
+    <translation key="restart_button_text">เริ่มใหม่?</translation>
+    <translation key="pause_key_hint">หรือใช้ [pause_key]</translation>
+    <translation key="supported_formats">รูปแบบที่รองรับ</translation>
+    <translation key="file_hint_no_file">⚠️ กรุณาเลือกเพลงก่อน</translation>
+
+    <!-- ================= -->
+    <!-- คำเตือนและข้อผิดพลาด -->
+    <!-- ================= -->
+    <translation key="warning_title">คำเตือน</translation>
+    <translation key="error_title">ข้อผิดพลาด</translation>
+    <translation key="info_title">ข้อมูล</translation>
+    <translation key="choose_song_warning">กรุณาเลือกเพลงก่อนดำเนินการต่อ</translation>
+    <translation key="sky_only_warning">ใช้งานได้เฉพาะใน Sky!</translation>
+    <translation key="sky_window_focus_error">ไม่สามารถโฟกัสหน้าต่าง Sky ได้ ตรวจสอบให้แน่ใจว่า Sky กำลังทำงานและมองเห็นได้</translation>
+    <translation key="invalid_song_format">รูปแบบเพลงไม่ถูกต้อง</translation>
+    <translation key="missing_song_notes">ข้อมูลเพลงหายไป (songNotes)</translation>
+    <translation key="invalid_speed">ความเร็วไม่ถูกต้อง! ต้องมากกว่า 0</translation>
+    <translation key="invalid_speed_number">ความเร็วต้องเป็นตัวเลขที่ถูกต้อง</translation>
+    <translation key="speed_too_slow">ความเร็วช้าเกินไป ความเร็วขั้นต่ำคือ {min_speed} ตั้งเป็น {min_speed_again}</translation>
+    <translation key="speed_too_fast">ความเร็วเร็วเกินไป ความเร็วสูงสุดคือ {max_speed} ตั้งเป็น {max_speed_again}</translation>
+    <translation key="no_bpm_found">ไฟล์เพลงนี้ไม่มีข้อมูล BPM ใช้ความเร็วเริ่มต้น</translation>
+
+    <!-- ================= -->
+    <!-- ฟังก์ชันเครื่องเล่นเพลง -->
+    <!-- ================= -->
+    <translation key="key_press">การกดปุ่ม</translation>
+    <translation key="enabled">เปิดใช้งาน</translation>
+    <translation key="disabled">ปิดใช้งาน</translation>
+    <translation key="duration">ระยะเวลากดปุ่ม</translation>
+    <translation key="speed_control">ความเร็ว</translation>
+    <translation key="smooth_ramping">การเปลี่ยนที่ราบรื่น</translation>
+    <translation key="smooth_ramping_info">ปรับความเร็วอย่างราบรื่นที่จุดเริ่มต้นและจุดสิ้นสุดของเพลงเพื่อการเปลี่ยนที่เป็นธรรมชาติมากขึ้น</translation>
+
+    <!-- ================= -->
+    <!-- ภาษาและเค้าโครง -->
+    <!-- ================= -->
+    <translation key="language_window_title">เลือกภาษา</translation>
+    <translation key="select_language">เลือกภาษา:</translation>
+    <translation key="language_saved">บันทึกภาษาแล้ว</translation>
+    <translation key="language_save_failed">ไม่สามารถบันทึกภาษาได้</translation>
+    <translation key="no_languages_configured">ไม่มีภาษาที่กำหนดค่าไว้</translation>
+    <translation key="save_button_text">บันทึก</translation>
+
+    <!-- ================= -->
+    <!-- ข้อมูลเวอร์ชัน -->
+    <!-- ================= -->
+    <translation key="update_available_text">มีการอัปเดต! v {}</translation>
+    <translation key="current_version_text">v {}</translation>
+    <translation key="no_connection_text">ไม่มีการเชื่อมต่อกับเซิร์ฟเวอร์</translation>
+
+    <!-- ================= -->
+    <!-- ตัวตรวจสอบ Sky -->
+    <!-- ================= -->
+    <translation key="window_settings_title">เลือก Sky.exe</translation>
+    <translation key="select_sky_exe_instruction">กรุณาเลือกไฟล์ Sky.exe:</translation>
+    <translation key="select_sky_exe">เลือก Sky.exe</translation>
+    <translation key="exe_path_required">คุณต้องเลือก Sky.exe เพื่อดำเนินการต่อ</translation>
+    <translation key="exe_path_required_exit">แอปพลิเคชันจะปิดลงเนื่องจากต้องใช้ Sky.exe</translation>
+    <translation key="must_select_sky">กรุณาเลือกไฟล์ Sky.exe</translation>
+    <translation key="exe_path_invalid">ไฟล์ที่เลือกไม่มีอยู่</translation>
+
+    <!-- ================= -->
+    <!-- หน้าต่างการตั้งค่า - ส่วนหัว -->
+    <!-- ================= -->
+    <translation key="settings_window_title">การตั้งค่า</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - เกม -->
+    <!-- ================= -->
+    <translation key="settings_game_title">การตั้งค่าเกม</translation>
+    <translation key="settings_sky_path">เส้นทาง Sky.exe</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - การเล่น -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">การตั้งค่าการเล่น</translation>
+    <translation key="settings_key_durations">ระยะเวลากดปุ่ม</translation>
+    <translation key="settings_key_durations_hint">(วินาที คั่นด้วยเครื่องหมายจุลภาค)</translation>
+    <translation key="settings_speed_presets">ความเร็ว</translation>
+    <translation key="settings_speed_presets_hint">(ค่าคั่นด้วยเครื่องหมายจุลภาค)</translation>
+    <translation key="settings_custom_keys">ปุ่มกำหนดเอง</translation>
+    <translation key="settings_edit_keys">แก้ไขปุ่ม</translation>
+    <translation key="settings_using_default_layout">ใช้เค้าโครงเริ่มต้น</translation>
+    <translation key="settings_custom_active">กำหนดเอง (ใช้งานอยู่)</translation>
+    <translation key="settings_custom_available">กำหนดเองพร้อมใช้งาน</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - การเปลี่ยนความเร็ว -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">การเปลี่ยนความเร็วระหว่างเล่น</translation>
+    <translation key="settings_speed_change_enable_hint">เปิดใช้งานการเปลี่ยนความเร็วระหว่างเล่นโดยใช้ปุ่มลัด</translation>
+    <translation key="settings_speed_change_preset_keys">ปุ่มที่ตั้งไว้ล่วงหน้า</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - ความล่าช้า -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">ความล่าช้า</translation>
+    <translation key="settings_initial_delay">ความล่าช้าเริ่มต้น</translation>
+    <translation key="settings_pause_delay">ความล่าช้าหยุดชั่วคราว</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - การเปลี่ยนความเร็ว -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">การเปลี่ยนความเร็ว</translation>
+    <translation key="settings_ramping_start">ขั้นตอนเริ่มต้น</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">ขั้นตอนสิ้นสุด</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">ขั้นตอนหลังหยุดชั่วคราว</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">การปรับความเร็ว</translation>
+    <translation key="settings_speed_transition">เวลาการเปลี่ยน</translation>
+    <translation key="settings_speed_transition_hint">(วินาทีสำหรับการเปลี่ยนที่ราบรื่น)</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - อินเทอร์เฟซ -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">อินเทอร์เฟซ</translation>
+    <translation key="settings_language">ภาษา</translation>
+    <translation key="settings_theme">ธีม</translation>
+    <translation key="theme_dark">มืด</translation>
+    <translation key="theme_light">สว่าง</translation>
+    <translation key="settings_keyboard_layout">เค้าโครงแป้นพิมพ์</translation>
+    <translation key="settings_pause_key">ปุ่มหยุดชั่วคราว</translation>
+    <translation key="settings_reset_speed_key">ปุ่มรีเซ็ตความเร็ว</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - ปุ่ม -->
+    <!-- ================= -->
+    <translation key="settings_save">บันทึก</translation>
+    <translation key="settings_reset">รีเซ็ต</translation>
+    <translation key="settings_cancel">ปิด</translation>
+    <translation key="settings_save_and_close">บันทึกและปิด</translation>
+    <translation key="settings_no_changes">ไม่พบการเปลี่ยนแปลง</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - ข้อความ -->
+    <!-- ================= -->
+    <translation key="settings_saved">บันทึกการตั้งค่าแล้ว!</translation>
+    <translation key="settings_save_error">เกิดข้อผิดพลาดในการบันทึกการตั้งค่า</translation>
+    <translation key="settings_reset_confirm">รีเซ็ตการตั้งค่าทั้งหมดเป็นค่าเริ่มต้น?</translation>
+    <translation key="settings_reset_success">รีเซ็ตการตั้งค่าแล้ว!</translation>
+    <translation key="settings_reset_error">เกิดข้อผิดพลาดในการรีเซ็ต</translation>
+    <translation key="settings_restart_required">การตั้งค่าบางอย่างต้องรีสตาร์ทแอปพลิเคชันเพื่อให้มีผล</translation>
+    <translation key="settings_restart_now">รีสตาร์ทตอนนี้?</translation>
+    <translation key="settings_restart_later">บันทึกการตั้งค่าแล้ว กรุณารีสตาร์ทแอปพลิเคชันในภายหลัง</translation>
+    <translation key="settings_restart_failed">การรีสตาร์ทอัตโนมัติล้มเหลว กรุณารีสตาร์ทแอปพลิเคชันด้วยตนเอง</translation>
+    <translation key="custom_layout_not_found">ไม่พบเค้าโครงที่กำหนดเอง เปลี่ยนเป็น {fallback_layout} โดยอัตโนมัติ</translation>
+
+    <!-- ================= -->
+    <!-- การตั้งค่า - ข้อผิดพลาดการตรวจสอบ -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">กรุณาป้อนตัวเลขที่ถูกต้อง</translation>
+    <translation key="settings_error_positive">กรุณาป้อนค่าบวก</translation>
+    <translation key="settings_error_general">ข้อมูลไม่ถูกต้อง</translation>
+    <translation key="settings_error_pause_key">ปุ่มหยุดชั่วคราวต้องเป็นอักขระหนึ่งตัวเท่านั้น</translation>
+    <translation key="settings_error_reset_speed_key">ปุ่มรีเซ็ตความเร็วต้องเป็นอักขระหนึ่งตัวเท่านั้น</translation>
+
+    <!-- ================= -->
+    <!-- ตัวแก้ไขเค้าโครงปุ่ม - ส่วนหัวและคำแนะนำ -->
+    <!-- ================= -->
+    <translation key="key_editor_title">ตัวแก้ไขเค้าโครงปุ่ม</translation>
+    <translation key="key_editor_instructions">คลิกที่ปุ่มด้านล่างแล้วกดเค้าโครงที่ต้องการบนแป้นพิมพ์ของคุณ Escape เพื่อยกเลิก Backspace เพื่อลบ</translation>
+
+    <!-- ================= -->
+    <!-- ตัวแก้ไขเค้าโครงปุ่ม - สถานะ -->
+    <!-- ================= -->
+    <translation key="key_editor_current_key">ปุ่มปัจจุบัน:</translation>
+    <translation key="key_editor_no_selection">ไม่ได้เลือกปุ่ม</translation>
+    <translation key="key_editor_press_key">กดปุ่ม...</translation>
+    <translation key="key_editor_empty">(ว่าง)</translation>
+    <translation key="key_editor_changes">เปลี่ยนแล้ว {changed}/{total} ปุ่ม</translation>
+    <translation key="key_editor_save_and_close">บันทึกและปิด</translation>
+
+    <!-- ================= -->
+    <!-- ตัวแก้ไขเค้าโครงปุ่ม - ปุ่ม -->
+    <!-- ================= -->
+    <translation key="key_editor_save">บันทึก</translation>
+    <translation key="key_editor_reset_all">รีเซ็ตทั้งหมด</translation>
+    <translation key="key_editor_delete">ลบที่กำหนดเอง</translation>
+    <translation key="key_editor_cancel">ยกเลิก</translation>
+
+    <!-- ================= -->
+    <!-- ตัวแก้ไขเค้าโครงปุ่ม - ข้อความ -->
+    <!-- ================= -->
+    <translation key="key_editor_no_changes">ไม่มีการเปลี่ยนแปลงในเค้าโครงที่กำหนดเอง</translation>
+    <translation key="key_editor_unconfirm_changes">คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก บันทึกก่อนปิด?</translation>
+    <translation key="key_editor_reset_confirm">รีเซ็ตปุ่มทั้งหมดเป็นค่าเริ่มต้น?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">ลบเค้าโครงที่กำหนดเองและกลับไปใช้เค้าโครงมาตรฐาน?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">บันทึกและเปิดใช้งานเค้าโครงที่กำหนดเองแล้ว</translation>
+    <translation key="key_editor_custom_deleted">ลบเค้าโครงที่กำหนดเองแล้ว เปลี่ยนเป็น {layout}</translation>
+
+</translations>

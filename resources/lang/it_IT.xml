@@ -6,31 +6,28 @@
     <translation key="project_title">Progetto Lyrica</translation>
     <translation key="file_select_title">Seleziona canzone</translation>
     <translation key="play_button_text">▶ Riproduci</translation>
+    <translation key="playing_button_text">Riproducendo...</translation>
+    <translation key="restart_button_text">Riavviare?</translation>
+    <translation key="pause_key_hint">oppure usa [pause_key]</translation>
     <translation key="supported_formats">Formati supportati</translation>
+    <translation key="file_hint_no_file">⚠️ Seleziona prima una canzone</translation>
 
     <!-- ================= -->
     <!-- AVVISI & ERRORI -->
     <!-- ================= -->
     <translation key="warning_title">Avviso</translation>
     <translation key="error_title">Errore</translation>
+    <translation key="info_title">Informazione</translation>
     <translation key="choose_song_warning">Seleziona una canzone prima di procedere.</translation>
-    <translation key="play_error_message">Errore nella riproduzione della musica</translation>
-    <translation key="security_error_path">Percorso file non autorizzato</translation>
-    <translation key="invalid_file_format">Formato file non valido. Supportati: .json, .txt, .skysheet</translation>
-    <translation key="sky_window_not_found">Finestra Sky non trovata</translation>
-    <translation key="window_focus_error">Impossibile portare la finestra in primo piano</translation>
-    <translation key="browser_open_error">Impossibile aprire il browser</translation>
-    <translation key="sky_not_running">Sky deve essere in esecuzione!</translation>
+    <translation key="sky_only_warning">Funziona solo in Sky!</translation>
+    <translation key="sky_window_focus_error">Impossibile mettere a fuoco la finestra di Sky. Assicurati che Sky sia in esecuzione e visibile.</translation>
+    <translation key="invalid_song_format">Formato brano non valido</translation>
     <translation key="missing_song_notes">Dati canzone mancanti (songNotes)</translation>
     <translation key="invalid_speed">Velocità non valida! Deve essere maggiore di 0.</translation>
-    <translation key="invalid_song_format">Formato brano non valido</translation>
-
-    <translation key="sky_only_warning">Funziona solo in Sky! Avvia Sky Children of the Light.</translation>
-    <translation key="sky_window_focus_error">Impossibile mettere a fuoco la finestra di Sky. Assicurati che Sky sia in esecuzione e visibile.</translation>
-
+    <translation key="invalid_speed_number">La velocità deve essere un numero valido</translation>
     <translation key="speed_too_slow">Velocità troppo lenta. La velocità minima è {min_speed}. Impostata su {min_speed_again}.</translation>
     <translation key="speed_too_fast">Velocità troppo veloce. La velocità massima è {max_speed}. Impostata su {max_speed_again}.</translation>
-    <translation key="speed_setting_failed">Errore durante l'impostazione della velocità: {error}</translation>
+    <translation key="no_bpm_found">Questo file canzone non contiene informazioni BPM. Utilizzo della velocità predefinita</translation>
 
     <!-- ================= -->
     <!-- FUNZIONI DEL LETTORE MUSICALE -->
@@ -40,33 +37,28 @@
     <translation key="disabled">Disabilitato</translation>
     <translation key="duration">Durata della pressione del tasto</translation>
     <translation key="speed_control">Velocità</translation>
-    <translation key="current_speed">Velocità corrente</translation>
-    <translation key="preset">Preset</translation>
-    
+    <translation key="smooth_ramping">Transizioni Dolci</translation>
+    <translation key="smooth_ramping_info">Regola dolcemente la velocità all'inizio e alla fine della canzone per transizioni più naturali.</translation>
+
     <!-- ================= -->
     <!-- LINGUA E LAYOUT -->
     <!-- ================= -->
     <translation key="language_window_title">Selezione lingua</translation>
     <translation key="select_language">Seleziona lingua:</translation>
     <translation key="language_saved">Lingua salvata</translation>
+    <translation key="language_save_failed">Impossibile salvare la lingua</translation>
+    <translation key="no_languages_configured">Nessuna lingua configurata</translation>
     <translation key="save_button_text">Salva</translation>
-    <translation key="smooth_ramping">Transizioni Dolci</translation>
-    <translation key="smooth_ramping_info">Regola dolcemente la velocità all'inizio e alla fine della canzone per transizioni più naturali.</translation>
-    <translation key="playing_button_text">Riproducendo...</translation>
-    <translation key="paused_button_text">In pausa</translation>
-    <translation key="restart_button_text">Riavviare?</translation>
-    <translation key="pause_key_hint">oppure usa [pause_key]</translation>
-    
+
     <!-- ================= -->
     <!-- INFORMAZIONI SULLA VERSIONE -->
     <!-- ================= -->
     <translation key="update_available_text">Aggiornamento disponibile! v {}</translation>
     <translation key="current_version_text">v {}</translation>
-    <translation key="update_error_text">Controllo fallito</translation>
     <translation key="no_connection_text">Nessuna connessione al server</translation>
 
     <!-- ================= -->
-    <!-- SkyChecker -->
+    <!-- SKYCHECKER -->
     <!-- ================= -->
     <translation key="window_settings_title">Selezione Sky.exe</translation>
     <translation key="select_sky_exe_instruction">Seleziona il file Sky.exe:</translation>
@@ -77,19 +69,18 @@
     <translation key="exe_path_invalid">Il file selezionato non esiste</translation>
 
     <!-- ================= -->
-    <!-- Settings Window -->
+    <!-- SETTINGS WINDOW - HEADER -->
     <!-- ================= -->
     <translation key="settings_window_title">Impostazioni</translation>
-    <translation key="info_title">Informazione</translation>
 
     <!-- ================= -->
-    <!-- Game Settings -->
+    <!-- SETTINGS - GAME -->
     <!-- ================= -->
     <translation key="settings_game_title">Impostazioni di Gioco</translation>
     <translation key="settings_sky_path">Percorso Sky.exe</translation>
 
     <!-- ================= -->
-    <!-- Playback Settings -->
+    <!-- SETTINGS - PLAYBACK -->
     <!-- ================= -->
     <translation key="settings_playback_title">Impostazioni di Riproduzione</translation>
     <translation key="settings_key_durations">Durata Pressione Tasti</translation>
@@ -98,20 +89,26 @@
     <translation key="settings_speed_presets_hint">(valori separati da virgola)</translation>
     <translation key="settings_custom_keys">Tasti Personalizzati</translation>
     <translation key="settings_edit_keys">Modifica Tasti</translation>
-    <translation key="settings_custom_keys_status">{count} tasti personalizzati</translation>
     <translation key="settings_using_default_layout">Utilizza layout predefinito</translation>
     <translation key="settings_custom_active">Personalizzato (attivo)</translation>
     <translation key="settings_custom_available">Personalizzato disponibile</translation>
 
     <!-- ================= -->
-    <!-- Delays -->
+    <!-- SETTINGS - SPEED CHANGE -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Cambio Velocità Durante la Riproduzione</translation>
+    <translation key="settings_speed_change_enable_hint">Abilita cambio velocità durante la riproduzione utilizzando scorciatoie da tastiera</translation>
+    <translation key="settings_speed_change_preset_keys">Tasti Preimpostati</translation>
+
+    <!-- ================= -->
+    <!-- SETTINGS - DELAYS -->
     <!-- ================= -->
     <translation key="settings_delays_title">Ritardi</translation>
     <translation key="settings_initial_delay">Ritardo Iniziale</translation>
     <translation key="settings_pause_delay">Ritardo Pausa</translation>
 
     <!-- ================= -->
-    <!-- Ramping -->
+    <!-- SETTINGS - RAMPING -->
     <!-- ================= -->
     <translation key="settings_ramping_title">Transizioni di Velocità</translation>
     <translation key="settings_ramping_start">Passi di Inizio</translation>
@@ -120,9 +117,12 @@
     <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
     <translation key="settings_ramping_after_pause">Passi dopo Pausa</translation>
     <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Ramping di Velocità</translation>
+    <translation key="settings_speed_transition">Tempo di Transizione</translation>
+    <translation key="settings_speed_transition_hint">(secondi per transizioni fluide)</translation>
 
     <!-- ================= -->
-    <!-- Interface -->
+    <!-- SETTINGS - INTERFACE -->
     <!-- ================= -->
     <translation key="settings_interface_title">Interfaccia</translation>
     <translation key="settings_language">Lingua</translation>
@@ -131,21 +131,19 @@
     <translation key="theme_light">Chiaro</translation>
     <translation key="settings_keyboard_layout">Layout Tastiera</translation>
     <translation key="settings_pause_key">Tasto Pausa</translation>
-
-    <translation key="settings_speed_change_title">Cambio Velocità Durante la Riproduzione</translation>
-    <translation key="settings_speed_change_enable_hint">Abilita cambio velocità durante la riproduzione utilizzando scorciatoie da tastiera</translation>
-    <translation key="settings_speed_change_preset_keys">Tasti Preimpostati</translation>
-    <translation key="settings_speed_change_ramp_steps">Passi di Transizione Velocità</translation>
+    <translation key="settings_reset_speed_key">Tasto Ripristino Velocità</translation>
 
     <!-- ================= -->
-    <!-- Buttons -->
+    <!-- SETTINGS - BUTTONS -->
     <!-- ================= -->
     <translation key="settings_save">Salva</translation>
     <translation key="settings_reset">Ripristina</translation>
-    <translation key="settings_cancel">Annulla</translation>
+    <translation key="settings_cancel">Chiudi</translation>
+    <translation key="settings_save_and_close">Salva e chiudi</translation>
+    <translation key="settings_no_changes">Nessuna modifica rilevata</translation>
 
     <!-- ================= -->
-    <!-- Messages -->
+    <!-- SETTINGS - MESSAGES -->
     <!-- ================= -->
     <translation key="settings_saved">Impostazioni salvate!</translation>
     <translation key="settings_save_error">Errore durante il salvataggio delle impostazioni</translation>
@@ -159,55 +157,46 @@
     <translation key="custom_layout_not_found">Layout personalizzato non trovato. Passato automaticamente a {fallback_layout}.</translation>
 
     <!-- ================= -->
-    <!-- Validation Errors -->
+    <!-- SETTINGS - VALIDATION ERRORS -->
     <!-- ================= -->
     <translation key="settings_error_numbers">Inserisci numeri validi</translation>
     <translation key="settings_error_positive">Inserisci valori positivi</translation>
-    <translation key="settings_error_empty">Compila tutti i campi</translation>
-    <translation key="settings_error_pause_key">Il tasto pausa deve essere esattamente un carattere</translation>
     <translation key="settings_error_general">Input non valido</translation>
+    <translation key="settings_error_pause_key">Il tasto pausa deve essere esattamente un carattere</translation>
+    <translation key="settings_error_reset_speed_key">Il tasto ripristino velocità deve essere esattamente un carattere</translation>
 
     <!-- ================= -->
-    <!-- Key Editor -->
+    <!-- KEY EDITOR - HEADER & INSTRUCTIONS -->
     <!-- ================= -->
     <translation key="key_editor_title">Editor Layout Tasti</translation>
     <translation key="key_editor_instructions">Clicca su un tasto qui sotto e poi premi la mappatura desiderata sulla tua tastiera. Esc per annullare, Backspace per eliminare.</translation>
+
+    <!-- ================= -->
+    <!-- KEY EDITOR - STATUS -->
+    <!-- ================= -->
     <translation key="key_editor_current_key">Tasto corrente:</translation>
     <translation key="key_editor_no_selection">Nessun tasto selezionato</translation>
     <translation key="key_editor_press_key">Premi un tasto...</translation>
     <translation key="key_editor_empty">(vuoto)</translation>
-    <translation key="key_editor_delete">Elimina Personalizzato</translation>
     <translation key="key_editor_changes">{changed}/{total} tasti modificati</translation>
-    <translation key="key_editor_saved_settings_hint">Layout personalizzato salvato. Clicca 'Salva' in Impostazioni affinché le modifiche abbiano effetto.</translation>
+    <translation key="key_editor_save_and_close">Salva e chiudi</translation>
 
     <!-- ================= -->
-    <!-- Status Labels -->
-    <!-- ================= -->
-    <translation key="key_editor_default">Predefinito</translation>
-    <translation key="key_editor_custom">Personalizzato</translation>
-    <translation key="key_editor_empty_error">Il tasto {key} non può essere vuoto</translation>
-
-    <!-- ================= -->
-    <!-- Buttons -->
+    <!-- KEY EDITOR - BUTTONS -->
     <!-- ================= -->
     <translation key="key_editor_save">Salva</translation>
     <translation key="key_editor_reset_all">Ripristina Tutto</translation>
-    <translation key="key_editor_import">Importa</translation>
+    <translation key="key_editor_delete">Elimina Personalizzato</translation>
     <translation key="key_editor_cancel">Annulla</translation>
 
     <!-- ================= -->
-    <!-- Dialog Messages -->
+    <!-- KEY EDITOR - MESSAGES -->
     <!-- ================= -->
-    <translation key="key_editor_saved">Layout tasti salvato!</translation>
-    <translation key="key_editor_save_error">Errore durante il salvataggio del layout tasti</translation>
-    <translation key="key_editor_reset_confirm">Ripristinare tutti i tasti ai valori predefiniti?</translation>
-    <translation key="key_editor_import_title">Importa Layout Tasti</translation>
-    <translation key="key_editor_import_success">Layout tasti importato</translation>
-    <translation key="key_editor_import_error">Errore durante l'importazione del layout tasti</translation>
     <translation key="key_editor_no_changes">Nessuna modifica apportata al layout personalizzato.</translation>
     <translation key="key_editor_unconfirm_changes">Hai modifiche non salvate. Salvare prima di chiudere?</translation>
+    <translation key="key_editor_reset_confirm">Ripristinare tutti i tasti ai valori predefiniti?</translation>
     <translation key="key_editor_delete_custom_layout_confirm">Eliminare il layout personalizzato e tornare al layout predefinito?</translation>
     <translation key="key_editor_custom_layout_saved_activated">Layout personalizzato salvato e attivato.</translation>
-    <translation key="key_editor_error_deleting_custom_layout">Errore durante l'eliminazione del layout personalizzato.</translation>
+    <translation key="key_editor_custom_deleted">Layout personalizzato eliminato. Passato a {layout}.</translation>
 
 </translations>

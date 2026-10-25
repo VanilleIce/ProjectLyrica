@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!-- ==================== -->
+    <!-- VĂN BẢN CHÍNH CỦA ỨNG DỤNG -->
+    <!-- ==================== -->
+    <translation key="project_title">Dự án Lyrica</translation>
+    <translation key="file_select_title">Chọn bài hát</translation>
+    <translation key="play_button_text">▶ Phát</translation>
+    <translation key="playing_button_text">Đang phát...</translation>
+    <translation key="restart_button_text">Khởi động lại?</translation>
+    <translation key="pause_key_hint">hoặc dùng [pause_key]</translation>
+    <translation key="supported_formats">Định dạng được hỗ trợ</translation>
+    <translation key="file_hint_no_file">⚠️ Vui lòng chọn một bài hát trước</translation>
+
+    <!-- ================= -->
+    <!-- CẢNH BÁO & LỖI -->
+    <!-- ================= -->
+    <translation key="warning_title">Cảnh báo</translation>
+    <translation key="error_title">Lỗi</translation>
+    <translation key="info_title">Thông tin</translation>
+    <translation key="choose_song_warning">Vui lòng chọn một bài hát trước khi tiếp tục.</translation>
+    <translation key="sky_only_warning">Chỉ hoạt động trong Sky!</translation>
+    <translation key="sky_window_focus_error">Không thể lấy nét cửa sổ Sky. Hãy đảm bảo Sky đang chạy và hiển thị.</translation>
+    <translation key="invalid_song_format">Định dạng bài hát không hợp lệ</translation>
+    <translation key="missing_song_notes">Thiếu dữ liệu bài hát (songNotes)</translation>
+    <translation key="invalid_speed">Tốc độ không hợp lệ! Phải lớn hơn 0.</translation>
+    <translation key="invalid_speed_number">Tốc độ phải là một số hợp lệ</translation>
+    <translation key="speed_too_slow">Tốc độ quá chậm. Tốc độ tối thiểu là {min_speed}. Đặt thành {min_speed_again}.</translation>
+    <translation key="speed_too_fast">Tốc độ quá nhanh. Tốc độ tối đa là {max_speed}. Đặt thành {max_speed_again}.</translation>
+    <translation key="no_bpm_found">Tệp bài hát này không chứa thông tin BPM. Sử dụng tốc độ mặc định</translation>
+
+    <!-- ================= -->
+    <!-- CHỨC NĂNG TRÌNH PHÁT NHẠC -->
+    <!-- ================= -->
+    <translation key="key_press">Nhấn phím</translation>
+    <translation key="enabled">Bật</translation>
+    <translation key="disabled">Tắt</translation>
+    <translation key="duration">Thời gian nhấn phím</translation>
+    <translation key="speed_control">Tốc độ</translation>
+    <translation key="smooth_ramping">Chuyển đổi mượt mà</translation>
+    <translation key="smooth_ramping_info">Điều chỉnh tốc độ mượt mà ở đầu và cuối bài hát để có chuyển đổi tự nhiên hơn.</translation>
+
+    <!-- ================= -->
+    <!-- NGÔN NGỮ & BỐ CỤC -->
+    <!-- ================= -->
+    <translation key="language_window_title">Chọn ngôn ngữ</translation>
+    <translation key="select_language">Chọn ngôn ngữ:</translation>
+    <translation key="language_saved">Đã lưu ngôn ngữ</translation>
+    <translation key="language_save_failed">Không thể lưu ngôn ngữ</translation>
+    <translation key="no_languages_configured">Chưa có ngôn ngữ nào được cấu hình</translation>
+    <translation key="save_button_text">Lưu</translation>
+
+    <!-- ================= -->
+    <!-- THÔNG TIN PHIÊN BẢN -->
+    <!-- ================= -->
+    <translation key="update_available_text">Có bản cập nhật! v {}</translation>
+    <translation key="current_version_text">v {}</translation>
+    <translation key="no_connection_text">Không có kết nối đến máy chủ</translation>
+
+    <!-- ================= -->
+    <!-- KIỂM TRA SKY -->
+    <!-- ================= -->
+    <translation key="window_settings_title">Chọn Sky.exe</translation>
+    <translation key="select_sky_exe_instruction">Vui lòng chọn tệp Sky.exe:</translation>
+    <translation key="select_sky_exe">Chọn Sky.exe</translation>
+    <translation key="exe_path_required">Bạn phải chọn Sky.exe để tiếp tục</translation>
+    <translation key="exe_path_required_exit">Ứng dụng sẽ thoát vì cần có Sky.exe</translation>
+    <translation key="must_select_sky">Vui lòng chọn tệp Sky.exe</translation>
+    <translation key="exe_path_invalid">Tệp đã chọn không tồn tại</translation>
+
+    <!-- ================= -->
+    <!-- CỬA SỔ CÀI ĐẶT - TIÊU ĐỀ -->
+    <!-- ================= -->
+    <translation key="settings_window_title">Cài đặt</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - TRÒ CHƠI -->
+    <!-- ================= -->
+    <translation key="settings_game_title">Cài đặt trò chơi</translation>
+    <translation key="settings_sky_path">Đường dẫn Sky.exe</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - PHÁT LẠI -->
+    <!-- ================= -->
+    <translation key="settings_playback_title">Cài đặt phát lại</translation>
+    <translation key="settings_key_durations">Thời gian nhấn phím</translation>
+    <translation key="settings_key_durations_hint">(giây, cách nhau bằng dấu phẩy)</translation>
+    <translation key="settings_speed_presets">Tốc độ</translation>
+    <translation key="settings_speed_presets_hint">(giá trị, cách nhau bằng dấu phẩy)</translation>
+    <translation key="settings_custom_keys">Phím tùy chỉnh</translation>
+    <translation key="settings_edit_keys">Chỉnh sửa phím</translation>
+    <translation key="settings_using_default_layout">Đang dùng bố cục mặc định</translation>
+    <translation key="settings_custom_active">Tùy chỉnh (đang hoạt động)</translation>
+    <translation key="settings_custom_available">Tùy chỉnh có sẵn</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - THAY ĐỔI TỐC ĐỘ -->
+    <!-- ================= -->
+    <translation key="settings_speed_change_title">Thay đổi tốc độ khi đang phát</translation>
+    <translation key="settings_speed_change_enable_hint">Bật thay đổi tốc độ khi đang phát bằng phím tắt</translation>
+    <translation key="settings_speed_change_preset_keys">Phím đặt trước</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - ĐỘ TRỄ -->
+    <!-- ================= -->
+    <translation key="settings_delays_title">Độ trễ</translation>
+    <translation key="settings_initial_delay">Độ trễ bắt đầu</translation>
+    <translation key="settings_pause_delay">Độ trễ tạm dừng</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - CHUYỂN ĐỔI TỐC ĐỘ -->
+    <!-- ================= -->
+    <translation key="settings_ramping_title">Chuyển đổi tốc độ</translation>
+    <translation key="settings_ramping_start">Bước bắt đầu</translation>
+    <translation key="settings_ramping_start_hint">(50% → 100%)</translation>
+    <translation key="settings_ramping_end">Bước kết thúc</translation>
+    <translation key="settings_ramping_end_hint">(100% → 50%)</translation>
+    <translation key="settings_ramping_after_pause">Bước sau tạm dừng</translation>
+    <translation key="settings_ramping_pause_hint">(50% → 100%)</translation>
+    <translation key="settings_speed_ramping_title">Chuyển đổi tốc độ</translation>
+    <translation key="settings_speed_transition">Thời gian chuyển đổi</translation>
+    <translation key="settings_speed_transition_hint">(giây cho chuyển đổi mượt mà)</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - GIAO DIỆN -->
+    <!-- ================= -->
+    <translation key="settings_interface_title">Giao diện</translation>
+    <translation key="settings_language">Ngôn ngữ</translation>
+    <translation key="settings_theme">Chủ đề</translation>
+    <translation key="theme_dark">Tối</translation>
+    <translation key="theme_light">Sáng</translation>
+    <translation key="settings_keyboard_layout">Bố cục bàn phím</translation>
+    <translation key="settings_pause_key">Phím tạm dừng</translation>
+    <translation key="settings_reset_speed_key">Phím đặt lại tốc độ</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - NÚT -->
+    <!-- ================= -->
+    <translation key="settings_save">Lưu</translation>
+    <translation key="settings_reset">Đặt lại</translation>
+    <translation key="settings_cancel">Đóng</translation>
+    <translation key="settings_save_and_close">Lưu &amp; Đóng</translation>
+    <translation key="settings_no_changes">Không phát hiện thay đổi</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - THÔNG BÁO -->
+    <!-- ================= -->
+    <translation key="settings_saved">Đã lưu cài đặt!</translation>
+    <translation key="settings_save_error">Lỗi khi lưu cài đặt</translation>
+    <translation key="settings_reset_confirm">Đặt lại tất cả cài đặt về giá trị mặc định?</translation>
+    <translation key="settings_reset_success">Đã đặt lại cài đặt!</translation>
+    <translation key="settings_reset_error">Lỗi khi đặt lại</translation>
+    <translation key="settings_restart_required">Một số cài đặt cần khởi động lại ứng dụng để có hiệu lực.</translation>
+    <translation key="settings_restart_now">Khởi động lại ngay?</translation>
+    <translation key="settings_restart_later">Đã lưu cài đặt. Vui lòng khởi động lại ứng dụng sau.</translation>
+    <translation key="settings_restart_failed">Khởi động lại tự động thất bại. Vui lòng khởi động lại ứng dụng thủ công.</translation>
+    <translation key="custom_layout_not_found">Không tìm thấy bố cục tùy chỉnh. Đã tự động chuyển sang {fallback_layout}.</translation>
+
+    <!-- ================= -->
+    <!-- CÀI ĐẶT - LỖI XÁC THỰC -->
+    <!-- ================= -->
+    <translation key="settings_error_numbers">Vui lòng nhập số hợp lệ</translation>
+    <translation key="settings_error_positive">Vui lòng nhập giá trị dương</translation>
+    <translation key="settings_error_general">Dữ liệu không hợp lệ</translation>
+    <translation key="settings_error_pause_key">Phím tạm dừng phải là đúng một ký tự</translation>
+    <translation key="settings_error_reset_speed_key">Phím đặt lại tốc độ phải là đúng một ký tự</translation>
+
+    <!-- ================= -->
+    <!-- TRÌNH CHỈNH SỬA PHÍM - TIÊU ĐỀ & HƯỚNG DẪN -->
+    <!-- ================= -->
+    <translation key="key_editor_title">Trình chỉnh sửa bố cục phím</translation>
+    <translation key="key_editor_instructions">Nhấp vào một phím bên dưới rồi nhấn bố cục mong muốn trên bàn phím của bạn. Escape để hủy, Backspace để xóa.</translation>
+
+    <!-- ================= -->
+    <!-- TRÌNH CHỈNH SỬA PHÍM - TRẠNG THÁI -->
+    <!-- ================= -->
+    <translation key="key_editor_current_key">Phím hiện tại:</translation>
+    <translation key="key_editor_no_selection">Chưa chọn phím nào</translation>
+    <translation key="key_editor_press_key">Nhấn một phím...</translation>
+    <translation key="key_editor_empty">(trống)</translation>
+    <translation key="key_editor_changes">Đã thay đổi {changed}/{total} phím</translation>
+    <translation key="key_editor_save_and_close">Lưu &amp; Đóng</translation>
+
+    <!-- ================= -->
+    <!-- TRÌNH CHỈNH SỬA PHÍM - NÚT -->
+    <!-- ================= -->
+    <translation key="key_editor_save">Lưu</translation>
+    <translation key="key_editor_reset_all">Đặt lại tất cả</translation>
+    <translation key="key_editor_delete">Xóa tùy chỉnh</translation>
+    <translation key="key_editor_cancel">Hủy</translation>
+
+    <!-- ================= -->
+    <!-- TRÌNH CHỈNH SỬA PHÍM - THÔNG BÁO -->
+    <!-- ================= -->
+    <translation key="key_editor_no_changes">Không có thay đổi nào đối với bố cục tùy chỉnh.</translation>
+    <translation key="key_editor_unconfirm_changes">Bạn có thay đổi chưa lưu. Lưu trước khi đóng?</translation>
+    <translation key="key_editor_reset_confirm">Đặt lại tất cả phím về giá trị mặc định?</translation>
+    <translation key="key_editor_delete_custom_layout_confirm">Xóa bố cục tùy chỉnh và quay về bố cục tiêu chuẩn?</translation>
+    <translation key="key_editor_custom_layout_saved_activated">Đã lưu và kích hoạt bố cục tùy chỉnh.</translation>
+    <translation key="key_editor_custom_deleted">Đã xóa bố cục tùy chỉnh. Đã chuyển sang {layout}.</translation>
+
+</translations>
