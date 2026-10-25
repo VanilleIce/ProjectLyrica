@@ -52,7 +52,7 @@ logger = logging.getLogger("ProjectLyrica.ProjectLyrica")
 
 # ==================== Konstanten ====================
 
-VERSION = "2.8.0"
+VERSION = "2.8.1"
 
 # Fenster-Größen
 DEFAULT_WINDOW_SIZE = (360, 365)
@@ -1166,25 +1166,24 @@ class MusicApp:
         Sucht in dieser Reihenfolge:
         1. Neben der EXE (extern, für Release) — Vorrang für Nutzer-Songs
         2. Im _MEIPASS (falls eingepackt)
-        3. Über resource_path (sucht im Script-Dir und bis zu 3 Ebenen darüber)
+        3. Über resource_path (sucht im Script-Dir und darüber)
         4. Fallback: CWD
         """
-        # 1. Neben der EXE
+        # 1. Neben der EXE (direkt, ohne "resources")
         if getattr(sys, 'frozen', False):
             exe_dir = Path(sys.executable).parent
-            external_songs = exe_dir / "resources" / "Songs"
+            external_songs = exe_dir / "Songs"
             if external_songs.exists():
                 return external_songs
 
         # 2. Im _MEIPASS (falls Songs in die EXE eingepackt wurden)
         if hasattr(sys, '_MEIPASS'):
-            internal_songs = Path(sys._MEIPASS) / "resources" / "Songs"
+            internal_songs = Path(sys._MEIPASS) / "Songs"
             if internal_songs.exists():
                 return internal_songs
 
-        # 3. resource_path — sucht im Script-Dir UND in übergeordneten Ordnern
-        #    (wichtig für .bat-Start, wo Songs eine Ebene höher liegen)
-        songs_dir = Path(resource_path("resources/Songs"))
+        # 3. resource_path
+        songs_dir = Path(resource_path("Songs"))
         if songs_dir.exists():
             return songs_dir
 
